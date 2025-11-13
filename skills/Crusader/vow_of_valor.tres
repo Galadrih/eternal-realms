@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "vow_of_valor"
+display_name = "Vow of Valor"
+icon = null
+mana_cost = 26
+cooldown = 22.0
+description = """8 sn takım def +%10; Crusader atk +%10 — —. Duration: 8s. Range: 6 tile. Tags: buff. Cost: Mana 26."""
+cast_type = "instant"

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="SkillData" load_steps=2 format=3 uid="uid://dg3tdk2be8gin"]
+
+[ext_resource type="Script" uid="uid://c7mflldnikqwc" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "lightning_arc"
+display_name = "Lightning Arc"
+mana_cost = 24
+cooldown = 10.0
+cast_type = "targeted"

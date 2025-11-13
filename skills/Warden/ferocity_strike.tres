@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "ferocity_strike"
+display_name = "Ferocity Strike"
+icon = null
+mana_cost = 0
+cooldown = 8.0
+description = """Mini stun 0.6s — 80 + STR 90%. Duration: 0.6s. Range: 1 tile. Tags: damage, control. Cost: Stamina 16."""
+cast_type = "targeted"

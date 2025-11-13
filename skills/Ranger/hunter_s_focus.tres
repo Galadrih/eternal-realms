@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "hunter_s_focus"
+display_name = "Hunter’s Focus"
+icon = null
+mana_cost = 0
+cooldown = 0.0
+description = """1 sn sabit: her sn +%5 dmg (maks %20); hareket edince sıfır."""
+cast_type = "instant"

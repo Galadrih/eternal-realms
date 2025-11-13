@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "divine_guard"
+display_name = "Divine Guard"
+icon = null
+mana_cost = 28
+cooldown = 22.0
+description = """8 sn %30 hasar paylaşımı — —. Duration: 8s. Range: 6 tile. Tags: support. Cost: Mana 28."""
+cast_type = "instant"

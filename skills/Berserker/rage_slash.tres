@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "rage_slash"
+display_name = "Rage Slash"
+icon = null
+mana_cost = 0
+cooldown = 5.0
+description = """Tek hedef darbe — 110 + STR 140%. Range: 1 tile. Tags: damage. Cost: Stamina 15."""
+cast_type = "targeted"

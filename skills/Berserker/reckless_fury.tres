@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "reckless_fury"
+display_name = "Reckless Fury"
+icon = null
+mana_cost = 0
+cooldown = 18.0
+description = """3 sn döner alan; %10 fazla dmg alır — Her tik 60 + STR 70%. Duration: 3s. Range: 2 tile. Tags: aoe, damage, risk. Cost: Rage 40."""
+cast_type = "ground"

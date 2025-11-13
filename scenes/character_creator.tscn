@@ -1,0 +1,87 @@
+[gd_scene load_steps=2 format=3 uid="uid://dyy8gqe2t8sgi"]
+
+[ext_resource type="Script" uid="uid://b8mq5x6af43mf" path="res://scripts/character_creator.gd" id="1_tvdat"]
+
+[node name="CharacterCreator" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_tvdat")
+
+[node name="MainLayout" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="TitleLabel" type="Label" parent="MainLayout"]
+layout_mode = 2
+size_flags_vertical = 6
+text = "Karakter Yarat
+"
+horizontal_alignment = 1
+
+[node name="ClassNameLabel" type="Label" parent="MainLayout"]
+layout_mode = 2
+size_flags_vertical = 6
+text = "[Sınıf Adı]"
+horizontal_alignment = 1
+
+[node name="ClassDisplayLayout" type="HBoxContainer" parent="MainLayout"]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 1
+
+[node name="PreviousButton" type="Button" parent="MainLayout/ClassDisplayLayout"]
+layout_mode = 2
+text = "<"
+
+[node name="ClassSprite" type="TextureRect" parent="MainLayout/ClassDisplayLayout"]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+
+[node name="NextButton" type="Button" parent="MainLayout/ClassDisplayLayout"]
+layout_mode = 2
+text = ">"
+
+[node name="LoreText" type="RichTextLabel" parent="MainLayout"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_vertical = 3
+text = "Sınıfın hikayesi burada görünecek..."
+fit_content = true
+
+[node name="InputLayout" type="HBoxContainer" parent="MainLayout"]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 1
+
+[node name="NameLabel" type="Label" parent="MainLayout/InputLayout"]
+layout_mode = 2
+text = "Karakter Adı:"
+
+[node name="NameInput" type="LineEdit" parent="MainLayout/InputLayout"]
+layout_mode = 2
+text = "Bir isim girin..."
+expand_to_text_length = true
+
+[node name="ConfirmationLayout" type="HBoxContainer" parent="MainLayout"]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 1
+
+[node name="CreateButton" type="Button" parent="MainLayout/ConfirmationLayout"]
+layout_mode = 2
+text = "Oluştur"
+
+[node name="BackButton" type="Button" parent="MainLayout/ConfirmationLayout"]
+layout_mode = 2
+text = "Geri"

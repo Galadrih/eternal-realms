@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "dragon_s_blood"
+display_name = "Dragon’s Blood"
+icon = null
+mana_cost = 0
+cooldown = 0.0
+description = """Darbe sonra 3 sn VIT ölçekli regen."""
+cast_type = "instant"

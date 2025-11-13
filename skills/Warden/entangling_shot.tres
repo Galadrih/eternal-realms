@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "entangling_shot"
+display_name = "Entangling Shot"
+icon = null
+mana_cost = 0
+cooldown = 14.0
+description = """Alan slow %35 / 4 sn — —. Duration: 4s. Range: 3 tile. Tags: zone, control. Cost: Stamina 14."""
+cast_type = "ground"

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "crescendo_finale"
+display_name = "Crescendo Finale"
+icon = null
+mana_cost = 30
+cooldown = 30.0
+description = """Aktif şarkıları bitir; takım 120 kalkan + düşman 120 dmg; 0.6 sn stun — —. Duration: 0.6s. Range: 3 tile. Tags: burst, shield, control. Cost: Mana 30."""
+cast_type = "ground"

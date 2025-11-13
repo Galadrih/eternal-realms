@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "explosive_trap"
+display_name = "Explosive Trap"
+icon = null
+mana_cost = 0
+cooldown = 16.0
+description = """Patlama + 3 sn yanma alanı — 120 + DEX 130%. Duration: 3s. Range: 3 tile. Tags: trap, zone, dot. Cost: Stamina 16."""
+cast_type = "ground"

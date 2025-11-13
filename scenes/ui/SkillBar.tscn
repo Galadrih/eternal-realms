@@ -1,0 +1,56 @@
+[gd_scene load_steps=5 format=3 uid="uid://cw2bpfc61uhek"]
+
+[ext_resource type="Script" uid="uid://xqrpexvosdit" path="res://scripts/skill/skill_bar.gd" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/ui/SkillSlot.tscn" id="2"]
+[ext_resource type="Resource" path="res://skills/Druid/vine_whip.tres" id="3_nk72o"]
+[ext_resource type="Resource" uid="uid://c5kpaokpkyu65" path="res://skills/Druid/entangle_roots.tres" id="4_nk72o"]
+
+[node name="SkillBar" type="HBoxContainer"]
+custom_minimum_size = Vector2(512, 48)
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_type_variation = &"HBoxContainer"
+alignment = 1
+script = ExtResource("1")
+slots = Array[NodePath]([NodePath("Slot1"), NodePath("Slot2"), NodePath("Slot3"), NodePath("Slot4"), NodePath("Slot5"), NodePath("Slot6"), NodePath("Slot7"), NodePath("Slot8"), NodePath("Slot9"), NodePath("Slot0")])
+
+[node name="Slot1" parent="." instance=ExtResource("2")]
+layout_mode = 2
+skill = ExtResource("3_nk72o")
+
+[node name="Slot2" parent="." instance=ExtResource("2")]
+layout_mode = 2
+skill = ExtResource("4_nk72o")
+hotkey_text = "2"
+
+[node name="Slot3" parent="." instance=ExtResource("2")]
+layout_mode = 2
+hotkey_text = "3"
+
+[node name="Slot4" parent="." instance=ExtResource("2")]
+layout_mode = 2
+hotkey_text = "4"
+
+[node name="Slot5" parent="." instance=ExtResource("2")]
+layout_mode = 2
+hotkey_text = "5"
+
+[node name="Slot6" parent="." instance=ExtResource("2")]
+layout_mode = 2
+hotkey_text = "6"
+
+[node name="Slot7" parent="." instance=ExtResource("2")]
+layout_mode = 2
+hotkey_text = "7"
+
+[node name="Slot8" parent="." instance=ExtResource("2")]
+layout_mode = 2
+hotkey_text = "8"
+
+[node name="Slot9" parent="." instance=ExtResource("2")]
+layout_mode = 2
+hotkey_text = "9"
+
+[node name="Slot0" parent="." instance=ExtResource("2")]
+layout_mode = 2
+hotkey_text = "10"

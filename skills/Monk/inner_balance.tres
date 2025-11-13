@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "inner_balance"
+display_name = "Inner Balance"
+icon = null
+mana_cost = 0
+cooldown = 0.0
+description = """Vurdukça 5 Chi; her yük +%2 hasar ve alınan hasar -%2."""
+cast_type = "instant"

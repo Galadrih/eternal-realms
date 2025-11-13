@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "spirit_step"
+display_name = "Spirit Step"
+icon = null
+mana_cost = 0
+cooldown = 12.0
+description = """4 tile gölge adım; geçtiğine hasar — 40 + FOC 60%. Range: 4 tile. Tags: mobility, damage. Cost: Chi 1."""
+cast_type = "targeted"

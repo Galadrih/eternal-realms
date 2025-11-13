@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://1rbim1vuxnmm"]
+
+[node name="SkillPanel" type="Panel"]
+custom_minimum_size = Vector2(600, 420)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Skills" type="Label" parent="MarginContainer"]
+layout_mode = 2
+text = "Skills"
+
+[node name="LineEdit" type="LineEdit" parent="MarginContainer"]
+layout_mode = 2
+text = "Search..."
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="MarginContainer/ScrollContainer"]
+layout_mode = 2
+columns = 6
+
+[node name="Button" type="Button" parent="MarginContainer"]
+layout_mode = 2
+text = "Close"

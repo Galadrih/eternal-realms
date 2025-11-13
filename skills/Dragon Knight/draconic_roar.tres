@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "draconic_roar"
+display_name = "Draconic Roar"
+icon = null
+mana_cost = 0
+cooldown = 16.0
+description = """0.8 sn stun; 6 sn -%10 atk — —. Duration: 6s. Range: 4 tile. Tags: control, debuff. Cost: Stamina 18."""
+cast_type = "instant"

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "harmony_of_battle"
+display_name = "Harmony of Battle"
+icon = null
+mana_cost = 0
+cooldown = 0.0
+description = """1 şarkı: %+5 atk spd; 2 şarkı: %+8 (üst sınır)."""
+cast_type = "instant"

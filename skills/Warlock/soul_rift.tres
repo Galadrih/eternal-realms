@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "soul_rift"
+display_name = "Soul Rift"
+icon = null
+mana_cost = 28
+cooldown = 22.0
+description = """3 sn çekim; patlama — 100 + INT 120%. Duration: 3s. Range: 3 tile. Tags: zone, control, damage. Cost: Mana 28."""
+cast_type = "ground"

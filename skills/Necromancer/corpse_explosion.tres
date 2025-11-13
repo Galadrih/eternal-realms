@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "corpse_explosion"
+display_name = "Corpse Explosion"
+icon = null
+mana_cost = 24
+cooldown = 18.0
+description = """Yakın cesetleri patlat; AoE — 120 + INT 140%. Range: 2 tile. Tags: aoe. Cost: Mana 24."""
+cast_type = "ground"

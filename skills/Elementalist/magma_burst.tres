@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="SkillData" load_steps=2 format=3 uid="uid://cnmlefsqg5ruc"]
+
+[ext_resource type="Script" uid="uid://c7mflldnikqwc" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "magma_burst"
+display_name = "Magma Burst"
+mana_cost = 30
+cooldown = 18.0
+cast_type = "ground"

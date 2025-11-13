@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "dissonant_chord"
+display_name = "Dissonant Chord"
+icon = null
+mana_cost = 18
+cooldown = 16.0
+description = """1 sn interrupt + 60 ses hasarı — —. Duration: 1s. Range: 2 tile. Tags: interrupt, damage. Cost: Mana 18."""
+cast_type = "ground"

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "light_of_retribution"
+display_name = "Light of Retribution"
+icon = null
+mana_cost = 0
+cooldown = 40.0
+description = """HP %30 altı patlama — 120 holy. Range: 2 tile. Tags: burst. Cost: Passive Proc."""
+cast_type = "ground"

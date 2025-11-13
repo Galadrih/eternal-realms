@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="SkillData" load_steps=2 format=3 uid="uid://br4a8ekk5tj1q"]
+
+[ext_resource type="Script" uid="uid://c7mflldnikqwc" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "frost_shard"
+display_name = "Frost Shard"
+mana_cost = 18
+cooldown = 8.0
+cast_type = "targeted"

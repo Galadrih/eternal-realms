@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "molten_guard"
+display_name = "Molten Guard"
+icon = null
+mana_cost = 20
+cooldown = 20.0
+description = """6 sn %30 reduce; temas eden yanar — —. Duration: 6s. Tags: mitigation, thorns. Cost: Mana 20."""
+cast_type = "instant"

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "scale_slam"
+display_name = "Scale Slam"
+icon = null
+mana_cost = 0
+cooldown = 10.0
+description = """Geri itişli kalkan vuruşu — 80 + STR 90%. Range: 1 tile. Tags: damage, control. Cost: Stamina 16."""
+cast_type = "targeted"

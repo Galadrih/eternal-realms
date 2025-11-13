@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "hunter_s_instinct"
+display_name = "Hunter’s Instinct"
+icon = null
+mana_cost = 0
+cooldown = 0.0
+description = """%50 üzeri HP hedeflere +%10 crit."""
+cast_type = "instant"

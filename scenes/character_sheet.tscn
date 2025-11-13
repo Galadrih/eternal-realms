@@ -1,0 +1,280 @@
+[gd_scene load_steps=2 format=3 uid="uid://b2q5gieiv8h4w"]
+
+[ext_resource type="Script" uid="uid://b847s8pp18e36" path="res://scripts/character_sheet.gd" id="1_2ycnj"]
+
+[node name="CharacterSheet" type="CanvasLayer"]
+script = ExtResource("1_2ycnj")
+
+[node name="MainPanel" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(310, 400)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -155.0
+offset_top = -200.0
+offset_right = 155.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MainPanel"]
+layout_mode = 2
+
+[node name="MainLayout" type="VBoxContainer" parent="MainPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="MainPanel/MarginContainer/MainLayout"]
+layout_mode = 2
+text = "KARAKTER STATLARI"
+horizontal_alignment = 1
+
+[node name="LevelLabel" type="Label" parent="MainPanel/MarginContainer/MainLayout"]
+layout_mode = 2
+text = "Seviye: 1"
+
+[node name="PointsLabel" type="Label" parent="MainPanel/MarginContainer/MainLayout"]
+layout_mode = 2
+text = "Kalan Puan: 0"
+
+[node name="HSeparator" type="HSeparator" parent="MainPanel/MarginContainer/MainLayout"]
+layout_mode = 2
+
+[node name="StatsLayout" type="HBoxContainer" parent="MainPanel/MarginContainer/MainLayout"]
+layout_mode = 2
+
+[node name="BaseStatsLayout" type="VBoxContainer" parent="MainPanel/MarginContainer/MainLayout/StatsLayout"]
+custom_minimum_size = Vector2(103, 233)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/BaseStatsLayout"]
+layout_mode = 2
+text = "Temel Statlar"
+
+[node name="BaseStatsGrid" type="GridContainer" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/BaseStatsLayout"]
+layout_mode = 2
+columns = 3
+
+[node name="Label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/BaseStatsLayout/BaseStatsGrid"]
+layout_mode = 2
+text = "STR"
+
+[node name="str_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/BaseStatsLayout/BaseStatsGrid"]
+layout_mode = 2
+text = "10"
+
+[node name="str_plus_button" type="Button" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/BaseStatsLayout/BaseStatsGrid"]
+layout_mode = 2
+text = "+"
+
+[node name="Label2" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/BaseStatsLayout/BaseStatsGrid"]
+layout_mode = 2
+text = "DEX"
+
+[node name="dex_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/BaseStatsLayout/BaseStatsGrid"]
+layout_mode = 2
+text = "10"
+
+[node name="dex_plus_button" type="Button" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/BaseStatsLayout/BaseStatsGrid"]
+layout_mode = 2
+text = "+"
+
+[node name="Label3" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/BaseStatsLayout/BaseStatsGrid"]
+layout_mode = 2
+text = "VIT"
+
+[node name="vit_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/BaseStatsLayout/BaseStatsGrid"]
+layout_mode = 2
+text = "10"
+
+[node name="vit_plus_button" type="Button" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/BaseStatsLayout/BaseStatsGrid"]
+layout_mode = 2
+text = "+"
+
+[node name="Label4" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/BaseStatsLayout/BaseStatsGrid"]
+layout_mode = 2
+text = "WIS"
+
+[node name="wis_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/BaseStatsLayout/BaseStatsGrid"]
+layout_mode = 2
+text = "10"
+
+[node name="wis_plus_button" type="Button" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/BaseStatsLayout/BaseStatsGrid"]
+layout_mode = 2
+text = "+"
+
+[node name="Label5" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/BaseStatsLayout/BaseStatsGrid"]
+layout_mode = 2
+text = "INT"
+
+[node name="int_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/BaseStatsLayout/BaseStatsGrid"]
+layout_mode = 2
+text = "10"
+
+[node name="int_plus_button" type="Button" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/BaseStatsLayout/BaseStatsGrid"]
+layout_mode = 2
+text = "+"
+
+[node name="Label6" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/BaseStatsLayout/BaseStatsGrid"]
+layout_mode = 2
+text = "FOC"
+
+[node name="foc_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/BaseStatsLayout/BaseStatsGrid"]
+layout_mode = 2
+text = "10"
+
+[node name="foc_plus_button" type="Button" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/BaseStatsLayout/BaseStatsGrid"]
+layout_mode = 2
+text = "+"
+
+[node name="VSeparator" type="VSeparator" parent="MainPanel/MarginContainer/MainLayout/StatsLayout"]
+layout_mode = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MainPanel/MarginContainer/MainLayout/StatsLayout"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DerivedStatsLayout" type="VBoxContainer" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout"]
+layout_mode = 2
+text = "İkincil Statlar"
+
+[node name="DerivedStatsGrid" type="GridContainer" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout"]
+layout_mode = 2
+columns = 2
+
+[node name="Label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "Fiz. Saldırı Gücü:"
+
+[node name="pap_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "8"
+
+[node name="Label3" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "Büy. Saldırı Gücü:"
+
+[node name="map_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0"
+
+[node name="Label5" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "İyileştirme Gücü:"
+
+[node name="healp_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0"
+
+[node name="Label7" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "Fiz. Kritik Şans:"
+
+[node name="pcrit_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0%"
+
+[node name="Label9" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "Büy. Kritik Şans:"
+
+[node name="mcrit_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0%"
+
+[node name="Label11" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "Azami Can:"
+
+[node name="max_hp_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0"
+
+[node name="Label13" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "Azami Mana:"
+
+[node name="max_mp_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0"
+
+[node name="Label15" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "Fiz. Hasar Azaltma:"
+
+[node name="pdef_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0%"
+
+[node name="Label17" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "Büy. Hasar Azaltma:"
+
+[node name="mdef_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0%"
+
+[node name="Label19" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "Kaçınma Şansı:"
+
+[node name="evasion_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0%"
+
+[node name="Label21" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "Saldırı Hızı Bonusu:"
+
+[node name="aspd_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0%"
+
+[node name="Label23" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "Büyü Hızı Bonusu: "
+
+[node name="cspd_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0%"
+
+[node name="Label25" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "HP Yenilemesi: "
+
+[node name="hp_regen_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0"
+
+[node name="Label27" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "MP Yenilemesi:"
+
+[node name="mp_regen_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0"
+
+[node name="Label29" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "Statü Direnci: "
+
+[node name="debuff_resist_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0%"
+
+[node name="Label31" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "Statü Başarısı: "
+
+[node name="debuff_success_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0%"
+
+[node name="CloseButton" type="Button" parent="MainPanel/MarginContainer/MainLayout"]
+layout_mode = 2
+text = "Kapat"

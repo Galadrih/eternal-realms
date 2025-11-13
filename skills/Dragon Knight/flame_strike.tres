@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "flame_strike"
+display_name = "Flame Strike"
+icon = null
+mana_cost = 0
+cooldown = 8.0
+description = """Yanma 2 sn — 90 + STR 110%. Duration: 2s. Range: 1 tile. Tags: damage, dot. Cost: Stamina 14."""
+cast_type = "targeted"

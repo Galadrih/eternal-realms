@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "camouflage"
+display_name = "Camouflage"
+icon = null
+mana_cost = 0
+cooldown = 24.0
+description = """5 sn gizlilik; çıkış %100 kritik — —. Duration: 5s. Tags: stealth, burst. Cost: Focus 24."""
+cast_type = "instant"

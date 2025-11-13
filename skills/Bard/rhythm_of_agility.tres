@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "rhythm_of_agility"
+display_name = "Rhythm of Agility"
+icon = null
+mana_cost = 20
+cooldown = 20.0
+description = """8 sn takım hareket %+12, dodge %+8 — —. Duration: 8s. Range: 6 tile. Tags: buff. Cost: Mana 20."""
+cast_type = "instant"

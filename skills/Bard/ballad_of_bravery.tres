@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "ballad_of_bravery"
+display_name = "Ballad of Bravery"
+icon = null
+mana_cost = 20
+cooldown = 26.0
+description = """Her 5 sn %2 atk/def stack (maks %10) — —. Duration: 25s. Tags: buff, stack. Cost: Mana 20."""
+cast_type = "instant"

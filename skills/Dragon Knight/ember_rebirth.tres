@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "ember_rebirth"
+display_name = "Ember Rebirth"
+icon = null
+mana_cost = 0
+cooldown = 90.0
+description = """Bir kez ölümden döner (%20 HP) — —. Duration: 3s. Tags: cheat_death. Cost: Passive Proc."""
+cast_type = "instant"

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "ritual_of_sacrifice"
+display_name = "Ritual of Sacrifice"
+icon = null
+mana_cost = 28
+cooldown = 26.0
+description = """Tüm minyonları patlat; her biri 70 + INT 90%; self 6 sn +%20 hasar — —. Duration: 6s. Range: 3 tile. Tags: burst, buff. Cost: Mana 28."""
+cast_type = "ground"

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "beacon_of_hope"
+display_name = "Beacon of Hope"
+icon = null
+mana_cost = 28
+cooldown = 24.0
+description = """6 sn alan; sn başı heal — 30 + WIS 50% /sn. Duration: 6s. Range: 3 tile. Tags: zone, heal. Cost: Mana 28."""
+cast_type = "ground"

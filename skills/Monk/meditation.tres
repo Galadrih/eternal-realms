@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "meditation"
+display_name = "Meditation"
+icon = null
+mana_cost = 0
+cooldown = 20.0
+description = """3 sn kanal; can/mana doldurma — WIS/FOC ölçekli. Duration: 3s. Tags: channel, heal. Cost: —."""
+cast_type = "instant"

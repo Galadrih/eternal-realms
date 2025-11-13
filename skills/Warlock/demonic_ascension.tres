@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "demonic_ascension"
+display_name = "Demonic Ascension"
+icon = null
+mana_cost = 30
+cooldown = 32.0
+description = """8 sn form: +%20 spell, +%5 leech — —. Duration: 8s. Tags: buff. Cost: Mana 30."""
+cast_type = "instant"

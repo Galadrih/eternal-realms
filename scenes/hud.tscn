@@ -1,0 +1,56 @@
+[gd_scene load_steps=4 format=3 uid="uid://b2p5scgacieep"]
+
+[ext_resource type="Script" uid="uid://dknhlmqxyar17" path="res://scripts/hud.gd" id="1_37p78"]
+[ext_resource type="PackedScene" uid="uid://cw2bpfc61uhek" path="res://scenes/ui/SkillBar.tscn" id="2_oo0fn"]
+[ext_resource type="PackedScene" path="res://scenes/ui/SkillPanel.tscn" id="3_5ysmq"]
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_37p78")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="LevelLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HealthBar" type="ProgressBar" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ManaBar" type="ProgressBar" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="XPBar" type="ProgressBar" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SkillBar" parent="." instance=ExtResource("2_oo0fn")]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -256.0
+offset_top = -48.0
+offset_right = 256.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="SkillPanel" parent="." instance=ExtResource("3_5ysmq")]
+custom_minimum_size = Vector2(600, 400)
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grid_columns = 2
+item_min_size = Vector2(220, 52)
+
+[connection signal="skill_input" from="SkillBar" to="." method="_on_skill_bar_skill_input"]

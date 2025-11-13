@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "nature_s_bond"
+display_name = "Nature’s Bond"
+icon = null
+mana_cost = 0
+cooldown = 0.0
+description = """Pet aktifken +%10 regen, +%10 phys def."""
+cast_type = "instant"

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "revive"
+display_name = "Revive"
+icon = null
+mana_cost = 40
+cooldown = 60.0
+description = """Düşmüş müttefiki %25 HP ile kaldır — —. Range: 2 tile. Tags: revive. Cost: Mana 40."""
+cast_type = "instant"

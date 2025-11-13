@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "hex_of_weakness"
+display_name = "Hex of Weakness"
+icon = null
+mana_cost = 16
+cooldown = 14.0
+description = """8 sn atk/def -%12 — —. Duration: 8s. Range: 6 tile. Tags: debuff. Cost: Mana 16."""
+cast_type = "targeted"

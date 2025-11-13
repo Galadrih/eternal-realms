@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "power_shot"
+display_name = "Power Shot"
+icon = null
+mana_cost = 0
+cooldown = 8.0
+description = """Zırh delme %20 — 105 + DEX 120%. Range: 8 tile. Tags: damage, armor_pierce. Cost: Stamina 14."""
+cast_type = "targeted"

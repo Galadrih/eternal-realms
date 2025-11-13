@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "earth_splitter"
+display_name = "Earth Splitter"
+icon = null
+mana_cost = 0
+cooldown = 10.0
+description = """90° yay; 1 sn serseme — 95 + STR 100%. Duration: 1s. Range: 3 tile. Tags: damage, control, aoe. Cost: Stamina 25."""
+cast_type = "ground"

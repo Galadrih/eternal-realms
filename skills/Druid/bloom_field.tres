@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="SkillData" load_steps=2 format=3 uid="uid://bgv8v6iecjaag"]
+
+[ext_resource type="Script" uid="uid://c7mflldnikqwc" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "bloom_field"
+display_name = "Bloom Field"
+mana_cost = 55
+cooldown = 20.0

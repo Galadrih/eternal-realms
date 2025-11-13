@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "radiant_slash"
+display_name = "Radiant Slash"
+icon = null
+mana_cost = 0
+cooldown = 10.0
+description = """Yay vuruşu — 85 + STR 100%. Range: 3 tile. Tags: aoe, damage. Cost: Stamina 18."""
+cast_type = "ground"

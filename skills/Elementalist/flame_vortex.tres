@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="SkillData" load_steps=2 format=3 uid="uid://cey2e6gdp0rwj"]
+
+[ext_resource type="Script" uid="uid://c7mflldnikqwc" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "flame_vortex"
+display_name = "Flame Vortex"
+mana_cost = 28
+cooldown = 14.0
+cast_type = "ground"

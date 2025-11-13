@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="SkillData" load_steps=2 format=3 uid="uid://cl4rqjmcur3wd"]
+
+[ext_resource type="Script" uid="uid://c7mflldnikqwc" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "ice_barrier"
+display_name = "Ice Barrier"
+mana_cost = 25
+cooldown = 18.0

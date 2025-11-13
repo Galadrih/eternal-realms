@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "song_of_courage"
+display_name = "Song of Courage"
+icon = null
+mana_cost = 22
+cooldown = 22.0
+description = """10 sn takım +%12 atk — —. Duration: 10s. Range: 6 tile. Tags: buff. Cost: Mana 22."""
+cast_type = "instant"

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "melody_of_healing"
+display_name = "Melody of Healing"
+icon = null
+mana_cost = 24
+cooldown = 20.0
+description = """4 sn/s başı AoE heal — 35 + WIS 60% /sn. Duration: 4s. Range: 3 tile. Tags: heal, aoe. Cost: Mana 24."""
+cast_type = "ground"

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="SkillData" load_steps=2 format=3 uid="uid://bsk3b4866s46"]
+
+[ext_resource type="Script" uid="uid://c7mflldnikqwc" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "vine_whip"
+display_name = "Vine Whip"
+mana_cost = 20
+cooldown = 6.0
+cast_type = "targeted"

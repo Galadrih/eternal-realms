@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "holy_light"
+display_name = "Holy Light"
+icon = null
+mana_cost = 16
+cooldown = 6.0
+description = """Tek hedef instant heal — 100 + WIS 130%. Range: 6 tile. Tags: heal. Cost: Mana 16."""
+cast_type = "instant"

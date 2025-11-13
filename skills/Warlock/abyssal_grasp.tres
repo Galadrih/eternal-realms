@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "abyssal_grasp"
+display_name = "Abyssal Grasp"
+icon = null
+mana_cost = 16
+cooldown = 14.0
+description = """1.2 sn kök + hasar — 50 shadow. Duration: 1.2s. Range: 5 tile. Tags: control, damage. Cost: Mana 16."""
+cast_type = "targeted"

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "iron_body"
+display_name = "Iron Body"
+icon = null
+mana_cost = 0
+cooldown = 16.0
+description = """5 sn %25 fiziksel azaltım — —. Duration: 5s. Tags: mitigation. Cost: Chi 2."""
+cast_type = "instant"

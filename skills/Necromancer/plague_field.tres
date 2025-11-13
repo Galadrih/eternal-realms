@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "plague_field"
+display_name = "Plague Field"
+icon = null
+mana_cost = 26
+cooldown = 22.0
+description = """6 sn alan DoT; iyileşme -%25 — Toplam 140 + INT 150%. Duration: 6s. Range: 3 tile. Tags: zone, dot. Cost: Mana 26."""
+cast_type = "ground"

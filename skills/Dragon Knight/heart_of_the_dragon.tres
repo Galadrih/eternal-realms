@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "heart_of_the_dragon"
+display_name = "Heart of the Dragon"
+icon = null
+mana_cost = 0
+cooldown = 32.0
+description = """8 sn atk/def +%20, regen hızlı — —. Duration: 8s. Tags: buff. Cost: Rage 30."""
+cast_type = "instant"

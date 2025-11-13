@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "judgment_of_light"
+display_name = "Judgment of Light"
+icon = null
+mana_cost = 18
+cooldown = 14.0
+description = """Düşmana 80 holy; yakındakilere heal — 50 + WIS 60% (heal). Range: 2 tile. Tags: hybrid. Cost: Mana 18."""
+cast_type = "ground"

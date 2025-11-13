@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "unyielding_strike"
+display_name = "Unyielding Strike"
+icon = null
+mana_cost = 0
+cooldown = 11.0
+description = """6 sn %30 zırh delme — 95 + STR 120%. Duration: 6s. Range: 1 tile. Tags: damage, debuff. Cost: Stamina 20."""
+cast_type = "targeted"

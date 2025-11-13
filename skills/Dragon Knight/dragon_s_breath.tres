@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "dragon_s_breath"
+display_name = "Dragon’s Breath"
+icon = null
+mana_cost = 24
+cooldown = 18.0
+description = """60° koni — 135 + STR 140%. Range: 4 tile. Tags: aoe, damage. Cost: Mana 24."""
+cast_type = "ground"

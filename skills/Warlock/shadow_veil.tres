@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "shadow_veil"
+display_name = "Shadow Veil"
+icon = null
+mana_cost = 22
+cooldown = 20.0
+description = """4 sn %40 reduce, yarı görünmez — —. Duration: 4s. Tags: mitigation, stealth. Cost: Mana 22."""
+cast_type = "instant"

@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="SkillData" load_steps=2 format=3 uid="uid://jnp7d764xcp5"]
+
+[ext_resource type="Script" uid="uid://c7mflldnikqwc" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "meteor_fall"
+display_name = "Meteor Fall"
+mana_cost = 40
+cooldown = 24.0
+cast_type = "ground"

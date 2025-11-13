@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "resonant_shield"
+display_name = "Resonant Shield"
+icon = null
+mana_cost = 24
+cooldown = 22.0
+description = """6 sn takım kalkanı — 120 + FOC 120%. Duration: 6s. Range: 3 tile. Tags: shield. Cost: Mana 24."""
+cast_type = "ground"

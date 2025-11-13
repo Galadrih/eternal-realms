@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "bone_breaker"
+display_name = "Bone Breaker"
+icon = null
+mana_cost = 0
+cooldown = 14.0
+description = """4 sn %25 zırh kırma — 150 + STR 160%. Duration: 4s. Range: 1 tile. Tags: damage, debuff. Cost: Stamina 30."""
+cast_type = "targeted"
