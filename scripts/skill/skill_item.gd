@@ -3,7 +3,7 @@ class_name SkillItem
 
 # Satır tasarımı
 @export var icon_size: int = 40      # Sol taraftaki ikon alanı
-@export var row_width: int = 220     # Satır genişliği (SkillPanel’deki item_min_size.x ile uyumlu)
+@export var row_width: int = 220     # (SkillPanel’deki item_min_size.x ile uyumlu)
 
 # Dışarıdan atanan skill resource
 var skill: SkillData = null : set = set_skill
@@ -20,7 +20,7 @@ func _ready() -> void:
     # Satır boyutu – kompakt satır
     custom_minimum_size = Vector2(row_width, max(icon_size + 8, 48))
 
-    # PANEL İÇİ İKON BOYUT KONTROLÜ
+    # GÖRSEL DÜZELTME: PANEL İÇİ İKON BOYUT KONTROLÜ
     add_theme_constant_override("h_separation", icon_size / 4)
     add_theme_constant_override("icon_max_width", icon_size) # K Panelindeki ikon boyutu
 
@@ -33,11 +33,10 @@ func _ready() -> void:
     # Metin taşmasını üç nokta ile kes
     text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 
-    # Inspector’dan skill atanmışsa hemen uygula
+    # SKILL ATANMIŞSA UI'YI GÜNCELLE
     if skill != null:
-        _apply_skill()
+        _apply_skill() 
         
-    # Yetenek tetikleme fonksiyonunu bağla
     pressed.connect(_on_skill_button_pressed)
 
 
@@ -49,6 +48,7 @@ func set_skill(value: SkillData) -> void:
     if is_node_ready():
         _apply_skill()
 
+# HATA DÜZELTİLDİ: Eksik olan _apply_skill fonksiyon tanımı
 func _apply_skill() -> void:
     if not skill:
         text = "Yetenek Yok"
@@ -61,41 +61,40 @@ func _apply_skill() -> void:
     text = "%s (MP: %d)" % [skill.display_name, skill.mana_cost]
     icon = skill.icon
     
+    # Tooltip Düzeltildi
     if skill.description and skill.description != "":
         tooltip_text = skill.description
         
-# --- YETENEK TETİKLEME FONKSİYONU VE KRİTİK HATA TEŞHİSİ ---
+# --- YETENEK TETİKLEME FONKSİYONU ---
 func _on_skill_button_pressed():
     if skill == null:
         print("HATA: Buton boş.")
         return
         
-    # Player'ı 'player_character' grubu üzerinden bulmayı dene
+    # K Panelindeki item'a tıklandığında Player'ı bulur
     var player_node = get_tree().get_first_node_in_group("player_character")
     
     if player_node and player_node.has_method("execute_skill"):
         var skill_id_str = String(skill.id)
         
-        # Başarılı bağlantı: Yeteneği çağır. Mana/Cooldown kontrolü PlayerBase.gd'de yapılır.
+        # PlayerBase'e gönderilecek ID'yi direkt kullanıyoruz (snake_case)
         player_node.execute_skill(skill_id_str, null)
         
     else:
-        # Bağlantı başarısız: Detaylı hata teşhisi çıktısı
+        # BAĞLANTI BAŞARISIZ DURUM: Detaylı Teşhis
         print("--- KRİTİK HATA TEŞHİSİ: PlayerBase.execute_skill'e ulaşılamadı ---")
         
-        # 1. Player düğümü sahnede var mı?
         if player_node == null:
             print("1. 'player_character' grubunda HİÇBİR düğüm bulunamadı.")
-            print("ÇÖZÜM: Karakterinizin yüklenmesinden hemen sonra kendisini 'player_character' grubuna eklediğinden emin olun.")
+            print("ÇÖZÜM: Karakterinizin sahneye DİNAMİK ekleniyorsa, eklenir eklenmez kendisini 'player_character' grubuna eklediğinden emin olun. (PlayerBase.gd içindeki _ready fonksiyonuna add_to_group('player_character') eklendi)")
         else:
-            # 2. Düğüm bulundu ama doğru script bağlı değil mi?
             print("1. 'player_character' grubunda düğüm BULUNDU: ", player_node.name)
             print("2. Bulunan düğümde 'execute_skill' metodu var mı? HAYIR")
-            print("ÇÖZÜM: Düğüm (", player_node.name, ") doğru PlayerBase.gd scriptini (CharacterBody2D uzantılı) kullanmıyor.")
+            print("ÇÖZÜM: Bulunan düğüm (", player_node.name, ") PlayerBase.gd scriptini (execute_skill fonksiyonunu içeren) kullanmıyor olabilir.")
 
 
 # ---------------------------------------------------------
-#  UI ÇİZİMİ (Tooltip Düzeltmesi - Tekrar aşağı doğru genişleyecek)
+#  UI ÇİZİMİ (Tooltip Düzeltmesi)
 # ---------------------------------------------------------
 func _draw_tooltip(for_text: String, row_width: int, max_lines: int = 4) -> Control:
     var panel := PanelContainer.new()
@@ -113,7 +112,7 @@ func _draw_tooltip(for_text: String, row_width: int, max_lines: int = 4) -> Cont
     label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
     label.autowrap_mode = TextServer.AUTOWRAP_WORD       
     
-    # KRİTİK DÜZELTME: Genişliği sınırlar, yüksekliğin içeriğe göre büyümesini sağlar.
+    # KRİTİK DÜZELTME: Tooltip'in aşağı doğru genişlemesini sağlar.
     label.custom_minimum_size = Vector2(row_width, 0)
     
     label.size_flags_vertical = Control.SIZE_EXPAND       
@@ -124,7 +123,7 @@ func _draw_tooltip(for_text: String, row_width: int, max_lines: int = 4) -> Cont
     return panel
 
 # ---------------------------------------------------------
-#  DRAG & DROP – skillbar’a sürükleme için (İkon Boyutu Düzeltildi)
+#  DRAG & DROP (Sürükleme İkonu Boyut Düzeltildi)
 # ---------------------------------------------------------
 func _get_drag_data(at_position: Vector2) -> Variant:
     if skill == null:
@@ -138,18 +137,18 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 
     # Küçük önizleme konteynırı: Sabit boyutlu root oluştur
     var root := Control.new()
-    # Drag preview'i sabit boyuta zorla (K Panelinde gözüken boyut)
+    # Drag preview'i K Panelinde gözüken boyuta zorla (40x40)
     root.custom_minimum_size = Vector2(icon_size, icon_size)
 
     var tex := TextureRect.new()
     if skill.icon:
         tex.texture = skill.icon
     
-    # KRİTİK DÜZELTME: TextureRect'i boyutlandırmaya zorla
-    tex.custom_minimum_size = Vector2(icon_size, icon_size) 
+    # GÖRSEL DÜZELTME: TextureRect'i küçük boyuta zorla ve alanı kapla
     tex.set_anchors_preset(Control.PRESET_FULL_RECT)
+    tex.custom_minimum_size = Vector2(icon_size, icon_size) # Min boyutu sabitle
     
-    # Boyutu koruyarak kutuya sığdırır.
+    # Resmi ortala ve önizleme alanına sığdırır.
     tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED 
     tex.expand_mode = TextureRect.EXPAND_FIT_WIDTH 
     

@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://cyahhisrans70"]
+[gd_scene load_steps=2 format=3 uid="uid://cyahhisrans70"]
 
 [ext_resource type="Script" uid="uid://4yawk2ugf761" path="res://scripts/skill/skill_slot.gd" id="1"]
-[ext_resource type="Resource" uid="uid://bv4xlvjm2qiwh" path="res://skills/Elementalist/thunder_step.tres" id="2_6b0p6"]
 
 [node name="SkillSlot" type="Control"]
 layout_mode = 3
@@ -11,7 +10,6 @@ offset_bottom = 48.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1")
-skill = ExtResource("2_6b0p6")
 
 [node name="SlotButton" type="Button" parent="."]
 unique_name_in_owner = true
