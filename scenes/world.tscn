@@ -1379,9 +1379,13 @@ collision_enabled = false
 tile_set = SubResource("TileSet_aqk2v")
 
 [node name="HUD" parent="." instance=ExtResource("5_e3hyu")]
+layer = 2
 
 [node name="SpawnManager" type="Node2D" parent="."]
 script = ExtResource("6_q5onr")
 spawner_scene = ExtResource("7_jhx03")
 
 [node name="CharacterSheet" parent="." instance=ExtResource("8_4mrxx")]
+layer = 3
+
+[node name="EffectLayer" type="CanvasLayer" parent="."]

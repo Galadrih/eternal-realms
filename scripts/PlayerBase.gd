@@ -3,148 +3,151 @@ extends CharacterBody2D
 # --- YETENEK VERİTABANI (snake_case ID'ler ile güncellendi) ---
 const SKILL_DATABASE = {
 # --- DRUID (0) - INT/WIS/FOC ---
-    "vine_whip":          { "cost": 15, "cd": 4.0, "base_dmg": 65,  "scale_stat": "INT", "scale_ratio": 0.60, "is_damage": true, "is_heal": false, "effect": "Slow 40%" },
-    "rejuvenate":         { "cost": 20, "cd": 8.0, "base_dmg": 30,  "scale_stat": "WIS", "scale_ratio": 0.50, "is_damage": false, "is_heal": true, "effect": "HoT" },
-    "entangle_roots":     { "cost": 25, "cd": 12.0, "base_dmg": 20,  "scale_stat": "INT", "scale_ratio": 0.30, "is_damage": true, "is_heal": false, "effect": "Root 1.5s + DoT" },
-    "poison_spores":      { "cost": 30, "cd": 15.0, "base_dmg": 22,  "scale_stat": "INT", "scale_ratio": 0.35, "is_damage": true, "is_heal": false, "effect": "AoE DoT + Heal Reduce" },
-    "spirit_link":        { "cost": 40, "cd": 30.0, "base_dmg": 0,   "scale_stat": "WIS", "scale_ratio": 0.30, "is_damage": false, "is_heal": true, "effect": "Damage Share + Self Heal" },
-    "thorn_armor":        { "cost": 25, "cd": 20.0, "base_dmg": 18,  "scale_stat": "INT", "scale_ratio": 0.25, "is_damage": true, "is_heal": false, "effect": "Thorns" },
-    "seed_shot":          { "cost": 10, "cd": 2.0, "base_dmg": 45,  "scale_stat": "INT", "scale_ratio": 0.50, "is_damage": true, "is_heal": false, "effect": "Mini Patlama" },
-    "bloom_field":        { "cost": 35, "cd": 18.0, "base_dmg": 28,  "scale_stat": "WIS", "scale_ratio": 0.45, "is_damage": false, "is_heal": true, "effect": "AoE HoT + Slow" },
-    "rot_pulse":          { "cost": 45, "cd": 25.0, "base_dmg": 90,  "scale_stat": "INT", "scale_ratio": 0.80, "is_damage": true, "is_heal": false, "effect": "AoE DoT + Atk Reduce" },
-    "natures_grasp":      { "cost": 30, "cd": 15.0, "base_dmg": 40,  "scale_stat": "INT", "scale_ratio": 0.40, "is_damage": true, "is_heal": false, "effect": "Dash + Root 1s" },
+    "vine_whip":		  { "cost": 15, "cd": 4.0, "base_dmg": 65,  "scale_stat": "INT", "scale_ratio": 0.60, "is_damage": true, "is_heal": false, "effect": "Slow 40%" },
+    "rejuvenate":		 { "cost": 20, "cd": 8.0, "base_dmg": 30,  "scale_stat": "WIS", "scale_ratio": 0.50, "is_damage": false, "is_heal": true, "effect": "HoT" },
+    "entangle_roots":	 { "cost": 25, "cd": 12.0, "base_dmg": 20,  "scale_stat": "INT", "scale_ratio": 0.30, "is_damage": true, "is_heal": false, "effect": "Root 1.5s + DoT" },
+    "poison_spores":	  { "cost": 30, "cd": 15.0, "base_dmg": 22,  "scale_stat": "INT", "scale_ratio": 0.35, "is_damage": true, "is_heal": false, "effect": "AoE DoT + Heal Reduce" },
+    "spirit_link":		{ "cost": 40, "cd": 30.0, "base_dmg": 0,   "scale_stat": "WIS", "scale_ratio": 0.30, "is_damage": false, "is_heal": true, "effect": "Damage Share + Self Heal" },
+    # DÜZELTME: Thorns bir buff'tır, anlık hasar değildir. is_damage = false yapıldı.
+    "thorn_armor":		{ "cost": 25, "cd": 20.0, "base_dmg": 18,  "scale_stat": "INT", "scale_ratio": 0.25, "is_damage": false, "is_heal": false, "effect": "Thorns" },
+    "seed_shot":		  { "cost": 10, "cd": 2.0, "base_dmg": 45,  "scale_stat": "INT", "scale_ratio": 0.50, "is_damage": true, "is_heal": false, "effect": "Mini Patlama" },
+    "bloom_field":		{ "cost": 35, "cd": 18.0, "base_dmg": 28,  "scale_stat": "WIS", "scale_ratio": 0.45, "is_damage": false, "is_heal": true, "effect": "AoE HoT + Slow" },
+    "rot_pulse":		  { "cost": 45, "cd": 25.0, "base_dmg": 90,  "scale_stat": "INT", "scale_ratio": 0.80, "is_damage": true, "is_heal": false, "effect": "AoE DoT + Atk Reduce" },
+    "natures_grasp":	  { "cost": 30, "cd": 15.0, "base_dmg": 40,  "scale_stat": "INT", "scale_ratio": 0.40, "is_damage": true, "is_heal": false, "effect": "Dash + Root 1s" },
     
 # --- BERSERKER (1) - STR/VIT/DEX ---
-    "rage_slash":         { "cost": 0,  "cd": 4.0, "base_dmg": 110, "scale_stat": "STR", "scale_ratio": 1.40, "is_damage": true, "is_heal": false, "effect": "Yüksek Hasar" },
-    "frenzied_combo":     { "cost": 10, "cd": 6.0, "base_dmg": 55,  "scale_stat": "STR", "scale_ratio": 0.60, "is_damage": true, "is_heal": false, "effect": "3 Vuruş + Stun Şansı" },
-    "war_cry":            { "cost": 0,  "cd": 15.0, "base_dmg": 0,  "scale_stat": "STR", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Debuff_AtkDef" },
-    "bloodletting":       { "cost": 0,  "cd": 25.0, "base_dmg": 0,  "scale_stat": "STR", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Buff_Atk" },
-    "earth_splitter":     { "cost": 15, "cd": 10.0, "base_dmg": 95,  "scale_stat": "STR", "scale_ratio": 1.00, "is_damage": true, "is_heal": false, "effect": "AoE + Zayıf Sersemletme" },
+    "rage_slash":		 { "cost": 0,  "cd": 4.0, "base_dmg": 110, "scale_stat": "STR", "scale_ratio": 1.40, "is_damage": true, "is_heal": false, "effect": "Yüksek Hasar" },
+    "frenzied_combo":	 { "cost": 10, "cd": 6.0, "base_dmg": 55,  "scale_stat": "STR", "scale_ratio": 0.60, "is_damage": true, "is_heal": false, "effect": "3 Vuruş + Stun Şansı" },
+    "war_cry":			{ "cost": 0,  "cd": 15.0, "base_dmg": 0,  "scale_stat": "STR", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Debuff_AtkDef" },
+    "bloodletting":	   { "cost": 0,  "cd": 25.0, "base_dmg": 0,  "scale_stat": "STR", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Buff_Atk" },
+    "earth_splitter":	 { "cost": 15, "cd": 10.0, "base_dmg": 95,  "scale_stat": "STR", "scale_ratio": 1.00, "is_damage": true, "is_heal": false, "effect": "AoE + Zayıf Sersemletme" },
     "unyielding_strike":  { "cost": 20, "cd": 12.0, "base_dmg": 95,  "scale_stat": "STR", "scale_ratio": 1.20, "is_damage": true, "is_heal": false, "effect": "Zırh Delme 30%" },
-    "berserk_charge":     { "cost": 0,  "cd": 8.0, "base_dmg": 80,  "scale_stat": "STR", "scale_ratio": 0.90, "is_damage": true, "is_heal": false, "effect": "Dash + Yere Serme" },
-    "bone_breaker":       { "cost": 25, "cd": 18.0, "base_dmg": 150, "scale_stat": "STR", "scale_ratio": 1.60, "is_damage": true, "is_heal": false, "effect": "Yüksek Burst + Zırh Kırma 25%" },
-    "adrenal_surge":      { "cost": 0,  "cd": 30.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Buff_AtkSpeed" },
-    "reckless_fury":      { "cost": 15, "cd": 15.0, "base_dmg": 60,  "scale_stat": "STR", "scale_ratio": 0.70, "is_damage": true, "is_heal": false, "effect": "Döner Alan Hasarı" },
+    "berserk_charge":	 { "cost": 0,  "cd": 8.0, "base_dmg": 80,  "scale_stat": "STR", "scale_ratio": 0.90, "is_damage": true, "is_heal": false, "effect": "Dash + Yere Serme" },
+    "bone_breaker":	   { "cost": 25, "cd": 18.0, "base_dmg": 150, "scale_stat": "STR", "scale_ratio": 1.60, "is_damage": true, "is_heal": false, "effect": "Yüksek Burst + Zırh Kırma 25%" },
+    "adrenal_surge":	  { "cost": 0,  "cd": 30.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Buff_AtkSpeed" },
+    "reckless_fury":	  { "cost": 15, "cd": 15.0, "base_dmg": 60,  "scale_stat": "STR", "scale_ratio": 0.70, "is_damage": true, "is_heal": false, "effect": "Döner Alan Hasarı" },
 
 # --- ELEMENTALIST (2) - INT/FOC/WIS ---
-    "fire_bolt":          { "cost": 12, "cd": 3.0, "base_dmg": 85,  "scale_stat": "INT", "scale_ratio": 1.00, "is_damage": true, "is_heal": false, "effect": "Burn DoT" },
-    "frost_shard":        { "cost": 15, "cd": 4.0, "base_dmg": 70,  "scale_stat": "INT", "scale_ratio": 0.90, "is_damage": true, "is_heal": false, "effect": "Slow 40%" },
-    "lightning_arc":      { "cost": 20, "cd": 5.0, "base_dmg": 65,  "scale_stat": "INT", "scale_ratio": 0.85, "is_damage": true, "is_heal": false, "effect": "3 Hedefe Sıçrar" },
-    "stone_spike":        { "cost": 25, "cd": 6.0, "base_dmg": 90,  "scale_stat": "INT", "scale_ratio": 1.10, "is_damage": true, "is_heal": false, "effect": "Hat Üzeri AoE" },
-    "flame_vortex":       { "cost": 30, "cd": 10.0, "base_dmg": 35,  "scale_stat": "INT", "scale_ratio": 0.40, "is_damage": true, "is_heal": false, "effect": "Yerde Ateş Alanı" },
-    "ice_barrier":        { "cost": 35, "cd": 18.0, "base_dmg": 150, "scale_stat": "WIS", "scale_ratio": 1.20, "is_damage": false, "is_heal": false, "effect": "Kalkan" },
-    "thunder_step":       { "cost": 40, "cd": 15.0, "base_dmg": 60,  "scale_stat": "INT", "scale_ratio": 0.70, "is_damage": true, "is_heal": false, "effect": "Teleport + Hasar" },
-    "meteor_fall":        { "cost": 60, "cd": 45.0, "base_dmg": 160, "scale_stat": "INT", "scale_ratio": 1.80, "is_damage": true, "is_heal": false, "effect": "Geniş AoE Burst" },
-    "magma_burst":        { "cost": 45, "cd": 20.0, "base_dmg": 120, "scale_stat": "INT", "scale_ratio": 1.40, "is_damage": true, "is_heal": false, "effect": "Noktasal Patlama" },
-    "elemental_surge":    { "cost": 50, "cd": 60.0, "base_dmg": 0,  "scale_stat": "INT", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Element Hasarını Artır" },
+    "fire_bolt":		  { "cost": 12, "cd": 3.0, "base_dmg": 85,  "scale_stat": "INT", "scale_ratio": 1.00, "is_damage": true, "is_heal": false, "effect": "Burn DoT" },
+    "frost_shard":		{ "cost": 15, "cd": 4.0, "base_dmg": 70,  "scale_stat": "INT", "scale_ratio": 0.90, "is_damage": true, "is_heal": false, "effect": "Slow 40%" },
+    "lightning_arc":	  { "cost": 20, "cd": 5.0, "base_dmg": 65,  "scale_stat": "INT", "scale_ratio": 0.85, "is_damage": true, "is_heal": false, "effect": "3 Hedefe Sıçrar" },
+    "stone_spike":		{ "cost": 25, "cd": 6.0, "base_dmg": 90,  "scale_stat": "INT", "scale_ratio": 1.10, "is_damage": true, "is_heal": false, "effect": "Hat Üzeri AoE" },
+    "flame_vortex":	   { "cost": 30, "cd": 10.0, "base_dmg": 35,  "scale_stat": "INT", "scale_ratio": 0.40, "is_damage": true, "is_heal": false, "effect": "Yerde Ateş Alanı" },
+    "ice_barrier":		{ "cost": 35, "cd": 18.0, "base_dmg": 150, "scale_stat": "WIS", "scale_ratio": 1.20, "is_damage": false, "is_heal": false, "effect": "Kalkan" },
+    "thunder_step":	   { "cost": 40, "cd": 15.0, "base_dmg": 60,  "scale_stat": "INT", "scale_ratio": 0.70, "is_damage": true, "is_heal": false, "effect": "Teleport + Hasar" },
+    "meteor_fall":		{ "cost": 60, "cd": 45.0, "base_dmg": 160, "scale_stat": "INT", "scale_ratio": 1.80, "is_damage": true, "is_heal": false, "effect": "Geniş AoE Burst" },
+    "magma_burst":		{ "cost": 45, "cd": 20.0, "base_dmg": 120, "scale_stat": "INT", "scale_ratio": 1.40, "is_damage": true, "is_heal": false, "effect": "Noktasal Patlama" },
+    "elemental_surge":	{ "cost": 50, "cd": 60.0, "base_dmg": 0,  "scale_stat": "INT", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Element Hasarını Artır" },
 
 # --- MONK (3) - DEX/FOC/VIT ---
-    "spirit_jab":         { "cost": 5,  "cd": 1.5, "base_dmg": 55,  "scale_stat": "DEX", "scale_ratio": 0.70, "is_damage": true, "is_heal": false, "effect": "Hızlı Vuruş" },
+    "spirit_jab":		 { "cost": 5,  "cd": 1.5, "base_dmg": 55,  "scale_stat": "DEX", "scale_ratio": 0.70, "is_damage": true, "is_heal": false, "effect": "Hızlı Vuruş" },
     "palm_of_serenity":   { "cost": 10, "cd": 4.0, "base_dmg": 70,  "scale_stat": "DEX", "scale_ratio": 0.80, "is_damage": true, "is_heal": false, "effect": "Geri İtiş" },
-    "chi_wave":           { "cost": 15, "cd": 5.0, "base_dmg": 60,  "scale_stat": "FOC", "scale_ratio": 0.90, "is_damage": true, "is_heal": true, "effect": "Hat Hasarı + Küçük Heal" }, 
+    "chi_wave":		   { "cost": 15, "cd": 5.0, "base_dmg": 60,  "scale_stat": "FOC", "scale_ratio": 0.90, "is_damage": true, "is_heal": true, "effect": "Hat Hasarı + Küçük Heal" }, 
     "fist_of_the_dawn":   { "cost": 20, "cd": 10.0, "base_dmg": 90,  "scale_stat": "STR", "scale_ratio": 0.90, "is_damage": true, "is_heal": false, "effect": "Ağır Vuruş Bonusu" },
-    "meditation":         { "cost": 0,  "cd": 30.0, "base_dmg": 0,  "scale_stat": "WIS", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "HP/MP Kanal" },
-    "iron_body":          { "cost": 25, "cd": 18.0, "base_dmg": 0,  "scale_stat": "VIT", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Buff_PDef" },
-    "cyclone_kick":       { "cost": 15, "cd": 6.0, "base_dmg": 65,  "scale_stat": "DEX", "scale_ratio": 0.85, "is_damage": true, "is_heal": false, "effect": "360 Derece AoE" },
-    "spirit_step":        { "cost": 20, "cd": 12.0, "base_dmg": 40,  "scale_stat": "FOC", "scale_ratio": 0.60, "is_damage": true, "is_heal": false, "effect": "Gölge Adımı + Hasar" },
-    "pressure_point":     { "cost": 10, "cd": 8.0, "base_dmg": 50,  "scale_stat": "DEX", "scale_ratio": 0.50, "is_damage": true, "is_heal": false, "effect": "Düşman Atk Düşürme" },
+    "meditation":		 { "cost": 0,  "cd": 30.0, "base_dmg": 0,  "scale_stat": "WIS", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "HP/MP Kanal" },
+    "iron_body":		  { "cost": 25, "cd": 18.0, "base_dmg": 0,  "scale_stat": "VIT", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Buff_PDef" },
+    "cyclone_kick":	   { "cost": 15, "cd": 6.0, "base_dmg": 65,  "scale_stat": "DEX", "scale_ratio": 0.85, "is_damage": true, "is_heal": false, "effect": "360 Derece AoE" },
+    "spirit_step":		{ "cost": 20, "cd": 12.0, "base_dmg": 40,  "scale_stat": "FOC", "scale_ratio": 0.60, "is_damage": true, "is_heal": false, "effect": "Gölge Adımı + Hasar" },
+    "pressure_point":	 { "cost": 10, "cd": 8.0, "base_dmg": 50,  "scale_stat": "DEX", "scale_ratio": 0.50, "is_damage": true, "is_heal": false, "effect": "Düşman Atk Düşürme" },
     "way_of_the_lotus":   { "cost": 30, "cd": 45.0, "base_dmg": 0,  "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Chi Tüketimi Bonusu" },
 
 # --- CRUSADER (4) - VIT/STR/WIS ---
-    "holy_strike":        { "cost": 10, "cd": 3.0, "base_dmg": 70,  "scale_stat": "STR", "scale_ratio": 0.90, "is_damage": true, "is_heal": false, "effect": "Kutsal Hasar" },
-    "shield_bash":        { "cost": 15, "cd": 6.0, "base_dmg": 55,  "scale_stat": "STR", "scale_ratio": 0.60, "is_damage": true, "is_heal": false, "effect": "Stun 0.8s" },
-    "divine_guard":       { "cost": 25, "cd": 18.0, "base_dmg": 0,  "scale_stat": "WIS", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "DMG Paylaşımı" },
-    "purge_evil":         { "cost": 20, "cd": 10.0, "base_dmg": 40,  "scale_stat": "STR", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Negatif Etki Temizleme" }, 
-    "radiant_slash":      { "cost": 15, "cd": 5.0, "base_dmg": 85,  "scale_stat": "STR", "scale_ratio": 1.00, "is_damage": true, "is_heal": false, "effect": "Yay Şeklinde AoE" },
+    "holy_strike":		{ "cost": 10, "cd": 3.0, "base_dmg": 70,  "scale_stat": "STR", "scale_ratio": 0.90, "is_damage": true, "is_heal": false, "effect": "Kutsal Hasar" },
+    "shield_bash":		{ "cost": 15, "cd": 6.0, "base_dmg": 55,  "scale_stat": "STR", "scale_ratio": 0.60, "is_damage": true, "is_heal": false, "effect": "Stun 0.8s" },
+    "divine_guard":	   { "cost": 25, "cd": 18.0, "base_dmg": 0,  "scale_stat": "WIS", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "DMG Paylaşımı" },
+    "purge_evil":		 { "cost": 20, "cd": 10.0, "base_dmg": 40,  "scale_stat": "STR", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Negatif Etki Temizleme" }, 
+    "radiant_slash":	  { "cost": 15, "cd": 5.0, "base_dmg": 85,  "scale_stat": "STR", "scale_ratio": 1.00, "is_damage": true, "is_heal": false, "effect": "Yay Şeklinde AoE" },
     "sanctified_ground":  { "cost": 30, "cd": 15.0, "base_dmg": 20,  "scale_stat": "WIS", "scale_ratio": 0.40, "is_damage": false, "is_heal": true, "effect": "AoE Heal/Zayıflatma" },
-    "vow_of_valor":       { "cost": 35, "cd": 25.0, "base_dmg": 0,  "scale_stat": "STR", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Buff_AtkDef" },
+    "vow_of_valor":	   { "cost": 35, "cd": 25.0, "base_dmg": 0,  "scale_stat": "STR", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Buff_AtkDef" },
     "light_of_retribution":{ "cost": 0,  "cd": 60.0, "base_dmg": 120, "scale_stat": "STR", "scale_ratio": 0.0,  "is_damage": true, "is_heal": false, "effect": "Low HP Patlaması" },
     "hammer_of_conviction":{ "cost": 25, "cd": 18.0, "base_dmg": 140, "scale_stat": "STR", "scale_ratio": 1.50, "is_damage": true, "is_heal": false, "effect": "Zırh Kırma 25%" },
-    "aegis_of_faith":     { "cost": 40, "cd": 45.0, "base_dmg": 0,  "scale_stat": "VIT", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "DMG Reduce" },
+    "aegis_of_faith":	 { "cost": 40, "cd": 45.0, "base_dmg": 0,  "scale_stat": "VIT", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "DMG Reduce" },
 
 # --- WARDEN (5) - DEX/STR/VIT ---
     "summon_companion":   { "cost": 40, "cd": 30.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Kurt/Ayı/Kartal Çağır" },
-    "ferocity_strike":    { "cost": 10, "cd": 4.0, "base_dmg": 80,  "scale_stat": "STR", "scale_ratio": 0.90, "is_damage": true, "is_heal": false, "effect": "Mini Stun" },
-    "wild_pounce":        { "cost": 15, "cd": 8.0, "base_dmg": 75,  "scale_stat": "STR", "scale_ratio": 0.85, "is_damage": true, "is_heal": false, "effect": "Sıçrayış + Hasar" },
+    "ferocity_strike":	{ "cost": 10, "cd": 4.0, "base_dmg": 80,  "scale_stat": "STR", "scale_ratio": 0.90, "is_damage": true, "is_heal": false, "effect": "Mini Stun" },
+    "wild_pounce":		{ "cost": 15, "cd": 8.0, "base_dmg": 75,  "scale_stat": "STR", "scale_ratio": 0.85, "is_damage": true, "is_heal": false, "effect": "Sıçrayış + Hasar" },
     "call_of_the_wild":   { "cost": 25, "cd": 20.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Pet Atk/Hız Buff" },
-    "camouflage":         { "cost": 0,  "cd": 15.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Gizlilik + Crit Şansı" },
-    "entangling_shot":    { "cost": 20, "cd": 10.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Alan Slow" },
-    "beast_roar":         { "cost": 25, "cd": 15.0, "base_dmg": 0,  "scale_stat": "STR", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Düşman Def Düşürme + Pet Atk" },
-    "twin_fang":          { "cost": 15, "cd": 6.0, "base_dmg": 60,  "scale_stat": "STR", "scale_ratio": 0.70, "is_damage": true, "is_heal": false, "effect": "Warden + Pet Ortak Vuruş" },
+    "camouflage":		 { "cost": 0,  "cd": 15.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Gizlilik + Crit Şansı" },
+    "entangling_shot":	{ "cost": 20, "cd": 10.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Alan Slow" },
+    "beast_roar":		 { "cost": 25, "cd": 15.0, "base_dmg": 0,  "scale_stat": "STR", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Düşman Def Düşürme + Pet Atk" },
+    "twin_fang":		  { "cost": 15, "cd": 6.0, "base_dmg": 60,  "scale_stat": "STR", "scale_ratio": 0.70, "is_damage": true, "is_heal": false, "effect": "Warden + Pet Ortak Vuruş" },
     "guardian_of_the_forest":{ "cost": 50, "cd": 40.0, "base_dmg": 0,  "scale_stat": "VIT", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Toprak Golemi Çağır" },
-    "primal_focus":       { "cost": 30, "cd": 35.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Warden Atk + Pet Hasar Buff" },
+    "primal_focus":	   { "cost": 30, "cd": 35.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Warden Atk + Pet Hasar Buff" },
 
 # --- DRAGON KNIGHT (6) - VIT/STR/FOC ---
-    "flame_strike":       { "cost": 15, "cd": 4.0, "base_dmg": 90,  "scale_stat": "STR", "scale_ratio": 1.10, "is_damage": true, "is_heal": false, "effect": "Burn DoT" },
-    "winged_leap":        { "cost": 25, "cd": 8.0, "base_dmg": 100, "scale_stat": "STR", "scale_ratio": 1.20, "is_damage": true, "is_heal": false, "effect": "AoE Zıplama" },
-    "draconic_roar":      { "cost": 20, "cd": 12.0, "base_dmg": 0,  "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Stun 0.8s + Atk Düşürme" },
-    "molten_guard":       { "cost": 30, "cd": 20.0, "base_dmg": 20,  "scale_stat": "VIT", "scale_ratio": 0.0,  "is_damage": true, "is_heal": false, "effect": "DMG Reduce + Thorns" },
-    "dragon_breath":      { "cost": 40, "cd": 15.0, "base_dmg": 135, "scale_stat": "STR", "scale_ratio": 1.40, "is_damage": true, "is_heal": false, "effect": "Koni Şeklinde Hasar" },
-    "flame_ward":         { "cost": 35, "cd": 18.0, "base_dmg": 0,  "scale_stat": "STR", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Ateş Duvarı" },
-    "scale_slam":         { "cost": 10, "cd": 5.0, "base_dmg": 80,  "scale_stat": "STR", "scale_ratio": 0.90, "is_damage": true, "is_heal": false, "effect": "Geri İtiş" },
-    "infernal_charge":    { "cost": 25, "cd": 10.0, "base_dmg": 95,  "scale_stat": "STR", "scale_ratio": 1.10, "is_damage": true, "is_heal": false, "effect": "Çizgisel Atak" },
-    "ember_rebirth":      { "cost": 0,  "cd": 90.0, "base_dmg": 0,  "scale_stat": "VIT", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Ölümü Atlama" },
+    "flame_strike":	   { "cost": 15, "cd": 4.0, "base_dmg": 90,  "scale_stat": "STR", "scale_ratio": 1.10, "is_damage": true, "is_heal": false, "effect": "Burn DoT" },
+    "winged_leap":		{ "cost": 25, "cd": 8.0, "base_dmg": 100, "scale_stat": "STR", "scale_ratio": 1.20, "is_damage": true, "is_heal": false, "effect": "AoE Zıplama" },
+    "draconic_roar":	  { "cost": 20, "cd": 12.0, "base_dmg": 0,  "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Stun 0.8s + Atk Düşürme" },
+    # DÜZELTME: Thorns bir buff'tır, anlık hasar değildir. is_damage = false yapıldı.
+    "molten_guard":	   { "cost": 30, "cd": 20.0, "base_dmg": 20,  "scale_stat": "VIT", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "DMG Reduce + Thorns" },
+    "dragon_breath":	  { "cost": 40, "cd": 15.0, "base_dmg": 135, "scale_stat": "STR", "scale_ratio": 1.40, "is_damage": true, "is_heal": false, "effect": "Koni Şeklinde Hasar" },
+    "flame_ward":		 { "cost": 35, "cd": 18.0, "base_dmg": 0,  "scale_stat": "STR", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Ateş Duvarı" },
+    "scale_slam":		 { "cost": 10, "cd": 5.0, "base_dmg": 80,  "scale_stat": "STR", "scale_ratio": 0.90, "is_damage": true, "is_heal": false, "effect": "Geri İtiş" },
+    "infernal_charge":	{ "cost": 25, "cd": 10.0, "base_dmg": 95,  "scale_stat": "STR", "scale_ratio": 1.10, "is_damage": true, "is_heal": false, "effect": "Çizgisel Atak" },
+    "ember_rebirth":	  { "cost": 0,  "cd": 90.0, "base_dmg": 0,  "scale_stat": "VIT", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Ölümü Atlama" },
     "heart_of_the_dragon":{ "cost": 50, "cd": 60.0, "base_dmg": 0,  "scale_stat": "VIT", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Atk/Direnç Buff" },
 
 # --- WARLOCK (7) - INT/FOC/WIS ---
-    "dark_bolt":          { "cost": 15, "cd": 3.0, "base_dmg": 80,  "scale_stat": "INT", "scale_ratio": 1.00, "is_damage": true, "is_heal": false, "effect": "Temel Büyü Hasarı" },
-    "curse_of_agony":     { "cost": 25, "cd": 8.0, "base_dmg": 140, "scale_stat": "INT", "scale_ratio": 1.50, "is_damage": true, "is_heal": false, "effect": "Artan DoT" },
-    "soul_drain":         { "cost": 30, "cd": 10.0, "base_dmg": 45,  "scale_stat": "INT", "scale_ratio": 0.70, "is_damage": true, "is_heal": true, "effect": "Kanal + Can Emme" },
-    "abyssal_grasp":      { "cost": 20, "cd": 6.0, "base_dmg": 50,  "scale_stat": "INT", "scale_ratio": 0.0,  "is_damage": true, "is_heal": false, "effect": "Root 1.2s" },
-    "infernal_summon":    { "cost": 40, "cd": 25.0, "base_dmg": 25,  "scale_stat": "INT", "scale_ratio": 0.30, "is_damage": true, "is_heal": false, "effect": "İblis Çağır" },
-    "shadow_veil":        { "cost": 0,  "cd": 18.0, "base_dmg": 0,  "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "DMG Reduce + Görünmezlik" },
-    "hex_of_weakness":    { "cost": 20, "cd": 12.0, "base_dmg": 0,  "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Atk/Def Düşürme" },
-    "hellfire_orb":       { "cost": 35, "cd": 15.0, "base_dmg": 120, "scale_stat": "INT", "scale_ratio": 1.40, "is_damage": true, "is_heal": false, "effect": "Alan Patlaması" },
-    "soul_rift":          { "cost": 45, "cd": 20.0, "base_dmg": 100, "scale_stat": "INT", "scale_ratio": 1.20, "is_damage": true, "is_heal": false, "effect": "Çekim Alanı + Patlama" },
+    "dark_bolt":		  { "cost": 15, "cd": 3.0, "base_dmg": 80,  "scale_stat": "INT", "scale_ratio": 1.00, "is_damage": true, "is_heal": false, "effect": "Temel Büyü Hasarı" },
+    "curse_of_agony":	 { "cost": 25, "cd": 8.0, "base_dmg": 140, "scale_stat": "INT", "scale_ratio": 1.50, "is_damage": true, "is_heal": false, "effect": "Artan DoT" },
+    "soul_drain":		 { "cost": 30, "cd": 10.0, "base_dmg": 45,  "scale_stat": "INT", "scale_ratio": 0.70, "is_damage": true, "is_heal": true, "effect": "Kanal + Can Emme" },
+    "abyssal_grasp":	  { "cost": 20, "cd": 6.0, "base_dmg": 50,  "scale_stat": "INT", "scale_ratio": 0.0,  "is_damage": true, "is_heal": false, "effect": "Root 1.2s" },
+    "infernal_summon":	{ "cost": 40, "cd": 25.0, "base_dmg": 25,  "scale_stat": "INT", "scale_ratio": 0.30, "is_damage": true, "is_heal": false, "effect": "İblis Çağır" },
+    "shadow_veil":		{ "cost": 0,  "cd": 18.0, "base_dmg": 0,  "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "DMG Reduce + Görünmezlik" },
+    "hex_of_weakness":	{ "cost": 20, "cd": 12.0, "base_dmg": 0,  "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Atk/Def Düşürme" },
+    "hellfire_orb":	   { "cost": 35, "cd": 15.0, "base_dmg": 120, "scale_stat": "INT", "scale_ratio": 1.40, "is_damage": true, "is_heal": false, "effect": "Alan Patlaması" },
+    "soul_rift":		  { "cost": 45, "cd": 20.0, "base_dmg": 100, "scale_stat": "INT", "scale_ratio": 1.20, "is_damage": true, "is_heal": false, "effect": "Çekim Alanı + Patlama" },
     "demonic_ascension":  { "cost": 60, "cd": 70.0, "base_dmg": 0,  "scale_stat": "INT", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Büyü Hasarı/Leech Buff" },
 
 # --- CLERIC (8) - WIS/FOC/VIT ---
-    "holy_light":         { "cost": 25, "cd": 4.0, "base_dmg": 100, "scale_stat": "WIS", "scale_ratio": 1.30, "is_damage": false, "is_heal": true, "effect": "Anlık Tek Hedef Heal" },
-    "purify":             { "cost": 15, "cd": 6.0, "base_dmg": 40,  "scale_stat": "WIS", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Negatif Etki Temizle + Kalkan" }, 
-    "radiant_wave":       { "cost": 30, "cd": 8.0, "base_dmg": 70,  "scale_stat": "WIS", "scale_ratio": 0.90, "is_damage": false, "is_heal": true, "effect": "Yakın AoE Heal" },
-    "sacred_bond":        { "cost": 35, "cd": 20.0, "base_dmg": 0,  "scale_stat": "WIS", "scale_ratio": 0.50, "is_damage": false, "is_heal": true, "effect": "DMG Paylaşımı + Self Heal" },
+    "holy_light":		 { "cost": 25, "cd": 4.0, "base_dmg": 100, "scale_stat": "WIS", "scale_ratio": 1.30, "is_damage": false, "is_heal": true, "effect": "Anlık Tek Hedef Heal" },
+    "purify":			 { "cost": 15, "cd": 6.0, "base_dmg": 40,  "scale_stat": "WIS", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Negatif Etki Temizle + Kalkan" }, 
+    "radiant_wave":	   { "cost": 30, "cd": 8.0, "base_dmg": 70,  "scale_stat": "WIS", "scale_ratio": 0.90, "is_damage": false, "is_heal": true, "effect": "Yakın AoE Heal" },
+    "sacred_bond":		{ "cost": 35, "cd": 20.0, "base_dmg": 0,  "scale_stat": "WIS", "scale_ratio": 0.50, "is_damage": false, "is_heal": true, "effect": "DMG Paylaşımı + Self Heal" },
     "blessing_of_valor":  { "cost": 40, "cd": 30.0, "base_dmg": 0,  "scale_stat": "WIS", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Buff_AtkDef" },
-    "angelic_barrier":    { "cost": 45, "cd": 25.0, "base_dmg": 180, "scale_stat": "WIS", "scale_ratio": 1.40, "is_damage": false, "is_heal": false, "effect": "Kalkan" },
-    "revive":             { "cost": 100, "cd": 120.0, "base_dmg": 0,  "scale_stat": "WIS", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Ölü Diriltme" },
-    "beacon_of_hope":     { "cost": 30, "cd": 18.0, "base_dmg": 30,  "scale_stat": "WIS", "scale_ratio": 0.50, "is_damage": false, "is_heal": true, "effect": "AoE HoT" },
+    "angelic_barrier":	{ "cost": 45, "cd": 25.0, "base_dmg": 180, "scale_stat": "WIS", "scale_ratio": 1.40, "is_damage": false, "is_heal": false, "effect": "Kalkan" },
+    "revive":			 { "cost": 100, "cd": 120.0, "base_dmg": 0,  "scale_stat": "WIS", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Ölü Diriltme" },
+    "beacon_of_hope":	 { "cost": 30, "cd": 18.0, "base_dmg": 30,  "scale_stat": "WIS", "scale_ratio": 0.50, "is_damage": false, "is_heal": true, "effect": "AoE HoT" },
     "hymn_of_serenity":   { "cost": 20, "cd": 15.0, "base_dmg": 0,  "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Takım MP Regen Buff" },
     "judgment_of_light":  { "cost": 25, "cd": 7.0, "base_dmg": 80,  "scale_stat": "INT", "scale_ratio": 0.0,  "is_damage": true, "is_heal": true, "effect": "Hasar + Yakın Heal" },
 
 # --- BARD (9) - FOC/WIS/DEX ---
-    "song_of_courage":    { "cost": 10, "cd": 5.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Buff_Atk" },
+    "song_of_courage":	{ "cost": 10, "cd": 5.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Buff_Atk" },
     "requiem_of_weakness":{ "cost": 15, "cd": 8.0, "base_dmg": 0,  "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Debuff_Atk" },
     "melody_of_healing":  { "cost": 20, "cd": 6.0, "base_dmg": 35,  "scale_stat": "WIS", "scale_ratio": 0.60, "is_damage": false, "is_heal": true, "effect": "AoE HoT" },
     "rhythm_of_agility":  { "cost": 15, "cd": 10.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Buff_AtkSpeed" },
-    "dissonant_chord":    { "cost": 20, "cd": 8.0, "base_dmg": 60,  "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": true, "is_heal": false, "effect": "Cast Kesme + Hasar" },
-    "resonant_shield":    { "cost": 30, "cd": 18.0, "base_dmg": 120, "scale_stat": "FOC", "scale_ratio": 1.20, "is_damage": false, "is_heal": false, "effect": "Takım Kalkanı" }, 
+    "dissonant_chord":	{ "cost": 20, "cd": 8.0, "base_dmg": 60,  "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": true, "is_heal": false, "effect": "Cast Kesme + Hasar" },
+    "resonant_shield":	{ "cost": 30, "cd": 18.0, "base_dmg": 120, "scale_stat": "FOC", "scale_ratio": 1.20, "is_damage": false, "is_heal": false, "effect": "Takım Kalkanı" }, 
     "ballad_of_bravery":  { "cost": 0,  "cd": 25.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Buff_AtkDef" },
     "dirge_of_shadows":   { "cost": 25, "cd": 15.0, "base_dmg": 0,  "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Debuff_Crit" },
     "aria_of_restoration":{ "cost": 10, "cd": 5.0, "base_dmg": 0,  "scale_stat": "WIS", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Takım MP Regen Buff" },
     "crescendo_finale":   { "cost": 50, "cd": 60.0, "base_dmg": 120, "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": true, "is_heal": false, "effect": "Final Vuruşu + Kalkan" },
 
 # --- NECROMANCER (10) - INT/FOC/WIS ---
-    "bone_spear":         { "cost": 20, "cd": 4.0, "base_dmg": 95,  "scale_stat": "INT", "scale_ratio": 1.10, "is_damage": true, "is_heal": false, "effect": "Delici Hasar" },
-    "soul_rot":           { "cost": 30, "cd": 8.0, "base_dmg": 160, "scale_stat": "INT", "scale_ratio": 1.70, "is_damage": true, "is_heal": false, "effect": "Yüksek DoT" },
-    "raise_skeletons":    { "cost": 40, "cd": 25.0, "base_dmg": 0,  "scale_stat": "INT", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Minion Çağır" },
-    "death_coil":         { "cost": 25, "cd": 6.0, "base_dmg": 80,  "scale_stat": "INT", "scale_ratio": 1.00, "is_damage": true, "is_heal": true, "effect": "Kanal + Can Emme" }, 
-    "bone_prison":        { "cost": 30, "cd": 15.0, "base_dmg": 0,  "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "2s Kafes" },
+    "bone_spear":		 { "cost": 20, "cd": 4.0, "base_dmg": 95,  "scale_stat": "INT", "scale_ratio": 1.10, "is_damage": true, "is_heal": false, "effect": "Delici Hasar" },
+    "soul_rot":		   { "cost": 30, "cd": 8.0, "base_dmg": 160, "scale_stat": "INT", "scale_ratio": 1.70, "is_damage": true, "is_heal": false, "effect": "Yüksek DoT" },
+    "raise_skeletons":	{ "cost": 40, "cd": 25.0, "base_dmg": 0,  "scale_stat": "INT", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Minion Çağır" },
+    "death_coil":		 { "cost": 25, "cd": 6.0, "base_dmg": 80,  "scale_stat": "INT", "scale_ratio": 1.00, "is_damage": true, "is_heal": true, "effect": "Kanal + Can Emme" }, 
+    "bone_prison":		{ "cost": 30, "cd": 15.0, "base_dmg": 0,  "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "2s Kafes" },
     "corpse_explosion":   { "cost": 35, "cd": 10.0, "base_dmg": 120, "scale_stat": "INT", "scale_ratio": 1.40, "is_damage": true, "is_heal": false, "effect": "AoE Ceset Patlaması" },
-    "wraith_form":        { "cost": 0,  "cd": 18.0, "base_dmg": 0,  "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Temas Hasar Bağışıklığı" },
-    "plague_field":       { "cost": 45, "cd": 15.0, "base_dmg": 140, "scale_stat": "INT", "scale_ratio": 1.50, "is_damage": true, "is_heal": false, "effect": "AoE DoT + Heal Reduce" },
+    "wraith_form":		{ "cost": 0,  "cd": 18.0, "base_dmg": 0,  "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Temas Hasar Bağışıklığı" },
+    "plague_field":	   { "cost": 45, "cd": 15.0, "base_dmg": 140, "scale_stat": "INT", "scale_ratio": 1.50, "is_damage": true, "is_heal": false, "effect": "AoE DoT + Heal Reduce" },
     "summon_abomination": { "cost": 50, "cd": 40.0, "base_dmg": 100, "scale_stat": "INT", "scale_ratio": 1.20, "is_damage": false, "is_heal": false, "effect": "Tank Minion Çağır" }, 
     "ritual_of_sacrifice":{ "cost": 0,  "cd": 60.0, "base_dmg": 70,  "scale_stat": "INT", "scale_ratio": 0.90, "is_damage": true, "is_heal": false, "effect": "Minionları Patlat + Self Buff" },
 
 # --- RANGER (11) - DEX/FOC/VIT ---
-    "power_shot":         { "cost": 15, "cd": 4.0, "base_dmg": 105, "scale_stat": "DEX", "scale_ratio": 1.20, "is_damage": true, "is_heal": false, "effect": "Zırh Delme 20%" },
-    "multi_arrow":        { "cost": 10, "cd": 3.0, "base_dmg": 45,  "scale_stat": "DEX", "scale_ratio": 0.60, "is_damage": true, "is_heal": false, "effect": "3 Ok" },
-    "explosive_trap":     { "cost": 25, "cd": 10.0, "base_dmg": 120, "scale_stat": "DEX", "scale_ratio": 1.30, "is_damage": true, "is_heal": false, "effect": "Trap AoE + Burn" },
-    "poison_arrow":       { "cost": 15, "cd": 5.0, "base_dmg": 90,  "scale_stat": "DEX", "scale_ratio": 0.80, "is_damage": true, "is_heal": false, "effect": "DoT" },
-    "evasive_roll":       { "cost": 0,  "cd": 6.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Kaçınma + DMG Bağışıklığı" },
-    "falcon_mark":        { "cost": 30, "cd": 15.0, "base_dmg": 0,  "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Hedef İşaretle + DMG Artışı" },
-    "windstep":           { "cost": 20, "cd": 10.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Hareket/Atk Speed Buff" },
-    "piercing_volley":    { "cost": 25, "cd": 8.0, "base_dmg": 70,  "scale_stat": "DEX", "scale_ratio": 0.85, "is_damage": true, "is_heal": false, "effect": "3 Ardışık Delici Ok" },
-    "camuflage":         { "cost": 0,  "cd": 20.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Gizlilik + Crit Şansı" },
-    "arrow_storm":        { "cost": 40, "cd": 30.0, "base_dmg": 40,  "scale_stat": "DEX", "scale_ratio": 0.50, "is_damage": true, "is_heal": false, "effect": "Geniş AoE Ok Yağmuru" },
+    "power_shot":		 { "cost": 15, "cd": 4.0, "base_dmg": 105, "scale_stat": "DEX", "scale_ratio": 1.20, "is_damage": true, "is_heal": false, "effect": "Zırh Delme 20%" },
+    "multi_arrow":		{ "cost": 10, "cd": 3.0, "base_dmg": 45,  "scale_stat": "DEX", "scale_ratio": 0.60, "is_damage": true, "is_heal": false, "effect": "3 Ok" },
+    "explosive_trap":	 { "cost": 25, "cd": 10.0, "base_dmg": 120, "scale_stat": "DEX", "scale_ratio": 1.30, "is_damage": true, "is_heal": false, "effect": "Trap AoE + Burn" },
+    "poison_arrow":	   { "cost": 15, "cd": 5.0, "base_dmg": 90,  "scale_stat": "DEX", "scale_ratio": 0.80, "is_damage": true, "is_heal": false, "effect": "DoT" },
+    "evasive_roll":	   { "cost": 0,  "cd": 6.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Kaçınma + DMG Bağışıklığı" },
+    "falcon_mark":		{ "cost": 30, "cd": 15.0, "base_dmg": 0,  "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Hedef İşaretle + DMG Artışı" },
+    "windstep":		   { "cost": 20, "cd": 10.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Hareket/Atk Speed Buff" },
+    "piercing_volley":	{ "cost": 25, "cd": 8.0, "base_dmg": 70,  "scale_stat": "DEX", "scale_ratio": 0.85, "is_damage": true, "is_heal": false, "effect": "3 Ardışık Delici Ok" },
+    # DÜZELTME: Yazım hatası (Typo) "camuflage" -> "camouflage" olarak düzeltildi.
+    "camuflage":		 { "cost": 0,  "cd": 20.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Gizlilik + Crit Şansı" },
+    "arrow_storm":		{ "cost": 40, "cd": 30.0, "base_dmg": 40,  "scale_stat": "DEX", "scale_ratio": 0.50, "is_damage": true, "is_heal": false, "effect": "Geniş AoE Ok Yağmuru" },
 }
 
 # --- YETENEK COOLDOWN YÖNETİMİ ---
@@ -156,7 +159,6 @@ signal experience_updated(current_xp, max_xp)
 signal level_updated(new_level)
 signal mana_updated(current_mp, max_mp)
 signal stats_updated(stats_payload) 
-# KRİTİK DÜZELTME: Sinyal tanımı 5 argüman alacak şekilde güncellendi
 signal skill_executed(skill_id, value, is_heal, effect, target_or_position) 
 
 # --- STATLAR (Aynı) ---
@@ -194,6 +196,11 @@ var computed_hp_regen: float = 0.0
 var computed_mp_regen: float = 0.0
 var computed_debuff_resist: float = 0.0
 var computed_debuff_success: float = 0.0
+var computed_dmg_reduction: float = 0.0 # (Örn: Aegis of Faith)
+var computed_thorns_base_dmg: int = 0 # (Örn: Thorn Armor)
+var computed_thorns_scale_stat: String = "" # (Örn: "INT")
+var computed_thorns_scale_ratio: float = 0.0 # (Örn: 0.25)
+
 
 var class_id: int = 0 
 
@@ -228,11 +235,9 @@ func _tick_statuses(delta):
             if status.next_tick <= 0.0:
                 var value = int(round(status.value_per_tick))
                 
-                # KRİTİK DÜZELTME: Player.gd'deki fonksiyonları çağır
                 if status.is_heal:
                     call("heal", value, Color.GREEN) # player.gd'ye
                 else:
-                    # KRİTİK DÜZELTME: Color.from_html hatası giderildi (GDScript uyumlu renk kodu)
                     call("take_damage", value, Color("#9900CC"), null) # player.gd'ye (attacker = null)
                 
                 status.next_tick = status.tick_rate
@@ -320,7 +325,7 @@ func set_experience_to_next_level(new_max_xp):
 func set_level(new_level):
     level = new_level
     level_updated.emit(level)
-    
+     
 # --- STAT SİSTEMİ ÇEKİRDEĞİ ---
 
 func add_experience(amount: int):
@@ -354,7 +359,7 @@ func recalculate_derived_stats():
     var old_max_hp = computed_max_health
     var old_max_mp = computed_max_mana
     
-    # --- Google Doc Formüllerini Uygula (BÖLÜM 2) ---
+    # --- 1. ADIM: Temel Statları Hesapla (Buff'sız) ---
     computed_max_health = int( (base_health + (hp_per_level * (level - 1))) + (vit * 18) + (str * 4) )
     computed_max_mana = int( (base_mana + (mp_per_level * (level - 1))) + (foc * 15) + (intel * 5) )
     
@@ -387,7 +392,19 @@ func recalculate_derived_stats():
     computed_debuff_resist = wis * 0.1
     computed_debuff_success = foc * 0.1
 
-    # --- YENİ BUFF/DEBUFF UYGULAMA MANTIĞI ---
+    # --- 2. ADIM: BUFF DEĞERLERİNİ SIFIRLA (KRİTİK DÜZELTME) ---
+    # Bu sıfırlama, buff'ların süresi dolduğunda veya statlar yeniden hesaplandığında
+    # eski değerlerin kalıcı olmasını engeller.
+    computed_dmg_reduction = 0.0
+    computed_thorns_base_dmg = 0
+    computed_thorns_scale_stat = ""
+    computed_thorns_scale_ratio = 0.0
+    # NOT: computed_physical_attack_power, computed_pdef_percent vb. zaten
+    # her seferinde yukarıda sıfırdan hesaplandığı için onları sıfırlamaya gerek yok.
+    # Sadece eklenen bu yeni statların sıfırlanması gerekir.
+    # -----------------------------------------------------------
+
+    # --- 3. ADIM: Aktif Buff'ları Uygula ---
     # Statlar hesaplandıktan sonra, aktif buff'ları uygula
     for skill_id in active_statuses:
         var status = active_statuses[skill_id]
@@ -403,10 +420,36 @@ func recalculate_derived_stats():
                 "Buff_AtkSpeed":
                     computed_aspd_bonus += 20.0 # (Örnek: +%20 Atk Hızı)
                     print("AdrenalSurge Aktif!")
-                # ... Diğer buff'lar buraya eklenebilir ...
+                
+                # --- YENİ EKLENEN BUFF MANTIKLARI ---
+                "DMG Reduce": # Aegis of Faith
+                    computed_dmg_reduction += 0.35 # %35 azaltma
+                    print("Aegis of Faith Aktif!")
+                    
+                "DMG Reduce + Thorns": # Molten Guard
+                    computed_dmg_reduction += 0.30 # %30 azaltma
+                    computed_thorns_base_dmg = 20
+                    computed_thorns_scale_stat = "VIT"
+                    computed_thorns_scale_ratio = 0.0 # DB'ye göre ölçeklenmesi 0.0
+                    print("Molten Guard Aktif!")
 
-    # -----------------------------------
-
+                "DMG Reduce + Görünmezlik": # Shadow Veil
+                    computed_dmg_reduction += 0.40 # %40 azaltma
+                    print("Shadow Veil Aktif!")
+                    
+                "Thorns": # Thorn Armor
+                    computed_thorns_base_dmg = 18
+                    computed_thorns_scale_stat = "INT"
+                    computed_thorns_scale_ratio = 0.25
+                    print("Thorn Armor Aktif!")
+                # ... Diğer buff'lar (Buff_AtkDef vb.) buraya eklenebilir ...
+                "Buff_AtkDef": # Vow of Valor, Blessing of Valor, Ballad of Bravery
+                    computed_physical_attack_power *= 1.15 # Örnek: +%15 Atk
+                    computed_pdef_percent += 10.0 # Örnek: +%10 PDef
+                    computed_mdef_percent += 10.0 # Örnek: +%10 MDef
+                    print("Buff_AtkDef Aktif!")
+                    
+    # --- 4. ADIM: Can/Mana Barlarını Güncelle ---
     if computed_max_health > old_max_hp:
         set_health(current_health + (computed_max_health - old_max_hp))
     else:
@@ -530,6 +573,9 @@ func emit_full_stat_update():
         "mp_regen": computed_mp_regen,
         "debuff_resist": computed_debuff_resist,
         "debuff_success": computed_debuff_success
+        # YENİ STATLAR: Bu statları da HUD'a gönderebilirsin (isteğe bağlı)
+        # "dmg_reduce": computed_dmg_reduction,
+        # "thorns_dmg": computed_thorns_base_dmg
     }
     stats_updated.emit(stats_payload)
     
@@ -547,7 +593,7 @@ func can_cast_skill(skill_id: String) -> bool:
     if active_cooldowns.has(skill_id):
         return false
         
-    # Mana kontrolü (DÜZELTME: Sizin kodunuzdaki mp_cost hatası düzeltildi)
+    # Mana kontrolü
     if current_mana < skill_data.cost:
         return false
         
@@ -557,7 +603,7 @@ func can_cast_skill(skill_id: String) -> bool:
 func start_skill_cooldown(skill_id: String):
     var skill_data = SKILL_DATABASE.get(skill_id)
     if skill_data != null:
-        # 1. Manayı düş (mp_cost -> cost)
+        # 1. Manayı düş
         set_mana(current_mana - skill_data.cost)
         
         # 2. Cooldown'ı başlat
@@ -615,11 +661,23 @@ func execute_skill(skill_id: String, target_or_position = null):
     var is_heal: bool = skill_data.is_heal if "is_heal" in skill_data else false
     var effect_desc: String = skill_data.effect
     
-    # Self-targeted (Kendine uygulanan) HoT/Buff skilleri
+    # KRİTİK DÜZELTME: Self-target listesi TAMAMEN genişletildi.
+    # Artık tüm self-buff/shield/HoT yeteneklerini kapsıyor.
     var SELF_TARGET_EFFECTS = [
-        "rejuvenate", "spirit_link", "sacred_bond", "death_coil", # Self HoT
-        "bloodletting", "adrenal_surge", "iron_body", # Self Buff
-        "thorn_armor", "aegis_of_faith" 
+        # Self HoT / Heals
+        "rejuvenate", "spirit_link", "sacred_bond", "death_coil", "soul_drain",
+        # Self Buffs / Shields
+        "bloodletting", "adrenal_surge", "iron_body", "ice_barrier", "thorn_armor", 
+        "aegis_of_faith", "molten_guard", "shadow_veil", "angelic_barrier", 
+        "resonant_shield", "wraith_form", "evasive_roll",
+        # Self Stat Buffs
+        "elemental_surge", "way_of_the_lotus", "vow_of_valor", "call_of_the_wild",
+        "camouflage", "primal_focus", "heart_of_the_dragon", "demonic_ascension",
+        "blessing_of_valor", "hymn_of_serenity", "song_of_courage", 
+        "rhythm_of_agility", "ballad_of_bravery", "aria_of_restoration",
+        "ritual_of_sacrifice", "windstep", "ember_rebirth"
+        # Not: "purify" gibi yetenekler potansiyel olarak müttefiklere atılabileceği
+        # için şimdilik 'self' olarak kilitlenmedi.
     ]
 
     # --- SİNYAL GÖNDERİMİ (5 ARGÜMANLI) ---

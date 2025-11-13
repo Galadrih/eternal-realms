@@ -1,15 +1,9 @@
 extends "res://scripts/PlayerBase.gd"
 
-# Hasar sayısı sahnesini önceden yükle
-const DamageNumberScene = preload("res://scenes/damage_number.tscn") 
-
 @export var SPEED = 300.0
 @export var ATTACK_COOLDOWN: float = 0.5
 var can_attack: bool = true
 var last_direction = Vector2(0, 1)
-
-# --- YENİ HOT İŞLEYİCİSİ İÇİN TEMİZ BAŞLANGIÇ ---
-# PlayerBase'den _tick_dots tarafından çağrılacaktır.
 
 func _ready():
     if not has_node("AttackTimer"):
@@ -24,8 +18,8 @@ func _ready():
     
     $AnimatedSprite2D.play("idle_down")
 
+# --- DÜZELTİLMİŞ FİZİK FONKSİYONU ---
 func _physics_process(_delta):
-    # (Hareket kodu aynı kaldı, değişiklik yok)
     var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
     var anim_sprite = $AnimatedSprite2D
 
@@ -40,8 +34,10 @@ func _physics_process(_delta):
                 anim_sprite.play("walk_down")
             elif direction.x < 0:
                 anim_sprite.play("walk_left")
+            # --- DÜZELTME: Bu satır hatalı girintilenmişti ---
             elif direction.x > 0:
                 anim_sprite.play("walk_right")
+            # --- Düzeltme Bitişi ---
     else:
         velocity = Vector2.ZERO
         
@@ -56,28 +52,51 @@ func _physics_process(_delta):
                     anim_sprite.play("idle_left")
                 else:
                     anim_sprite.play("idle_right")
-                
+             
     move_and_slide()
+# --- Düzeltme Bitişi ---
 
 
 # --- STAT FONKSİYONLARI ---
 
-# KRİTİK DÜZELTME: Düşmandan gelen renk argümanını kabul eder
-func take_damage(amount: int, color: Color = Color.RED):
+func take_damage(amount: int, color: Color = Color.RED, attacker = null):
     if current_health <= 0:
         return
+
+    # --- 1. ADIM: HASAR AZALTMA HESAPLAMASI ---
+    var final_damage_float = float(amount)
     
-    var final_damage = amount
+    # A. Fiziksel Savunma (PDef) azaltması uygula
+    final_damage_float = final_damage_float * (1.0 - computed_pdef_percent / 100.0)
+
+    # B. Genel Hasar Azaltma (DMG Reduce) uygula
+    final_damage_float = final_damage_float * (1.0 - computed_dmg_reduction)
     
+    var final_damage = int(round(final_damage_float))
+    # --- BİTİŞ ---
+
+    
+    # --- 2. ADIM: HASARI UYGULA ---
     set_health(current_health - final_damage)
-    
     spawn_damage_number(final_damage, color) 
+    print("Hasar Alındı: ", final_damage, " (Orijinal: ", amount, "). Kalan Can: ", current_health)
+
     
-    print("Hasar Alındı: ", final_damage, ". Kalan Can: ", current_health)
+    # --- 3. ADIM: THORNS (DİKEN) HASARINI YANSITMA ---
+    if attacker != null and computed_thorns_base_dmg > 0:
+        
+        var thorns_stat_value = _get_stat_value(computed_thorns_scale_stat)
+        var thorns_damage = float(computed_thorns_base_dmg) + (thorns_stat_value * computed_thorns_scale_ratio)
+        
+        if attacker.has_method("receive_skill_damage"):
+            attacker.receive_skill_damage(thorns_damage)
+            print("THORNS: Düşmana %d hasar yansıtıldı!" % int(thorns_damage))
+    # --- BİTİŞ ---
+
+    
     if current_health == 0:
         die() 
 
-# KRİTİK DÜZELTME: HoT/Heal'ı PlayerBase'den işlemek için yeni fonksiyon
 func heal(amount: int, color: Color = Color.GREEN):
     if current_health == computed_max_health:
         return
@@ -85,9 +104,7 @@ func heal(amount: int, color: Color = Color.GREEN):
     var final_heal = amount
     
     set_health(current_health + final_heal)
-    
     spawn_damage_number(final_heal, color)
-    
     print("İyileşme: ", final_heal, ". Yeni Can: ", current_health) 
 
 func die():
@@ -115,11 +132,10 @@ func _on_animated_sprite_2d_animation_finished():
 
 func _unhandled_input(event):
     if event.is_action_pressed("test_damage"):
-        take_damage(10, Color.RED) 
+        take_damage(10, Color.RED, null) 
         get_viewport().set_input_as_handled()
     
     elif event.is_action_pressed("test_heal"):
-        # Anlık iyileşme için heal çağrısı (HoT değil)
         heal(15, Color.GREEN)
         get_viewport().set_input_as_handled()
     
@@ -138,7 +154,6 @@ func _unhandled_input(event):
         can_attack = false
         var anim_sprite = $AnimatedSprite2D
         
-        # (Animasyon kodları aynı kaldı)
         if abs(last_direction.y) > abs(last_direction.x):
             if last_direction.y < 0: anim_sprite.play("attack_up") 
             else: anim_sprite.play("attack_down") 
@@ -161,7 +176,7 @@ func _unhandled_input(event):
 # --- DİĞER FONKSİYONLAR ---
 
 func spawn_damage_number(amount, color):
-    var damage_number = DamageNumberScene.instantiate()
-    get_parent().add_child(damage_number) 
-    damage_number.global_position = global_position + Vector2(0, -30) 
-    damage_number.set_damage(amount, color)
+    if get_parent().has_method("spawn_damage_number_on_effect_layer"):
+        get_parent().spawn_damage_number_on_effect_layer(amount, color, global_position + Vector2(0, -30))
+    else:
+        print("HATA: Player'ın ebeveyninde 'spawn_damage_number_on_effect_layer' fonksiyonu bulunamadı!")
