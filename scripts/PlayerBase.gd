@@ -68,7 +68,8 @@ const SKILL_DATABASE = {
     "ferocity_strike":	{ "cost": 10, "cd": 4.0, "base_dmg": 80,  "scale_stat": "STR", "scale_ratio": 0.90, "is_damage": true, "is_heal": false, "effect": "Mini Stun" },
     "wild_pounce":		{ "cost": 15, "cd": 8.0, "base_dmg": 75,  "scale_stat": "STR", "scale_ratio": 0.85, "is_damage": true, "is_heal": false, "effect": "Sıçrayış + Hasar" },
     "call_of_the_wild":   { "cost": 25, "cd": 20.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Pet Atk/Hız Buff" },
-    "camouflage":		 { "cost": 0,  "cd": 15.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Gizlilik + Crit Şansı" },
+    # DÜZELTME: ID çakışmasını önlemek için "warden_" ön eki eklendi
+    "warden_camouflage":  { "cost": 0,  "cd": 15.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Gizlilik + Crit Şansı" },
     "entangling_shot":	{ "cost": 20, "cd": 10.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Alan Slow" },
     "beast_roar":		 { "cost": 25, "cd": 15.0, "base_dmg": 0,  "scale_stat": "STR", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Düşman Def Düşürme + Pet Atk" },
     "twin_fang":		  { "cost": 15, "cd": 6.0, "base_dmg": 60,  "scale_stat": "STR", "scale_ratio": 0.70, "is_damage": true, "is_heal": false, "effect": "Warden + Pet Ortak Vuruş" },
@@ -145,8 +146,8 @@ const SKILL_DATABASE = {
     "falcon_mark":		{ "cost": 30, "cd": 15.0, "base_dmg": 0,  "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Hedef İşaretle + DMG Artışı" },
     "windstep":		   { "cost": 20, "cd": 10.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Hareket/Atk Speed Buff" },
     "piercing_volley":	{ "cost": 25, "cd": 8.0, "base_dmg": 70,  "scale_stat": "DEX", "scale_ratio": 0.85, "is_damage": true, "is_heal": false, "effect": "3 Ardışık Delici Ok" },
-    # DÜZELTME: Yazım hatası (Typo) "camuflage" -> "camouflage" olarak düzeltildi.
-    "camuflage":		 { "cost": 0,  "cd": 20.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Gizlilik + Crit Şansı" },
+    # DÜZELTME: Yazım hatası (Typo) "camuflage" -> "ranger_camouflage" olarak düzeltildi.
+    "ranger_camouflage":  { "cost": 0,  "cd": 20.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Gizlilik + Crit Şansı" },
     "arrow_storm":		{ "cost": 40, "cd": 30.0, "base_dmg": 40,  "scale_stat": "DEX", "scale_ratio": 0.50, "is_damage": true, "is_heal": false, "effect": "Geniş AoE Ok Yağmuru" },
 }
 
@@ -160,6 +161,7 @@ signal level_updated(new_level)
 signal mana_updated(current_mp, max_mp)
 signal stats_updated(stats_payload) 
 signal skill_executed(skill_id, value, is_heal, effect, target_or_position) 
+signal invisibility_changed(is_now_invisible) # GÖRÜNMEZLİK SİNYALİ
 
 # --- STATLAR (Aynı) ---
 var base_health: int = 80
@@ -201,8 +203,8 @@ var computed_thorns_base_dmg: int = 0 # (Örn: Thorn Armor)
 var computed_thorns_scale_stat: String = "" # (Örn: "INT")
 var computed_thorns_scale_ratio: float = 0.0 # (Örn: 0.25)
 
-
 var class_id: int = 0 
+var is_invisible: bool = false # GÖRÜNMEZLİK DURUMU
 
 # --- YENİ DOT/HOT/BUFF SİSTEMİ ---
 var active_statuses: Dictionary = {} # DoT, HoT ve Buff/Debuff'ları tutar
@@ -234,12 +236,12 @@ func _tick_statuses(delta):
             status.next_tick -= delta
             if status.next_tick <= 0.0:
                 var value = int(round(status.value_per_tick))
-                
+            
                 if status.is_heal:
                     call("heal", value, Color.GREEN) # player.gd'ye
                 else:
                     call("take_damage", value, Color("#9900CC"), null) # player.gd'ye (attacker = null)
-                
+            
                 status.next_tick = status.tick_rate
         
         # Süresi biteni kaldır
@@ -301,8 +303,37 @@ func _ready():
     add_to_group("player_character") 
     emit_full_stat_update()
 
-# --- GÜVENLİ GÜNCELLEME FONKSİYONLARI (SETTERS) ---
+# --- EKSİK FONKSİYONLAR (HoT/DoT için) ---
+# Bu fonksiyonlar olmadan _tick_statuses'daki call() komutları çalışmaz.
+func heal(amount: int, damage_color: Color):
+    if current_health <= 0: return # Zaten ölmüşse iyileştirme yapma
 
+    set_health(current_health + amount)
+    spawn_damage_number(amount, damage_color)
+    print("PLAYER HoT Aldı: ", amount, ". Yeni Can: ", current_health)
+
+func take_damage(amount: int, damage_color: Color, attacker = null):
+    if current_health <= 0: return # Zaten ölmüşse hasar alma
+    
+    # player.gd'deki take_damage hasar azaltma içerir,
+    # ancak bu DoT hasarı içindir, bu yüzden doğrudan set_health çağrılır.
+    set_health(current_health - amount)
+    spawn_damage_number(amount, damage_color)
+    print("PLAYER DoT Aldı: ", amount, ". Kalan Can: ", current_health)
+    
+# İyileştirme/Hasar sayılarını göstermek için (enemy.gd'den uyarlanmıştır)
+func spawn_damage_number(amount, color):
+    # Bu fonksiyon, player.gd'de override edilebilir (veya doğrudan burada kullanılır)
+    # Şimdilik, player.gd'de daha spesifik bir spawn_damage_number olduğunu varsayıyoruz.
+    # Bu yüzden player.gd'nin bunu override etmesine izin veriyoruz.
+    # Eğer player.gd'de bu fonksiyon olmasaydı, bu çalışırdı.
+    if get_parent().has_method("spawn_damage_number_on_effect_layer"):
+        get_parent().spawn_damage_number_on_effect_layer(amount, color, global_position + Vector2(0, -35))
+    else:
+        print("HATA: PlayerBase'in ebeveyninde 'spawn_damage_number_on_effect_layer' fonksiyonu bulunamadı!")
+# --------------------------------------------------
+
+# --- GÜVENLİ GÜNCELLEME FONKSİYONLARI (SETTERS) ---
 func set_health(new_health):
     current_health = clampi(new_health, 0, computed_max_health)
     health_updated.emit(current_health, computed_max_health)
@@ -327,7 +358,6 @@ func set_level(new_level):
     level_updated.emit(level)
      
 # --- STAT SİSTEMİ ÇEKİRDEĞİ ---
-
 func add_experience(amount: int):
     set_experience(experience + amount)
     print("Tecrübe Kazanıldı: ", amount, ". Toplam XP: ", experience, " / ", experience_to_next_level)
@@ -359,6 +389,11 @@ func recalculate_derived_stats():
     var old_max_hp = computed_max_health
     var old_max_mp = computed_max_mana
     
+    # --- GÖRÜNMEZLİK KONTROLÜ (ADIM 1) ---
+    var was_invisible = is_invisible
+    is_invisible = false # Her hesaplamada sıfırla
+    # ------------------------------------
+  
     # --- 1. ADIM: Temel Statları Hesapla (Buff'sız) ---
     computed_max_health = int( (base_health + (hp_per_level * (level - 1))) + (vit * 18) + (str * 4) )
     computed_max_mana = int( (base_mana + (mp_per_level * (level - 1))) + (foc * 15) + (intel * 5) )
@@ -393,61 +428,92 @@ func recalculate_derived_stats():
     computed_debuff_success = foc * 0.1
 
     # --- 2. ADIM: BUFF DEĞERLERİNİ SIFIRLA (KRİTİK DÜZELTME) ---
-    # Bu sıfırlama, buff'ların süresi dolduğunda veya statlar yeniden hesaplandığında
-    # eski değerlerin kalıcı olmasını engeller.
     computed_dmg_reduction = 0.0
     computed_thorns_base_dmg = 0
     computed_thorns_scale_stat = ""
     computed_thorns_scale_ratio = 0.0
-    # NOT: computed_physical_attack_power, computed_pdef_percent vb. zaten
-    # her seferinde yukarıda sıfırdan hesaplandığı için onları sıfırlamaya gerek yok.
-    # Sadece eklenen bu yeni statların sıfırlanması gerekir.
     # -----------------------------------------------------------
 
     # --- 3. ADIM: Aktif Buff'ları Uygula ---
-    # Statlar hesaplandıktan sonra, aktif buff'ları uygula
     for skill_id in active_statuses:
         var status = active_statuses[skill_id]
         if status.has("is_buff"):
+            # DİKKAT: Artık 'effect_type' doğrudan SKILL_DATABASE'deki 'effect' metnidir.
             match status.effect_type:
-                "Buff_Atk":
-                    # (Örnek: %20 saldırı gücü artışı)
+                
+                # --- MEVCUT BUFF'LAR (EŞLEŞME GÜNCELLENDİ) ---
+                "Buff_Atk": # bloodletting, song_of_courage
                     computed_physical_attack_power *= 1.2 
                     print("Buff_Atk Aktif!")
-                "Buff_PDef":
-                    computed_pdef_percent += 15.0 # (Örnek: +%15 PDef)
+                "Buff_PDef": # iron_body
+                    computed_pdef_percent += 15.0
                     print("IronBody Aktif!")
-                "Buff_AtkSpeed":
-                    computed_aspd_bonus += 20.0 # (Örnek: +%20 Atk Hızı)
-                    print("AdrenalSurge Aktif!")
-                
-                # --- YENİ EKLENEN BUFF MANTIKLARI ---
-                "DMG Reduce": # Aegis of Faith
-                    computed_dmg_reduction += 0.35 # %35 azaltma
+                "Buff_AtkSpeed": # adrenal_surge, rhythm_of_agility
+                    computed_aspd_bonus += 20.0
+                    print("Buff_AtkSpeed Aktif!")
+                "DMG Reduce": # aegis_of_faith
+                    computed_dmg_reduction += 0.35
                     print("Aegis of Faith Aktif!")
-                    
-                "DMG Reduce + Thorns": # Molten Guard
-                    computed_dmg_reduction += 0.30 # %30 azaltma
+                "DMG Reduce + Thorns": # molten_guard
+                    computed_dmg_reduction += 0.30
                     computed_thorns_base_dmg = 20
                     computed_thorns_scale_stat = "VIT"
-                    computed_thorns_scale_ratio = 0.0 # DB'ye göre ölçeklenmesi 0.0
+                    computed_thorns_scale_ratio = 0.0 
                     print("Molten Guard Aktif!")
-
-                "DMG Reduce + Görünmezlik": # Shadow Veil
-                    computed_dmg_reduction += 0.40 # %40 azaltma
+                "DMG Reduce + Görünmezlik": # shadow_veil
+                    computed_dmg_reduction += 0.40
+                    is_invisible = true
                     print("Shadow Veil Aktif!")
-                    
-                "Thorns": # Thorn Armor
+                "Thorns": # thorn_armor
                     computed_thorns_base_dmg = 18
                     computed_thorns_scale_stat = "INT"
                     computed_thorns_scale_ratio = 0.25
                     print("Thorn Armor Aktif!")
-                # ... Diğer buff'lar (Buff_AtkDef vb.) buraya eklenebilir ...
-                "Buff_AtkDef": # Vow of Valor, Blessing of Valor, Ballad of Bravery
-                    computed_physical_attack_power *= 1.15 # Örnek: +%15 Atk
-                    computed_pdef_percent += 10.0 # Örnek: +%10 PDef
-                    computed_mdef_percent += 10.0 # Örnek: +%10 MDef
+                "Gizlilik + Crit Şansı": # warden_camouflage, ranger_camouflage
+                    computed_pcrit_chance += 25.0 # Örnek: +25% Crit
+                    is_invisible = true
+                    print("Camouflage Aktif!")
+                "Buff_AtkDef": # vow_of_valor, blessing_of_valor, ballad_of_bravery
+                    computed_physical_attack_power *= 1.15
+                    computed_pdef_percent += 10.0
+                    computed_mdef_percent += 10.0
                     print("Buff_AtkDef Aktif!")
+                    
+                # --- EKSİK BUFF'LAR EKLENDİ ---
+                "Element Hasarını Artır": # elemental_surge
+                    computed_magical_attack_power *= 1.25 # Örnek: +25% MAP
+                    print("Elemental Surge Aktif!")
+                "Chi Tüketimi Bonusu": # way_of_the_lotus
+                    pass # TODO: Buraya Chi sistemi bağlandığında mantık eklenecek.
+                    print("Way of the Lotus Aktif!")
+                "Atk/Direnç Buff": # heart_of_the_dragon
+                    computed_physical_attack_power *= 1.10
+                    computed_pdef_percent += 15.0
+                    computed_mdef_percent += 15.0
+                    print("Heart of the Dragon Aktif!")
+                "Büyü Hasarı/Leech Buff": # demonic_ascension
+                    computed_magical_attack_power *= 1.20
+                    pass # TODO: Leech (Can Emme) sistemi eklenecek.
+                    print("Demonic Ascension Aktif!")
+                "Takım MP Regen Buff": # hymn_of_serenity, aria_of_restoration
+                    computed_mp_regen *= 1.5 # Örnek: MP yenilenmesini %50 artır
+                    print("MP Regen Buff Aktif!")
+                "Hareket/Atk Speed Buff": # windstep
+                    computed_aspd_bonus += 15.0
+                    # TODO: Hareket hızı (SPEED) bonusu player.gd'de ele alınmalı.
+                    print("Windstep Aktif!")
+                "Ölümü Atlama": # ember_rebirth
+                    pass # TODO: Ölüm anında tetiklenecek bir mantık gerektirir.
+                    print("Ember Rebirth Aktif!")
+                "Temas Hasar Bağışıklığı": # wraith_form
+                    pass # TODO: player.gd'deki take_damage'de kontrol edilmeli.
+                    print("Wraith Form Aktif!")
+                "Kaçınma + DMG Bağışıklığı": # evasive_roll
+                    pass # TODO: Bu anlık bir etkidir, buff değil. world.gd'de ele alınmalı.
+                    print("Evasive Roll Aktif!")
+                    
+                # Not: Pet/Minion buff'ları (call_of_the_wild vb.) 
+                # summon sistemi kurulduktan sonra eklenecek.
                     
     # --- 4. ADIM: Can/Mana Barlarını Güncelle ---
     if computed_max_health > old_max_hp:
@@ -459,6 +525,12 @@ func recalculate_derived_stats():
         set_mana(current_mana + (computed_max_mana - old_max_mp))
     else:
         set_mana(current_mana)
+
+    # --- 5. ADIM (YENİ): Görünmezlik durumunu kontrol et ve sinyal gönder ---
+    if is_invisible != was_invisible:
+        invisibility_changed.emit(is_invisible)
+        print("Görünmezlik durumu değişti: ", is_invisible)
+
 
 func level_up():
     set_level(level + 1)
@@ -573,9 +645,6 @@ func emit_full_stat_update():
         "mp_regen": computed_mp_regen,
         "debuff_resist": computed_debuff_resist,
         "debuff_success": computed_debuff_success
-        # YENİ STATLAR: Bu statları da HUD'a gönderebilirsin (isteğe bağlı)
-        # "dmg_reduce": computed_dmg_reduction,
-        # "thorns_dmg": computed_thorns_base_dmg
     }
     stats_updated.emit(stats_payload)
     
@@ -661,24 +730,36 @@ func execute_skill(skill_id: String, target_or_position = null):
     var is_heal: bool = skill_data.is_heal if "is_heal" in skill_data else false
     var effect_desc: String = skill_data.effect
     
-    # KRİTİK DÜZELTME: Self-target listesi TAMAMEN genişletildi.
-    # Artık tüm self-buff/shield/HoT yeteneklerini kapsıyor.
+    # --- BÜYÜK GÜNCELLEME: İSTİSNASIZ TÜM SELF-TARGET YETENEKLER ---
+    # Bu liste, oyuncunun KENDİNE yaptığı tüm (AoE dahil) iyileştirme,
+    # buff, kalkan ve çağırma yeteneklerini içerir.
     var SELF_TARGET_EFFECTS = [
-        # Self HoT / Heals
-        "rejuvenate", "spirit_link", "sacred_bond", "death_coil", "soul_drain",
-        # Self Buffs / Shields
-        "bloodletting", "adrenal_surge", "iron_body", "ice_barrier", "thorn_armor", 
-        "aegis_of_faith", "molten_guard", "shadow_veil", "angelic_barrier", 
-        "resonant_shield", "wraith_form", "evasive_roll",
-        # Self Stat Buffs
-        "elemental_surge", "way_of_the_lotus", "vow_of_valor", "call_of_the_wild",
-        "camouflage", "primal_focus", "heart_of_the_dragon", "demonic_ascension",
-        "blessing_of_valor", "hymn_of_serenity", "song_of_courage", 
-        "rhythm_of_agility", "ballad_of_bravery", "aria_of_restoration",
-        "ritual_of_sacrifice", "windstep", "ember_rebirth"
-        # Not: "purify" gibi yetenekler potansiyel olarak müttefiklere atılabileceği
-        # için şimdilik 'self' olarak kilitlenmedi.
+        # DRUID
+        "rejuvenate", "spirit_link", "thorn_armor", "bloom_field",
+        # BERSERKER
+        "bloodletting", "adrenal_surge",
+        # ELEMENTALIST
+        "ice_barrier", "elemental_surge",
+        # MONK
+        "meditation", "iron_body", "way_of_the_lotus",
+        # CRUSADER
+        "divine_guard", "purge_evil", "sanctified_ground", "vow_of_valor", "aegis_of_faith",
+        # WARDEN
+        "summon_companion", "call_of_the_wild", "warden_camouflage", "guardian_of_the_forest", "primal_focus",
+        # DRAGON KNIGHT
+        "molten_guard", "flame_ward", "ember_rebirth", "heart_of_the_dragon",
+        # WARLOCK
+        "soul_drain", "infernal_summon", "shadow_veil", "demonic_ascension",
+        # CLERIC
+        "holy_light", "purify", "radiant_wave", "sacred_bond", "blessing_of_valor", "angelic_barrier", "beacon_of_hope", "hymn_of_serenity",
+        # BARD
+        "song_of_courage", "melody_of_healing", "rhythm_of_agility", "resonant_shield", "ballad_of_bravery", "aria_of_restoration",
+        # NECROMANCER
+        "raise_skeletons", "death_coil", "wraith_form", "summon_abomination", "ritual_of_sacrifice",
+        # RANGER
+        "evasive_roll", "windstep", "ranger_camouflage"
     ]
+    # ------------------------------------------------------------------
 
     # --- SİNYAL GÖNDERİMİ (5 ARGÜMANLI) ---
     if SELF_TARGET_EFFECTS.has(skill_id):

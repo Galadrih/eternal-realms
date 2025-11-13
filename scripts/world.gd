@@ -37,6 +37,17 @@ const DASH_DISTANCE = 250.0 # Dash yeteneklerinin ne kadar uzağa gideceği
 const EFFECT_SCENE = preload("res://scenes/skill_effect.tscn")
 const DamageNumberScene = preload("res://scenes/damage_number.tscn")
 
+# --- YENİ EKLENTİ: Tüm Minion Sahnelerinin Yolları ---
+# Artık her yetenek ID'si kendi .tscn dosyasını çağıracak.
+# Bu dosyaların "res://scenes/" altında olması gerekir.
+const MINION_SCENE_PATHS = {
+    "summon_companion": "res://scenes/summon_companion.tscn", 			# Warden: Kurt/Ayı/Kartal
+    "guardian_of_the_forest": "res://scenes/guardian_of_the_forest.tscn", 	# Warden: Toprak Golemi
+    "infernal_summon": "res://scenes/infernal_summon.tscn", 				# Warlock: İblis
+    "raise_skeletons": "res://scenes/raise_skeletons.tscn", 				# Necromancer: İskeletler
+    "summon_abomination": "res://scenes/summon_abomination.tscn" 		# Necromancer: Tank Minion
+}
+# --------------------------------------------------
 
 # ARAYÜZ REFERANSLARI
 @onready var hud: CanvasLayer = $HUD
@@ -168,7 +179,7 @@ func spawn_damage_number_on_effect_layer(amount: int, color: Color, pos: Vector2
     effect_layer.add_child(damage_number)
     
     var screen_pos = world_to_screen(pos)
-    damage_number.position = screen_pos   # yine position
+    damage_number.position = screen_pos    # yine position
     damage_number.set_damage(amount, color)
 # --- YENİ FONKSİYON BİTİŞİ ---
 
@@ -203,25 +214,62 @@ func _on_player_skill_executed(skill_id, value, is_heal, effect_desc, target_or_
 
     var class_color = CLASS_COLORS.get(player_instance.class_id, Color.WHITE)
     
-    # 1. KENDİNE YÖNELİK ETKİLER (Self-HoT / Self-Buff)
+    # =======================================================================
+    # --- GÜNCELLENMİŞ BLOK: KENDİNE YÖNELİK ETKİLER ---
+    # (Self-HoT / Self-Buff / Anlık Heal / Kalkan / Görünmezlik / ÇAĞIRMA)
+    # =======================================================================
     if target_or_position == player_instance:
         _spawn_skill_effect(player_instance.global_position, class_color)
         
-        if DOT_HOTS_SKILLS.has(skill_id):
-            if player_instance.has_method("apply_status_effect"):
-                player_instance.apply_status_effect(skill_id, value, DOT_DURATION, DOT_TICK_RATE, true)
-                print("PLAYER HoT BAŞARILI: ", skill_id, " başlatıldı.")
+        # --- GÜNCELLEME: ÇAĞIRMA MANTIĞI ---
+        # "Çağır" yerine yetenek ID'sini (skill_id) kontrol et
+        if MINION_SCENE_PATHS.has(skill_id):
+            var scene_path = MINION_SCENE_PATHS[skill_id]
+            var minion_scene = load(scene_path)
+            
+            if not minion_scene:
+                print("HATA: Minion sahnesi yüklenemedi! Yol: ", scene_path)
+                return # Sahne bulunamadıysa devam etme
+                
+            var minion = minion_scene.instantiate()
+            # Minion'ı oyuncunun hemen yanına ekle
+            minion.global_position = player_instance.global_position + (Vector2.RIGHT * 60).rotated(randf_range(0, TAU))
+            add_child(minion) # Minion'ı ana dünyaya ekle
+            
+            # Minion'a sahibini ve süresini söyle (Örn: 30 saniye)
+            minion.set_owner_and_duration(player_instance, 30.0) 
+            print("WORLD: Minion çağrıldı: ", skill_id)
+        # --- ÇAĞIRMA MANTIĞI SONU ---
         
-        elif effect_desc.begins_with("Buff_") or effect_desc == "Thorns" or effect_desc.contains("DMG Reduce") or effect_desc.contains("Kalkan"):
+        elif is_heal:
+            # --- Yetenek bir iyileştirme ---
+            if DOT_HOTS_SKILLS.has(skill_id):
+                # Periyodik İyileştirme (HoT)
+                if player_instance.has_method("apply_status_effect"):
+                    player_instance.apply_status_effect(skill_id, value, DOT_DURATION, DOT_TICK_RATE, true)
+                    print("PLAYER HoT BAŞARILI: ", skill_id, " başlatıldı.")
+            else:
+                # Anlık İyileştirme (Instant Heal) - holy_light, vb.
+                if player_instance.has_method("heal"):
+                    player_instance.heal(int(round(value)), Color.GREEN)
+                    print("PLAYER ANLIK HEAL BAŞARILI: ", skill_id, " uygulandı.")
+        else:
+            # --- Yetenek bir iyileştirme DEĞİLSE, o zaman bir BUFF'tır ---
+            # (Kalkan, Stat, Görünmezlik, Thorns, vb.)
             if player_instance.has_method("apply_buff_debuff"):
+                # Varsayılan buff süresi 10sn
                 player_instance.apply_buff_debuff(skill_id, 10.0, effect_desc) 
-                print("PLAYER BUFF BAŞARILI: ", skill_id, " başlatıldı.")
-        return 
+                print("PLAYER BUFF BAŞARILI: ", skill_id, " (Etki: ", effect_desc, ") başlatıldı.")
+        
+        return # Bu blok bittiğinde, düşman hedefli mantığa geçme
+    # --- GÜNCELLENMİŞ BLOK SONU ---
+
 
     # 2. DÜŞMANA YÖNELİK ETKİLER (Hasar, DoT, Debuff)
     
     var is_debuff = effect_desc.contains("Slow") or effect_desc.contains("Root") or effect_desc.contains("Stun") or effect_desc.contains("Debuff_") or effect_desc.contains("Reduce")
     
+    # Anlık heal (self-target olmayan) veya değersiz (debuff olmayan) yetenekleri atla
     if (is_heal and not DOT_HOTS_SKILLS.has(skill_id)) or (value <= 0.0 and not is_debuff):
         print("World: Anlık heal veya değersiz (debuff olmayan) yetenek atlandı: ", skill_id)
         return 
@@ -250,6 +298,7 @@ func _on_player_skill_executed(skill_id, value, is_heal, effect_desc, target_or_
                 
                 if dist <= AOE_RANGE: 
                     if is_dot:
+                        # Not: is_heal (false) olarak gidiyor, enemy.gd bunu reddedecek.
                         enemy.apply_status_effect(skill_id, value, DOT_DURATION, DOT_TICK_RATE, is_heal)
                     elif not is_dot:
                         enemy.receive_skill_damage(value)
@@ -271,7 +320,6 @@ func _on_player_skill_executed(skill_id, value, is_heal, effect_desc, target_or_
             
             if is_dot:
                 target_enemy.apply_status_effect(skill_id, value, DOT_DURATION, DOT_TICK_RATE, is_heal)
-                # --- DÜZELTME: Bu print satırı 'if is_dot' içine alındı ---
                 print("TEK HEDEF DOT BAŞARILI: ", target_enemy.enemy_name, " - ", skill_id, " efekti başlatıldı.")
             else:
                 target_enemy.receive_skill_damage(value)
@@ -333,23 +381,23 @@ func _apply_enemy_debuffs(enemy_node, effect_desc: String):
         enemy_node.apply_debuff("Root", duration)
         print("DEBUFF UYGULANDI: ", enemy_node.enemy_name, " sabitlendi: ", duration, "s")
                         
-    # 3. SERSEMLETME (Stun) - Root ile aynı etkiyi yapar (enemy.gd'ye göre)
-    if effect_desc.contains("Stun"):
+    # 3. SERSEMLETME (Stun) / ZAYIF SERSEMLETME
+    if effect_desc.contains("Stun") or effect_desc.contains("Sersemletme"):
         var parts = effect_desc.split(" ")
         var duration = 0.8 # Varsayılan
         
         for part in parts:
-            if part.ends_with("s") and part.begins_with("Stun"):
-                var value_str = part.trim_prefix("Stun").trim_suffix("s")
+            if part.ends_with("s") and (part.begins_with("Stun") or part.begins_with("Sersemletme")):
+                var value_str = part.trim_prefix("Stun").trim_prefix("Sersemletme").trim_suffix("s")
                 if value_str.is_valid_float():
                     duration = value_str.to_float() # 0.8
                     break
                     
-        enemy_node.apply_debuff("Root", duration) # Stun = Root
+        enemy_node.apply_debuff("Root", duration) # Stun = Root (enemy.gd'ye göre)
         print("DEBUFF UYGULANDI: ", enemy_node.enemy_name, " sersemledi: ", duration, "s")
-
-    # 4. STAT DÜŞÜRME (Debuff_AtkDef)
-    if effect_desc.contains("Debuff_AtkDef") or effect_desc.contains("Atk Reduce"):
+    
+    # 4. STAT DÜŞÜRME (Atk/Def Reduce)
+    if effect_desc.contains("Debuff_AtkDef") or effect_desc.contains("Atk Reduce") or effect_desc.contains("Atk Düşürme") or effect_desc.contains("Def Düşürme"):
         enemy_node.apply_debuff("Debuff_AtkDef", 8.0) # 8sn varsayalım
         print("DEBUFF UYGULANDI: ", enemy_node.enemy_name, " zayıfladı (Atk/Def)")
     
@@ -357,3 +405,36 @@ func _apply_enemy_debuffs(enemy_node, effect_desc: String):
     if effect_desc.contains("Heal Reduce"):
         enemy_node.apply_debuff("Heal_Reduce", 10.0, 0.5) # 10sn, %50 azaltma varsayalım
         print("DEBUFF UYGULANDI: ", enemy_node.enemy_name, " iyileşme azaltması aldı.")
+        
+    # 6. YENİ: ZIRH KIRMA (Armor Shred)
+    if effect_desc.contains("Zırh Kırma") or effect_desc.contains("Zırh Delme"):
+        var parts = effect_desc.split(" ")
+        var shred_amount = 25.0 # Varsayılan
+        
+        for part in parts:
+            if part.ends_with("%"):
+                var value_str = part.trim_suffix("%")
+                if value_str.is_valid_float():
+                    shred_amount = value_str.to_float() # 25.0
+                    break
+        
+        enemy_node.apply_debuff("Armor_Shred", 8.0, shred_amount / 100.0) # 8sn, 0.25
+        print("DEBUFF UYGULANDI: ", enemy_node.enemy_name, " zırhı kırıldı: %", shred_amount)
+
+    # 7. YENİ: İŞARETLEME (Marked)
+    if effect_desc.contains("Hedef İşaretle"): # falcon_mark
+        enemy_node.apply_debuff("Marked", 10.0, 0.15) # 10sn, %15 fazla hasar
+        print("DEBUFF UYGULANDI: ", enemy_node.enemy_name, " işaretlendi!")
+        
+    # 8. YENİ: SADECE ATK DÜŞÜRME (Debuff_Atk)
+    if effect_desc == "Debuff_Atk": # requiem_of_weakness
+        enemy_node.apply_debuff("Debuff_Atk", 8.0, 0.20) # 8sn, %20 az hasar
+        print("DEBUFF UYGULANDI: ", enemy_node.enemy_name, " saldırı gücü düştü!")
+        
+    # 9. YENİ: CRIT DÜŞÜRME (Debuff_Crit)
+    if effect_desc == "Debuff_Crit": # dirge_of_shadows
+        enemy_node.apply_debuff("Debuff_Crit", 8.0)
+        print("DEBUFF UYGULANDI: ", enemy_node.enemy_name, " kritik şansı düştü!")
+        
+    # TODO: "Stun Şansı", "Cast Kesme", "Kafes" gibi daha karmaşık mekanikler
+    # henüz eklenmedi.

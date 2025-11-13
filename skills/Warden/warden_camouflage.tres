@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="SkillData" load_steps=2 format=3 uid="uid://buep6kuxk8a5u"]
+
+[ext_resource type="Script" uid="uid://c7mflldnikqwc" path="res://scripts/skill/skill_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = &"warden_camouflage"
+display_name = "Camouflage"
+cooldown = 22.0

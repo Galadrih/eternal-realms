@@ -4,6 +4,7 @@ extends "res://scripts/PlayerBase.gd"
 @export var ATTACK_COOLDOWN: float = 0.5
 var can_attack: bool = true
 var last_direction = Vector2(0, 1)
+var current_target: Node2D = null # Minion'lar bu hedefi takip edecek
 
 func _ready():
     if not has_node("AttackTimer"):
@@ -13,12 +14,15 @@ func _ready():
         timer.one_shot = true
         timer.timeout.connect(_on_attack_timer_timeout)
     
+    # --- Görünmezlik sinyaline bağlan ---
+    invisibility_changed.connect(_on_invisibility_changed)
+    
     # PlayerBase'in _ready'si çağrılacak
     super._ready() # PlayerBase'deki add_to_group ve stat ayarları için
     
     $AnimatedSprite2D.play("idle_down")
 
-# --- DÜZELTİLMİŞ FİZİK FONKSİYONU ---
+# --- FİZİK FONKSİYONU ---
 func _physics_process(_delta):
     var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
     var anim_sprite = $AnimatedSprite2D
@@ -34,10 +38,8 @@ func _physics_process(_delta):
                 anim_sprite.play("walk_down")
             elif direction.x < 0:
                 anim_sprite.play("walk_left")
-            # --- DÜZELTME: Bu satır hatalı girintilenmişti ---
             elif direction.x > 0:
                 anim_sprite.play("walk_right")
-            # --- Düzeltme Bitişi ---
     else:
         velocity = Vector2.ZERO
         
@@ -52,10 +54,8 @@ func _physics_process(_delta):
                     anim_sprite.play("idle_left")
                 else:
                     anim_sprite.play("idle_right")
-             
+            
     move_and_slide()
-# --- Düzeltme Bitişi ---
-
 
 # --- STAT FONKSİYONLARI ---
 
@@ -165,11 +165,24 @@ func _unhandled_input(event):
         
         var hit_enemies = $AttackHitbox.get_overlapping_bodies()
         
+        # --- GÜNCELLEME: Minion'lar için hedef belirleme ---
+        var hit_someone = false
         for body in hit_enemies:
             if body.is_in_group("enemies") and body.has_method("receive_skill_damage"):
                 body.receive_skill_damage(float(damage_amount))
                 print("Düşmana Vuruldu! Hasar: ", damage_amount)
                 
+                # Minion'ların saldırması için hedefi ayarla
+                current_target = body 
+                hit_someone = true
+                
+                # Sadece ilk hedefe kilitleniriz
+                break 
+        
+        if not hit_someone:
+            current_target = null # Boşa vurduysak veya menzilde düşman yoksa hedefi temizle
+        # --- GÜNCELLEME SONU ---
+            
         $AttackTimer.start(ATTACK_COOLDOWN)
         get_viewport().set_input_as_handled()
 
@@ -180,3 +193,19 @@ func spawn_damage_number(amount, color):
         get_parent().spawn_damage_number_on_effect_layer(amount, color, global_position + Vector2(0, -30))
     else:
         print("HATA: Player'ın ebeveyninde 'spawn_damage_number_on_effect_layer' fonksiyonu bulunamadı!")
+
+# --- YENİ FONKSİYON: Görünmezlik durumunu yönetir ---
+func _on_invisibility_changed(is_now_invisible: bool):
+    var anim_sprite = $AnimatedSprite2D
+
+    if is_now_invisible:
+        anim_sprite.modulate.a = 0.5
+        set_collision_layer_value(2, false)
+        print("GÖRÜNMEZ OLDUM. Katman 2 (player_detect) kapatıldı.")
+        print("Mevcut katmanlarım: ", collision_layer) # Debug
+
+    else:
+        anim_sprite.modulate.a = 1.0
+        set_collision_layer_value(2, true)
+        print("GÖRÜNÜR OLDUM. Katman 2 (player_detect) açıldı.")
+        print("Mevcut katmanlarım: ", collision_layer) # Debug

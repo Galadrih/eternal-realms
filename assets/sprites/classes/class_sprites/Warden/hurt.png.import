@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b14gitbh3y5at"
-path="res://.godot/imported/camouflage.png-17ec9eeb213d52d2593a0705f485fdde.ctex"
+uid="uid://dk11iss8jvqxg"
+path="res://.godot/imported/hurt.png-ab3ce1a6650f85f4ffa1e8463622ff69.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/skill_icons/Warden/camouflage.png"
-dest_files=["res://.godot/imported/camouflage.png-17ec9eeb213d52d2593a0705f485fdde.ctex"]
+source_file="res://assets/sprites/classes/class_sprites/Warden/hurt.png"
+dest_files=["res://.godot/imported/hurt.png-ab3ce1a6650f85f4ffa1e8463622ff69.ctex"]
 
 [params]
 

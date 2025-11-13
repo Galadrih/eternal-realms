@@ -745,6 +745,7 @@ size = Vector2(57.609375, 59.1875)
 size = Vector2(84.6875, 79.875)
 
 [node name="Player" type="CharacterBody2D" groups=["player", "player_character"]]
+collision_layer = 3
 platform_floor_layers = 4278190081
 script = ExtResource("1_onrkg")
 
@@ -760,7 +761,7 @@ shape = SubResource("RectangleShape2D_onrkg")
 
 [node name="AttackHitbox" type="Area2D" parent="."]
 collision_layer = 4
-collision_mask = 2
+collision_mask = 5
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackHitbox"]
 position = Vector2(0, 4)

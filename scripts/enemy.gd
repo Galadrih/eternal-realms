@@ -81,8 +81,17 @@ func _physics_process(delta):
 func apply_status_effect(skill_id: String, total_value: float, duration: float, tick_rate: float, is_heal: bool):
     if not is_alive: return
 
+    # --- YENİ EKLENEN KONTROL ---
+    # Düşmanlar iyileştirme (HoT) alamaz.
+    # Eğer gelen etki 'is_heal' olarak işaretlenmişse, fonksiyondan hemen çık.
+    if is_heal:
+        print(enemy_name, " iyileştirme etkisini reddetti: ", skill_id)
+        return
+    # -----------------------------
+
     var num_ticks = ceil(duration / tick_rate)
-    if num_ticks == 0: num_ticks = 1 
+    
+    if num_ticks == 0: num_ticks = 1
     var value_per_tick = total_value / num_ticks
 
     active_dots[skill_id] = {
@@ -90,13 +99,18 @@ func apply_status_effect(skill_id: String, total_value: float, duration: float, 
         "time_left": duration,
         "tick_rate": tick_rate,
         "next_tick": tick_rate, 
-        "is_heal": is_heal
+        "is_heal": is_heal # Bu değer (false) olarak geçecek, çünkü 'true' ise yukarıda engellendi.
     }
     
     print("DÜŞMAN DURUM BAŞLATILDI: ", skill_id, " (Değer: ", total_value, ", Ticks: ", num_ticks, ")")
 
 func apply_debuff(effect_type: String, duration: float, value: float = 0.0):
     if not is_alive: return
+    
+    # YENİ: Aynı türde daha güçlü bir debuff varsa, süreyi yenileme
+    if active_debuffs.has(effect_type) and active_debuffs[effect_type].value > value:
+        return # Mevcut debuff daha iyi
+        
     active_debuffs[effect_type] = {"time_left": duration, "value": value}
     print(enemy_name, " debuff aldı: ", effect_type, " Süre: ", duration, " Değer: ", value)
 
@@ -151,16 +165,35 @@ func _tick_debuffs(delta):
 
 func receive_skill_damage(amount: float):
     if not is_alive: return
-    take_damage(int(round(amount)), Color.RED) 
+    
+    var final_damage = amount
+    
+    # YENİ: Debuff'ları hasar hesaplamasına dahil et
+    if active_debuffs.has("Marked"):
+        final_damage *= (1.0 + active_debuffs["Marked"].value) # %15 fazla hasar
+        print(enemy_name, " işaretli, ekstra hasar alıyor!")
+        
+    if active_debuffs.has("Armor_Shred"):
+        # Normalde PDef olurdu, şimdilik hasarı direkt artıralım
+        final_damage *= (1.0 + active_debuffs["Armor_Shred"].value) # %25 fazla hasar
+        print(enemy_name, " zırhı kırık, ekstra hasar alıyor!")
+    
+    take_damage(int(round(final_damage)), Color.RED) 
 
 func take_damage(amount: int, damage_color: Color):
     if not is_alive: return
-    current_health -= amount
+    
+    # YENİ: Savunma debuff'ı varsa hasarı artır
+    var final_amount = float(amount)
+    if active_debuffs.has("Debuff_AtkDef"):
+        final_amount *= 1.2 # Örnek: %20 daha fazla hasar al
+        
+    current_health -= int(round(final_amount))
     
     health_bar.value = current_health 
-    spawn_damage_number(amount, damage_color) 
+    spawn_damage_number(int(round(final_amount)), damage_color) 
     
-    print(enemy_name, " Hasar Aldı: ", amount, ". Kalan Can: ", current_health)
+    print(enemy_name, " Hasar Aldı: ", int(round(final_amount)), ". Kalan Can: ", current_health)
     
     if current_health <= 0:
         current_health = 0
@@ -178,6 +211,7 @@ func attack():
     if not can_attack: return
     can_attack = false
     
+    # ... (animasyon kodları) ...
     if abs(last_direction.x) > abs(last_direction.y):
         if last_direction.x > 0: sprite.play("attack_right")
         else: sprite.play("attack_left")
@@ -187,12 +221,18 @@ func attack():
     
     attack_timer.start()
     
+    # YENİ: Hasar debuff'ı varsa saldırıyı düşür
+    var final_attack_damage = ATTACK_DAMAGE
+    if active_debuffs.has("Debuff_AtkDef") or active_debuffs.has("Debuff_Atk"):
+        final_attack_damage = int(round(final_attack_damage * 0.8)) # %20 daha az hasar
+        print(enemy_name, " zayıfladı, saldırısı düştü!")
+    
     var bodies = attack_area.get_overlapping_bodies()
     for body in bodies:
         if body.is_in_group("player"):
             if body.has_method("take_damage"):
-                body.take_damage(ATTACK_DAMAGE, Color.WHITE, self) 
-                print("Düşman, Oyuncuya vurdu!")
+                body.take_damage(final_attack_damage, Color.WHITE, self) 
+                print("Düşman, Oyuncuya vurdu! Hasar: ", final_attack_damage)
 
 func _on_attack_timer_timeout():
     can_attack = true
@@ -204,8 +244,10 @@ func _on_follow_area_body_entered(body):
         target = body
 
 func _on_follow_area_body_exited(body):
+    print("DÜŞMAN: Bir cisim alanımdan çıktı: ", body.name) # Debug
     if body == target:
         target = null
+        print("DÜŞMAN: Hedefimi (", body.name, ") kaybettim.")
 
 func die():
     if not is_alive: return
