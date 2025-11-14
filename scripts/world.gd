@@ -31,21 +31,23 @@ const CLASS_COLORS = {
     10: Color("#4B0082"), # Necromancer (Ölümcül İndigo)
     11: Color("#006400")  # Ranger (Orman Yeşili)
 }
+
 const DASH_DISTANCE = 250.0 # Dash yeteneklerinin ne kadar uzağa gideceği
 
 # Efekt Sahnemizi Yüklüyoruz
 const EFFECT_SCENE = preload("res://scenes/skill_effect.tscn")
 const DamageNumberScene = preload("res://scenes/damage_number.tscn")
+const LOOT_SCENE = preload("res://scenes/ui/LootBag.tscn")
 
 # --- YENİ EKLENTİ: Tüm Minion Sahnelerinin Yolları ---
 # Artık her yetenek ID'si kendi .tscn dosyasını çağıracak.
 # Bu dosyaların "res://scenes/" altında olması gerekir.
 const MINION_SCENE_PATHS = {
-    "summon_companion": "res://scenes/summon_companion.tscn", 			# Warden: Kurt/Ayı/Kartal
-    "guardian_of_the_forest": "res://scenes/guardian_of_the_forest.tscn", 	# Warden: Toprak Golemi
-    "infernal_summon": "res://scenes/infernal_summon.tscn", 				# Warlock: İblis
-    "raise_skeletons": "res://scenes/raise_skeletons.tscn", 				# Necromancer: İskeletler
-    "summon_abomination": "res://scenes/summon_abomination.tscn" 		# Necromancer: Tank Minion
+    "summon_companion": "res://scenes/summon_companion.tscn",             # Warden: Kurt/Ayı/Kartal
+    "guardian_of_the_forest": "res://scenes/guardian_of_the_forest.tscn", # Warden: Toprak Golemi
+    "infernal_summon": "res://scenes/infernal_summon.tscn",               # Warlock: İblis
+    "raise_skeletons": "res://scenes/raise_skeletons.tscn",               # Necromancer: İskeletler
+    "summon_abomination": "res://scenes/summon_abomination.tscn"          # Necromancer: Tank Minion
 }
 # --------------------------------------------------
 
@@ -53,7 +55,6 @@ const MINION_SCENE_PATHS = {
 @onready var hud: CanvasLayer = $HUD
 @onready var character_sheet = $CharacterSheet 
 @onready var effect_layer: CanvasLayer = $EffectLayer # Bu, $EffectLayer düğümüne bağlanır
-
 
 # KRİTİK: Player düğümünü tutacak değişken
 var player_instance: CharacterBody2D = null
@@ -63,6 +64,10 @@ const DEFAULT_SKILL_RANGE = 200.0
 const AOE_RANGE = 250.0 
 const DOT_DURATION = 6.0
 const DOT_TICK_RATE = 1.0
+
+# --- YENİ EKLENTİ: TAB HEDEFLEME MENZİLİ ---
+const TAB_TARGET_RANGE = 400.0
+# -------------------------------------------
 
 # YETENEKLERİN TÜRÜNÜ BELİRLEYEN LİSTE
 const AOE_DAMAGE_SKILLS = [
@@ -79,8 +84,13 @@ const DOT_HOTS_SKILLS = [
     "poison_arrow", "sanctified_ground", "chi_wave" 
 ]
 
+# --- YENİ DEĞİŞKEN: TAB İLE HEDEFLEME İÇİN ---
+var current_target_index = -1
+# -------------------------------------------
+
 
 func _ready() -> void:
+    add_to_group("world") # <-- BU SATIRI EKLE
     var selected_class_id = PlayerData.character_class_id
     
     if not CLASS_SCENES.has(selected_class_id):
@@ -98,6 +108,12 @@ func _ready() -> void:
     player_instance.name = PlayerData.character_name
     add_child(player_instance)
     
+    # HUD bağlantılarından SONRA:
+    if hud != null:
+        var inv_panel: Node = hud.get_node_or_null("InventoryPanel")
+        if inv_panel and inv_panel.has_method("set_player"):
+            inv_panel.set_player(player_instance)
+    
     print("Oyuncu '", player_instance.name, "' (Sınıf: ", PlayerData.character_class_name, ") dünyaya eklendi.")
 
     # --- BAĞLANTILAR ---
@@ -108,6 +124,9 @@ func _ready() -> void:
 
         if hud.has_method("set_player_class_name"):
             hud.set_player_class_name(PlayerData.character_class_name)
+        
+        if hud.has_method("set_character_name"):
+            hud.set_character_name(PlayerData.character_name)
         
         player_instance.health_updated.connect(hud.update_health)
         player_instance.experience_updated.connect(hud.update_experience)
@@ -130,6 +149,129 @@ func _ready() -> void:
         print("HATA: World.gd, CharacterSheet veya Oyuncu düğümünü bulamadı!")
 
 
+# world.gd'deki mevcut _input fonksiyonunun tamamını değiştir.
+func _input(event):
+    # Oyuncu henüz oluşturulmadıysa veya UI'a tıklandıysa işlemi durdur
+    if not is_instance_valid(player_instance):
+        return
+    if get_viewport().gui_get_focus_owner() != null:
+        return
+
+    # --- TAB HEDEFLEME ---
+    if event.is_action_pressed("target_next_enemy"):
+        get_viewport().set_input_as_handled() 
+        
+        var enemies = get_tree().get_nodes_in_group("enemies")
+        var alive_enemies_in_range = []
+        var player_pos = player_instance.global_position
+        
+        # Hangi düşmanın glow'unu kapatacağımızı kaydet
+        var old_target = player_instance.current_target
+        
+        for enemy in enemies:
+            if enemy.is_alive:
+                var dist = player_pos.distance_to(enemy.global_position)
+                if dist <= TAB_TARGET_RANGE:
+                    alive_enemies_in_range.append(enemy)
+        
+        if alive_enemies_in_range.is_empty():
+            # Menzilde düşman yoksa, eski hedefin glow'unu kapat ve temizle
+            if is_instance_valid(old_target) and old_target.has_method("set_glow_state"):
+                old_target.set_glow_state(false)
+                
+            player_instance.current_target = null
+            hud.set_target_from_node(null)
+            current_target_index = -1
+            return 
+        
+        alive_enemies_in_range.sort_custom(Callable(self, "_sort_by_distance_to_player"))
+
+        var current_target = player_instance.current_target
+        if is_instance_valid(current_target) and current_target in alive_enemies_in_range:
+            current_target_index = alive_enemies_in_range.find(current_target)
+        else:
+            current_target_index = -1 
+            
+        current_target_index = (current_target_index + 1) % alive_enemies_in_range.size()
+        
+        var new_target = alive_enemies_in_range[current_target_index]
+        
+        # --- DÜZELTME: GLOW YÖNETİMİ ---
+        if is_instance_valid(old_target) and old_target != new_target and old_target.has_method("set_glow_state"):
+            old_target.set_glow_state(false)
+            
+        if is_instance_valid(new_target) and new_target.has_method("set_glow_state"):
+            new_target.set_glow_state(true)
+        # --------------------------------
+        
+        player_instance.current_target = new_target
+        hud.set_target_from_node(new_target)
+
+    # --- TIKLAMA İLE HEDEFLEME ---
+    elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.is_pressed():
+        
+        var mouse_pos = get_global_mouse_position()
+        var space_state = get_world_2d().direct_space_state
+        
+        var query = PhysicsPointQueryParameters2D.new()
+        query.position = mouse_pos
+        query.collision_mask = 1 << 2 # 3. katman "enemies"
+        query.collide_with_bodies = true
+        
+        var results = space_state.intersect_point(query, 1) 
+        var old_target = player_instance.current_target # Eski hedefi kaydet
+
+        if not results.is_empty():
+            var collider = results[0].collider
+            
+            if collider.is_in_group("enemies") and collider.has_method("die") and collider.is_alive:
+                
+                # --- DÜZELTME: GLOW YÖNETİMİ (Yeni Hedef) ---
+                if is_instance_valid(old_target) and old_target != collider and old_target.has_method("set_glow_state"):
+                    old_target.set_glow_state(false)
+                    
+                if collider.has_method("set_glow_state"):
+                    collider.set_glow_state(true)
+                # -------------------------------------------
+                
+                player_instance.current_target = collider
+                hud.set_target_from_node(collider)
+                
+                var enemies = get_tree().get_nodes_in_group("enemies")
+                var alive_enemies_in_range = []
+                for enemy in enemies:
+                    if enemy.is_alive and player_instance.global_position.distance_to(enemy.global_position) <= TAB_TARGET_RANGE:
+                        alive_enemies_in_range.append(enemy)
+                
+                if !alive_enemies_in_range.is_empty():
+                    alive_enemies_in_range.sort_custom(Callable(self, "_sort_by_distance_to_player"))
+                    current_target_index = alive_enemies_in_range.find(collider)
+                else:
+                    current_target_index = -1
+            else:
+                # Geçersiz tıklama (boşa veya ölü hedefe)
+                # --- DÜZELTME: GLOW YÖNETİMİ (Hedef Temizleme) ---
+                if is_instance_valid(old_target) and old_target.has_method("set_glow_state"):
+                    old_target.set_glow_state(false)
+                # ------------------------------------------------
+                
+                player_instance.current_target = null
+                hud.set_target_from_node(null) 
+                current_target_index = -1 
+        else:
+            # Boş alana tıklandı
+            # --- DÜZELTME: GLOW YÖNETİMİ (Hedef Temizleme) ---
+            if is_instance_valid(old_target) and old_target.has_method("set_glow_state"):
+                old_target.set_glow_state(false)
+            # ------------------------------------------------
+                
+            if player_instance.current_target != null:
+                player_instance.current_target = null
+                hud.set_target_from_node(null) 
+                current_target_index = -1
+# --- INPUT FONKSİYONU SONU ---
+
+
 func world_to_screen(world_pos: Vector2) -> Vector2:
     var cam := get_viewport().get_camera_2d()
     if cam == null:
@@ -138,12 +280,12 @@ func world_to_screen(world_pos: Vector2) -> Vector2:
     var viewport_size: Vector2 = get_viewport().get_visible_rect().size
     return (world_pos - cam.global_position) + viewport_size * 0.5
 
+
 func toggle_character_sheet() -> void:
     if character_sheet != null:
         character_sheet.toggle()
 
 
-    
 # --- GÜVENLİK KONTROLÜ EKLENMİŞ EFEKT FONKSİYONU ---
 func _spawn_skill_effect(pos: Vector2, color: Color):
     if not is_instance_valid(effect_layer):
@@ -155,11 +297,9 @@ func _spawn_skill_effect(pos: Vector2, color: Color):
 
     var screen_pos := world_to_screen(pos)
 
-    # CPUParticles2D genelde Node2D’den türediği için:
     if effect is Node2D:
         effect.position = screen_pos
     else:
-        # Her ihtimale karşı fallback
         effect.global_position = screen_pos
 
     effect.modulate = color
@@ -179,7 +319,7 @@ func spawn_damage_number_on_effect_layer(amount: int, color: Color, pos: Vector2
     effect_layer.add_child(damage_number)
     
     var screen_pos = world_to_screen(pos)
-    damage_number.position = screen_pos    # yine position
+    damage_number.position = screen_pos
     damage_number.set_damage(amount, color)
 # --- YENİ FONKSİYON BİTİŞİ ---
 
@@ -187,7 +327,8 @@ func spawn_damage_number_on_effect_layer(amount: int, color: Color, pos: Vector2
 # Yetenek efektlerini ve debuff'ları tetikler
 func _on_player_skill_executed(skill_id, value, is_heal, effect_desc, target_or_position):
 
-    if player_instance == null: return
+    if player_instance == null: 
+        return
 
     # --- HAREKET YETENEKLERİ (DASH/CHARGE) ---
     var is_movement_skill = false
@@ -215,61 +356,47 @@ func _on_player_skill_executed(skill_id, value, is_heal, effect_desc, target_or_
     var class_color = CLASS_COLORS.get(player_instance.class_id, Color.WHITE)
     
     # =======================================================================
-    # --- GÜNCELLENMİŞ BLOK: KENDİNE YÖNELİK ETKİLER ---
-    # (Self-HoT / Self-Buff / Anlık Heal / Kalkan / Görünmezlik / ÇAĞIRMA)
+    # KENDİNE YÖNELİK ETKİLER
     # =======================================================================
     if target_or_position == player_instance:
         _spawn_skill_effect(player_instance.global_position, class_color)
         
-        # --- GÜNCELLEME: ÇAĞIRMA MANTIĞI ---
-        # "Çağır" yerine yetenek ID'sini (skill_id) kontrol et
+        # --- ÇAĞIRMA MANTIĞI ---
         if MINION_SCENE_PATHS.has(skill_id):
             var scene_path = MINION_SCENE_PATHS[skill_id]
             var minion_scene = load(scene_path)
             
             if not minion_scene:
                 print("HATA: Minion sahnesi yüklenemedi! Yol: ", scene_path)
-                return # Sahne bulunamadıysa devam etme
+                return
                 
             var minion = minion_scene.instantiate()
-            # Minion'ı oyuncunun hemen yanına ekle
             minion.global_position = player_instance.global_position + (Vector2.RIGHT * 60).rotated(randf_range(0, TAU))
-            add_child(minion) # Minion'ı ana dünyaya ekle
-            
-            # Minion'a sahibini ve süresini söyle (Örn: 30 saniye)
-            minion.set_owner_and_duration(player_instance, 30.0) 
+            add_child(minion)
+            minion.set_owner_and_duration(player_instance, 30.0)
             print("WORLD: Minion çağrıldı: ", skill_id)
-        # --- ÇAĞIRMA MANTIĞI SONU ---
         
         elif is_heal:
-            # --- Yetenek bir iyileştirme ---
             if DOT_HOTS_SKILLS.has(skill_id):
-                # Periyodik İyileştirme (HoT)
                 if player_instance.has_method("apply_status_effect"):
                     player_instance.apply_status_effect(skill_id, value, DOT_DURATION, DOT_TICK_RATE, true)
                     print("PLAYER HoT BAŞARILI: ", skill_id, " başlatıldı.")
             else:
-                # Anlık İyileştirme (Instant Heal) - holy_light, vb.
                 if player_instance.has_method("heal"):
                     player_instance.heal(int(round(value)), Color.GREEN)
                     print("PLAYER ANLIK HEAL BAŞARILI: ", skill_id, " uygulandı.")
         else:
-            # --- Yetenek bir iyileştirme DEĞİLSE, o zaman bir BUFF'tır ---
-            # (Kalkan, Stat, Görünmezlik, Thorns, vb.)
             if player_instance.has_method("apply_buff_debuff"):
-                # Varsayılan buff süresi 10sn
                 player_instance.apply_buff_debuff(skill_id, 10.0, effect_desc) 
                 print("PLAYER BUFF BAŞARILI: ", skill_id, " (Etki: ", effect_desc, ") başlatıldı.")
         
-        return # Bu blok bittiğinde, düşman hedefli mantığa geçme
-    # --- GÜNCELLENMİŞ BLOK SONU ---
+        return
+    # --- SELF BLOK SONU ---
 
 
     # 2. DÜŞMANA YÖNELİK ETKİLER (Hasar, DoT, Debuff)
-    
     var is_debuff = effect_desc.contains("Slow") or effect_desc.contains("Root") or effect_desc.contains("Stun") or effect_desc.contains("Debuff_") or effect_desc.contains("Reduce")
     
-    # Anlık heal (self-target olmayan) veya değersiz (debuff olmayan) yetenekleri atla
     if (is_heal and not DOT_HOTS_SKILLS.has(skill_id)) or (value <= 0.0 and not is_debuff):
         print("World: Anlık heal veya değersiz (debuff olmayan) yetenek atlandı: ", skill_id)
         return 
@@ -286,7 +413,6 @@ func _on_player_skill_executed(skill_id, value, is_heal, effect_desc, target_or_
     if not use_aoe_logic and (effect_desc == "Alan Slow"):
         use_aoe_logic = true
     
-    
     if use_aoe_logic:
         # --- AOE VE AOE-DOT/HOT MANTIĞI ---
         _spawn_skill_effect(player_pos, class_color.lightened(0.3))
@@ -296,9 +422,15 @@ func _on_player_skill_executed(skill_id, value, is_heal, effect_desc, target_or_
             if enemy.is_alive and enemy.has_method("apply_status_effect"):
                 var dist = player_pos.distance_to(enemy.global_position)
                 
-                if dist <= AOE_RANGE: 
+                if dist <= AOE_RANGE:
+                    # TARGETFRAME: AOE'de vurulan ilk düşmanı hedef yap
+                    # (Sadece mevcut bir hedefimiz yoksa ilk vurulanı kilitle)
+                    if hit_count == 0 and hud != null and not is_instance_valid(player_instance.current_target):
+                        print("WORLD: TargetFrame AOE ->", enemy.name)
+                        player_instance.current_target = enemy # Oyuncunun hedefini de ayarla
+                        hud.set_target_from_node(enemy)
+
                     if is_dot:
-                        # Not: is_heal (false) olarak gidiyor, enemy.gd bunu reddedecek.
                         enemy.apply_status_effect(skill_id, value, DOT_DURATION, DOT_TICK_RATE, is_heal)
                     elif not is_dot:
                         enemy.receive_skill_damage(value)
@@ -313,9 +445,26 @@ func _on_player_skill_executed(skill_id, value, is_heal, effect_desc, target_or_
 
     else:
         # --- TEK HEDEF MANTIĞI (DoT ve Anlık Hasar) ---
-        var target_enemy = _find_nearest_target(player_pos, DEFAULT_SKILL_RANGE, enemies)
         
-        if target_enemy != null:
+        # ÖNCE: Oyuncunun kilitli bir hedefi var mı? (Tıklayarak veya Tab ile seçtiği)
+        var target_enemy = player_instance.current_target
+        
+        # EĞER YOKSA: En yakındakini bul
+        if not is_instance_valid(target_enemy):
+            target_enemy = _find_nearest_target(player_pos, DEFAULT_SKILL_RANGE, enemies)
+        
+        if is_instance_valid(target_enemy):
+            # Menzil dışındaysa yine de vurma
+            if player_pos.distance_to(target_enemy.global_position) > DEFAULT_SKILL_RANGE:
+                print("HASAR BAŞARISIZ: Kilitli hedef menzil dışında (", target_enemy.enemy_name, ").")
+                return
+
+            # TARGETFRAME: Tek hedef skillde hedefi set et (zaten kilitli değilse)
+            if hud != null and player_instance.current_target != target_enemy:
+                print("WORLD: TargetFrame OTOMATİK ->", target_enemy.name)
+                player_instance.current_target = target_enemy
+                hud.set_target_from_node(target_enemy)
+
             _spawn_skill_effect(target_enemy.global_position, class_color)
             
             if is_dot:
@@ -346,6 +495,7 @@ func _find_nearest_target(origin_pos: Vector2, range: float, enemies: Array):
                 
     return target_enemy
 
+
 # YARDIMCI FONKSİYON: Efekt metnini ayrıştırır ve düşmana debuff uygular
 func _apply_enemy_debuffs(enemy_node, effect_desc: String):
     if not enemy_node.has_method("apply_debuff"):
@@ -354,7 +504,7 @@ func _apply_enemy_debuffs(enemy_node, effect_desc: String):
     # 1. YAVAŞLATMA (Slow)
     if effect_desc.contains("Slow"):
         var parts = effect_desc.split(" ")
-        var slow_amount_percent = 40.0 # Varsayılan
+        var slow_amount_percent = 40.0
         
         for part in parts:
             if part.ends_with("%") and part.begins_with("Slow"):
@@ -362,20 +512,20 @@ func _apply_enemy_debuffs(enemy_node, effect_desc: String):
                 if value_str.is_valid_float():
                     slow_amount_percent = value_str.to_float()
                     
-        var slow_amount = slow_amount_percent / 100.0 # 40.0 -> 0.4
-        enemy_node.apply_debuff("Slow", 3.0, slow_amount) # Süreyi 3sn varsayalım
+        var slow_amount = slow_amount_percent / 100.0
+        enemy_node.apply_debuff("Slow", 3.0, slow_amount)
         print("DEBUFF UYGULANDI: ", enemy_node.enemy_name, " yavaşladı: ", slow_amount)
 
     # 2. SABİTLEME (Root)
     if effect_desc.contains("Root"):
         var parts = effect_desc.split(" ")
-        var duration = 1.5 # Varsayılan
+        var duration = 1.5
         
         for part in parts:
             if part.ends_with("s") and part.begins_with("Root"):
                 var value_str = part.trim_prefix("Root").trim_suffix("s")
                 if value_str.is_valid_float():
-                    duration = value_str.to_float() # 1.5
+                    duration = value_str.to_float()
                     break
                     
         enemy_node.apply_debuff("Root", duration)
@@ -384,57 +534,90 @@ func _apply_enemy_debuffs(enemy_node, effect_desc: String):
     # 3. SERSEMLETME (Stun) / ZAYIF SERSEMLETME
     if effect_desc.contains("Stun") or effect_desc.contains("Sersemletme"):
         var parts = effect_desc.split(" ")
-        var duration = 0.8 # Varsayılan
+        var duration = 0.8
         
         for part in parts:
             if part.ends_with("s") and (part.begins_with("Stun") or part.begins_with("Sersemletme")):
                 var value_str = part.trim_prefix("Stun").trim_prefix("Sersemletme").trim_suffix("s")
                 if value_str.is_valid_float():
-                    duration = value_str.to_float() # 0.8
+                    duration = value_str.to_float()
                     break
                     
-        enemy_node.apply_debuff("Root", duration) # Stun = Root (enemy.gd'ye göre)
+        enemy_node.apply_debuff("Root", duration)
         print("DEBUFF UYGULANDI: ", enemy_node.enemy_name, " sersemledi: ", duration, "s")
     
     # 4. STAT DÜŞÜRME (Atk/Def Reduce)
     if effect_desc.contains("Debuff_AtkDef") or effect_desc.contains("Atk Reduce") or effect_desc.contains("Atk Düşürme") or effect_desc.contains("Def Düşürme"):
-        enemy_node.apply_debuff("Debuff_AtkDef", 8.0) # 8sn varsayalım
+        enemy_node.apply_debuff("Debuff_AtkDef", 8.0)
         print("DEBUFF UYGULANDI: ", enemy_node.enemy_name, " zayıfladı (Atk/Def)")
     
     # 5. İYİLEŞME AZALTMA (Heal Reduce)
     if effect_desc.contains("Heal Reduce"):
-        enemy_node.apply_debuff("Heal_Reduce", 10.0, 0.5) # 10sn, %50 azaltma varsayalım
+        enemy_node.apply_debuff("Heal_Reduce", 10.0, 0.5)
         print("DEBUFF UYGULANDI: ", enemy_node.enemy_name, " iyileşme azaltması aldı.")
         
-    # 6. YENİ: ZIRH KIRMA (Armor Shred)
+    # 6. ZIRH KIRMA (Armor Shred)
     if effect_desc.contains("Zırh Kırma") or effect_desc.contains("Zırh Delme"):
         var parts = effect_desc.split(" ")
-        var shred_amount = 25.0 # Varsayılan
+        var shred_amount = 25.0
         
         for part in parts:
             if part.ends_with("%"):
                 var value_str = part.trim_suffix("%")
                 if value_str.is_valid_float():
-                    shred_amount = value_str.to_float() # 25.0
+                    shred_amount = value_str.to_float()
                     break
         
-        enemy_node.apply_debuff("Armor_Shred", 8.0, shred_amount / 100.0) # 8sn, 0.25
+        enemy_node.apply_debuff("Armor_Shred", 8.0, shred_amount / 100.0)
         print("DEBUFF UYGULANDI: ", enemy_node.enemy_name, " zırhı kırıldı: %", shred_amount)
 
-    # 7. YENİ: İŞARETLEME (Marked)
-    if effect_desc.contains("Hedef İşaretle"): # falcon_mark
-        enemy_node.apply_debuff("Marked", 10.0, 0.15) # 10sn, %15 fazla hasar
+    # 7. İŞARETLEME (Marked)
+    if effect_desc.contains("Hedef İşaretle"):
+        enemy_node.apply_debuff("Marked", 10.0, 0.15)
         print("DEBUFF UYGULANDI: ", enemy_node.enemy_name, " işaretlendi!")
         
-    # 8. YENİ: SADECE ATK DÜŞÜRME (Debuff_Atk)
-    if effect_desc == "Debuff_Atk": # requiem_of_weakness
-        enemy_node.apply_debuff("Debuff_Atk", 8.0, 0.20) # 8sn, %20 az hasar
+    # 8. SADECE ATK DÜŞÜRME (Debuff_Atk)
+    if effect_desc == "Debuff_Atk":
+        enemy_node.apply_debuff("Debuff_Atk", 8.0, 0.20)
         print("DEBUFF UYGULANDI: ", enemy_node.enemy_name, " saldırı gücü düştü!")
         
-    # 9. YENİ: CRIT DÜŞÜRME (Debuff_Crit)
-    if effect_desc == "Debuff_Crit": # dirge_of_shadows
+    # 9. CRIT DÜŞÜRME (Debuff_Crit)
+    if effect_desc == "Debuff_Crit":
         enemy_node.apply_debuff("Debuff_Crit", 8.0)
         print("DEBUFF UYGULANDI: ", enemy_node.enemy_name, " kritik şansı düştü!")
+
+
+# --- YENİ YARDIMCI FONKSİYON: DÜŞMANLARI MESAFEYE GÖRE SIRALAR ---
+# sort_custom için bir karşılaştırıcı (comparator) fonksiyonu
+# 'a' ve 'b' iki düşman (enemy) node'udur.
+func _sort_by_distance_to_player(a, b):
+    if not is_instance_valid(player_instance):
+        return false # Oyuncu yoksa sıralama yapma
+    
+    var player_pos = player_instance.global_position
+    # (distance_squared_to kullanmak, kök alma (sqrt) işleminden 
+    #  kaçındığı için daha hızlıdır ve sıralama için yeterlidir)
+    var dist_a = player_pos.distance_squared_to(a.global_position)
+    var dist_b = player_pos.distance_squared_to(b.global_position)
+    
+    return dist_a < dist_b
+# ----------------------------------------------------------------
+# --- YENİ EKLENDİ: EŞYA DÜŞÜRME FONKSİYONU ---
+# enemy.gd'deki die() fonksiyonu bu fonksiyonu çağırır
+func drop_item_at(item_data: Dictionary, position: Vector2):
+    if item_data.is_empty():
+        return
         
-    # TODO: "Stun Şansı", "Cast Kesme", "Kafes" gibi daha karmaşık mekanikler
-    # henüz eklenmedi.
+    # 1. LootBag sahnesini oluştur
+    var loot_bag = LOOT_SCENE.instantiate()
+    
+    # 2. Pozisyonunu ayarla (üst üste binmesinler diye hafif rastgele)
+    loot_bag.global_position = position + Vector2(randf_range(-15, 15), randf_range(-15, 15))
+    
+    # 3. loot.gd'ye hangi eşya olduğunu söyle
+    loot_bag.set_item(item_data)
+    
+    # 4. Sahnemize (World) ekle
+    #    (Eğer YSort kullanıyorsan $YSort.add_child(loot_bag) daha iyi olabilir)
+    add_child(loot_bag)
+# --- FONKSİYON SONU ---

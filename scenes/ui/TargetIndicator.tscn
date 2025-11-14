@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://bccylipfomovb"]
+
+[ext_resource type="Texture2D" uid="uid://dn0rrkesj83uk" path="res://assets/skill_effects/magic_02.png" id="1_2lmue"]
+
+[node name="TargetIndicator" type="Sprite2D"]
+modulate = Color(1, 1, 1, 0.21568628)
+texture = ExtResource("1_2lmue")

@@ -1,7 +1,8 @@
-[gd_scene load_steps=106 format=3 uid="uid://cww50tg37rxo8"]
+[gd_scene load_steps=107 format=3 uid="uid://cww50tg37rxo8"]
 
 [ext_resource type="Script" uid="uid://c6qerxqyastee" path="res://scripts/player.gd" id="1_onrkg"]
 [ext_resource type="Texture2D" uid="uid://rmg6k5f3pre8" path="res://assets/sprites/animations/elementalist_universal.png" id="2_um1gy"]
+[ext_resource type="PackedScene" uid="uid://l5k315b17od4" path="res://scenes/ui/OverheadDisplay.tscn" id="3_llsfi"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wsbjk"]
 atlas = ExtResource("2_um1gy")
@@ -794,5 +795,7 @@ collision_mask = 5
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackHitbox"]
 position = Vector2(0, 4)
 shape = SubResource("RectangleShape2D_i3pqv")
+
+[node name="OverheadDisplay" parent="." instance=ExtResource("3_llsfi")]
 
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]

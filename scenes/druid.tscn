@@ -1,7 +1,8 @@
-[gd_scene load_steps=102 format=3 uid="uid://dgr0sltcuru5d"]
+[gd_scene load_steps=103 format=3 uid="uid://dgr0sltcuru5d"]
 
 [ext_resource type="Script" uid="uid://c6qerxqyastee" path="res://scripts/player.gd" id="1_onrkg"]
 [ext_resource type="Texture2D" uid="uid://d21e310gi0kcb" path="res://assets/sprites/animations/druid_universal.png" id="2_3abc4"]
+[ext_resource type="PackedScene" uid="uid://l5k315b17od4" path="res://scenes/ui/OverheadDisplay.tscn" id="3_h7bar"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_h7bar"]
 atlas = ExtResource("2_3abc4")
@@ -766,5 +767,7 @@ collision_mask = 5
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackHitbox"]
 position = Vector2(0, 4)
 shape = SubResource("RectangleShape2D_i3pqv")
+
+[node name="OverheadDisplay" parent="." instance=ExtResource("3_h7bar")]
 
 [connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]

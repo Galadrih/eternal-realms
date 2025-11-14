@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://c4h31yaak0pmj"]
+
+[ext_resource type="Script" uid="uid://dquknvvi5r6ag" path="res://scripts/loot.gd" id="1_38vg6"]
+[ext_resource type="Texture2D" uid="uid://dcbycufpqj18y" path="res://assets/icons/default_loot_bag.png" id="2_baxok"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_o0pg5"]
+radius = 769.12744
+
+[node name="LootBag" type="Area2D" groups=["loot"]]
+collision_layer = 0
+script = ExtResource("1_38vg6")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_baxok")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_o0pg5")

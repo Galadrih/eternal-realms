@@ -2,14 +2,7 @@
 
 [ext_resource type="Script" uid="uid://digfyc84f6q1t" path="res://scripts/damage_number.gd" id="1_jany0"]
 
-[node name="DamageNumber" type="Node2D"]
+[node name="DamageNumber" type="Label"]
+offset_right = 1.0
+offset_bottom = 23.0
 script = ExtResource("1_jany0")
-
-[node name="Label" type="Label" parent="."]
-offset_left = -25.0
-offset_top = -15.0
-offset_right = 15.0
-offset_bottom = 8.0
-text = "10"
-horizontal_alignment = 1
-vertical_alignment = 1

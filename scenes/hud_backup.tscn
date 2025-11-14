@@ -1,0 +1,84 @@
+[gd_scene load_steps=7 format=3 uid="uid://qo603gmt0umb"]
+
+[ext_resource type="Script" uid="uid://dknhlmqxyar17" path="res://scripts/hud.gd" id="1_a1stp"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_br27j"]
+bg_color = Color(0.14901961, 0.14901961, 0.14901961, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.26666668, 0.26666668, 0.26666668, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uvfaq"]
+bg_color = Color(0.0627451, 0.0627451, 0.0627451, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_58i2e"]
+bg_color = Color(0.12156863, 0.6862745, 0.2901961, 1)
+corner_detail = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s8ksn"]
+bg_color = Color(0.24705882, 0.56078434, 1, 1)
+corner_detail = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l24bc"]
+bg_color = Color(0.95686275, 0.7529412, 0.28235295, 1)
+corner_detail = 4
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_a1stp")
+
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PlayerFrame" type="PanelContainer" parent="Root"]
+layout_mode = 1
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 280.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_br27j")
+
+[node name="Content" type="HBoxContainer" parent="Root/PlayerFrame"]
+layout_mode = 2
+
+[node name="ClassIcon" type="TextureRect" parent="Root/PlayerFrame/Content"]
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+stretch_mode = 5
+
+[node name="InfoAndBars" type="VBoxContainer" parent="Root/PlayerFrame/Content"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="NameLabel" type="Label" parent="Root/PlayerFrame/Content/InfoAndBars"]
+layout_mode = 2
+text = "Lv.1 Deneme"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HealthBar" type="ProgressBar" parent="Root/PlayerFrame/Content/InfoAndBars"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_uvfaq")
+theme_override_styles/fill = SubResource("StyleBoxFlat_58i2e")
+value = 75.0
+
+[node name="ManaBar" type="ProgressBar" parent="Root/PlayerFrame/Content/InfoAndBars"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_uvfaq")
+theme_override_styles/fill = SubResource("StyleBoxFlat_s8ksn")
+value = 75.0
+
+[node name="ExpBar" type="ProgressBar" parent="Root/PlayerFrame/Content/InfoAndBars"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_uvfaq")
+theme_override_styles/fill = SubResource("StyleBoxFlat_l24bc")
+value = 75.0

@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=3 uid="uid://l5k315b17od4"]
+
+[ext_resource type="Script" uid="uid://cp5rpsn4lx12w" path="res://scripts/ui/OverheadDisplay.gd" id="1_g1hg0"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g1hg0"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0, 0.47194546, 8.663535e-07, 0.4)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 6
+
+[node name="OverheadDisplay" type="VBoxContainer"]
+offset_left = -30.0
+offset_top = -53.0
+offset_right = 30.0
+pivot_offset = Vector2(-30, 0)
+script = ExtResource("1_g1hg0")
+
+[node name="HealthBar" type="ProgressBar" parent="."]
+custom_minimum_size = Vector2(60, 8)
+layout_mode = 2
+theme_override_styles/fill = SubResource("StyleBoxFlat_g1hg0")
+value = 75.0
+show_percentage = false
+
+[node name="LevelLabel" type="Label" parent="."]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="NameLabel" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+vertical_alignment = 1

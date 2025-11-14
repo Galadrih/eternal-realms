@@ -1,7 +1,10 @@
 extends CharacterBody2D
 
-# --- YETENEK VERİTABANI (snake_case ID'ler ile güncellendi) ---
+# --- YETENEK VERİTABANI ---
 const SKILL_DATABASE = {
+
+
+
 # --- DRUID (0) - INT/WIS/FOC ---
     "vine_whip":		  { "cost": 15, "cd": 4.0, "base_dmg": 65,  "scale_stat": "INT", "scale_ratio": 0.60, "is_damage": true, "is_heal": false, "effect": "Slow 40%" },
     "rejuvenate":		 { "cost": 20, "cd": 8.0, "base_dmg": 30,  "scale_stat": "WIS", "scale_ratio": 0.50, "is_damage": false, "is_heal": true, "effect": "HoT" },
@@ -14,7 +17,6 @@ const SKILL_DATABASE = {
     "bloom_field":		{ "cost": 35, "cd": 18.0, "base_dmg": 28,  "scale_stat": "WIS", "scale_ratio": 0.45, "is_damage": false, "is_heal": true, "effect": "AoE HoT + Slow" },
     "rot_pulse":		  { "cost": 45, "cd": 25.0, "base_dmg": 90,  "scale_stat": "INT", "scale_ratio": 0.80, "is_damage": true, "is_heal": false, "effect": "AoE DoT + Atk Reduce" },
     "natures_grasp":	  { "cost": 30, "cd": 15.0, "base_dmg": 40,  "scale_stat": "INT", "scale_ratio": 0.40, "is_damage": true, "is_heal": false, "effect": "Dash + Root 1s" },
-    
 # --- BERSERKER (1) - STR/VIT/DEX ---
     "rage_slash":		 { "cost": 0,  "cd": 4.0, "base_dmg": 110, "scale_stat": "STR", "scale_ratio": 1.40, "is_damage": true, "is_heal": false, "effect": "Yüksek Hasar" },
     "frenzied_combo":	 { "cost": 10, "cd": 6.0, "base_dmg": 55,  "scale_stat": "STR", "scale_ratio": 0.60, "is_damage": true, "is_heal": false, "effect": "3 Vuruş + Stun Şansı" },
@@ -26,7 +28,6 @@ const SKILL_DATABASE = {
     "bone_breaker":	   { "cost": 25, "cd": 18.0, "base_dmg": 150, "scale_stat": "STR", "scale_ratio": 1.60, "is_damage": true, "is_heal": false, "effect": "Yüksek Burst + Zırh Kırma 25%" },
     "adrenal_surge":	  { "cost": 0,  "cd": 30.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Buff_AtkSpeed" },
     "reckless_fury":	  { "cost": 15, "cd": 15.0, "base_dmg": 60,  "scale_stat": "STR", "scale_ratio": 0.70, "is_damage": true, "is_heal": false, "effect": "Döner Alan Hasarı" },
-
 # --- ELEMENTALIST (2) - INT/FOC/WIS ---
     "fire_bolt":		  { "cost": 12, "cd": 3.0, "base_dmg": 85,  "scale_stat": "INT", "scale_ratio": 1.00, "is_damage": true, "is_heal": false, "effect": "Burn DoT" },
     "frost_shard":		{ "cost": 15, "cd": 4.0, "base_dmg": 70,  "scale_stat": "INT", "scale_ratio": 0.90, "is_damage": true, "is_heal": false, "effect": "Slow 40%" },
@@ -38,7 +39,6 @@ const SKILL_DATABASE = {
     "meteor_fall":		{ "cost": 60, "cd": 45.0, "base_dmg": 160, "scale_stat": "INT", "scale_ratio": 1.80, "is_damage": true, "is_heal": false, "effect": "Geniş AoE Burst" },
     "magma_burst":		{ "cost": 45, "cd": 20.0, "base_dmg": 120, "scale_stat": "INT", "scale_ratio": 1.40, "is_damage": true, "is_heal": false, "effect": "Noktasal Patlama" },
     "elemental_surge":	{ "cost": 50, "cd": 60.0, "base_dmg": 0,  "scale_stat": "INT", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Element Hasarını Artır" },
-
 # --- MONK (3) - DEX/FOC/VIT ---
     "spirit_jab":		 { "cost": 5,  "cd": 1.5, "base_dmg": 55,  "scale_stat": "DEX", "scale_ratio": 0.70, "is_damage": true, "is_heal": false, "effect": "Hızlı Vuruş" },
     "palm_of_serenity":   { "cost": 10, "cd": 4.0, "base_dmg": 70,  "scale_stat": "DEX", "scale_ratio": 0.80, "is_damage": true, "is_heal": false, "effect": "Geri İtiş" },
@@ -50,7 +50,6 @@ const SKILL_DATABASE = {
     "spirit_step":		{ "cost": 20, "cd": 12.0, "base_dmg": 40,  "scale_stat": "FOC", "scale_ratio": 0.60, "is_damage": true, "is_heal": false, "effect": "Gölge Adımı + Hasar" },
     "pressure_point":	 { "cost": 10, "cd": 8.0, "base_dmg": 50,  "scale_stat": "DEX", "scale_ratio": 0.50, "is_damage": true, "is_heal": false, "effect": "Düşman Atk Düşürme" },
     "way_of_the_lotus":   { "cost": 30, "cd": 45.0, "base_dmg": 0,  "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Chi Tüketimi Bonusu" },
-
 # --- CRUSADER (4) - VIT/STR/WIS ---
     "holy_strike":		{ "cost": 10, "cd": 3.0, "base_dmg": 70,  "scale_stat": "STR", "scale_ratio": 0.90, "is_damage": true, "is_heal": false, "effect": "Kutsal Hasar" },
     "shield_bash":		{ "cost": 15, "cd": 6.0, "base_dmg": 55,  "scale_stat": "STR", "scale_ratio": 0.60, "is_damage": true, "is_heal": false, "effect": "Stun 0.8s" },
@@ -62,7 +61,6 @@ const SKILL_DATABASE = {
     "light_of_retribution":{ "cost": 0,  "cd": 60.0, "base_dmg": 120, "scale_stat": "STR", "scale_ratio": 0.0,  "is_damage": true, "is_heal": false, "effect": "Low HP Patlaması" },
     "hammer_of_conviction":{ "cost": 25, "cd": 18.0, "base_dmg": 140, "scale_stat": "STR", "scale_ratio": 1.50, "is_damage": true, "is_heal": false, "effect": "Zırh Kırma 25%" },
     "aegis_of_faith":	 { "cost": 40, "cd": 45.0, "base_dmg": 0,  "scale_stat": "VIT", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "DMG Reduce" },
-
 # --- WARDEN (5) - DEX/STR/VIT ---
     "summon_companion":   { "cost": 40, "cd": 30.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Kurt/Ayı/Kartal Çağır" },
     "ferocity_strike":	{ "cost": 10, "cd": 4.0, "base_dmg": 80,  "scale_stat": "STR", "scale_ratio": 0.90, "is_damage": true, "is_heal": false, "effect": "Mini Stun" },
@@ -75,7 +73,6 @@ const SKILL_DATABASE = {
     "twin_fang":		  { "cost": 15, "cd": 6.0, "base_dmg": 60,  "scale_stat": "STR", "scale_ratio": 0.70, "is_damage": true, "is_heal": false, "effect": "Warden + Pet Ortak Vuruş" },
     "guardian_of_the_forest":{ "cost": 50, "cd": 40.0, "base_dmg": 0,  "scale_stat": "VIT", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Toprak Golemi Çağır" },
     "primal_focus":	   { "cost": 30, "cd": 35.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Warden Atk + Pet Hasar Buff" },
-
 # --- DRAGON KNIGHT (6) - VIT/STR/FOC ---
     "flame_strike":	   { "cost": 15, "cd": 4.0, "base_dmg": 90,  "scale_stat": "STR", "scale_ratio": 1.10, "is_damage": true, "is_heal": false, "effect": "Burn DoT" },
     "winged_leap":		{ "cost": 25, "cd": 8.0, "base_dmg": 100, "scale_stat": "STR", "scale_ratio": 1.20, "is_damage": true, "is_heal": false, "effect": "AoE Zıplama" },
@@ -88,7 +85,6 @@ const SKILL_DATABASE = {
     "infernal_charge":	{ "cost": 25, "cd": 10.0, "base_dmg": 95,  "scale_stat": "STR", "scale_ratio": 1.10, "is_damage": true, "is_heal": false, "effect": "Çizgisel Atak" },
     "ember_rebirth":	  { "cost": 0,  "cd": 90.0, "base_dmg": 0,  "scale_stat": "VIT", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Ölümü Atlama" },
     "heart_of_the_dragon":{ "cost": 50, "cd": 60.0, "base_dmg": 0,  "scale_stat": "VIT", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Atk/Direnç Buff" },
-
 # --- WARLOCK (7) - INT/FOC/WIS ---
     "dark_bolt":		  { "cost": 15, "cd": 3.0, "base_dmg": 80,  "scale_stat": "INT", "scale_ratio": 1.00, "is_damage": true, "is_heal": false, "effect": "Temel Büyü Hasarı" },
     "curse_of_agony":	 { "cost": 25, "cd": 8.0, "base_dmg": 140, "scale_stat": "INT", "scale_ratio": 1.50, "is_damage": true, "is_heal": false, "effect": "Artan DoT" },
@@ -100,7 +96,6 @@ const SKILL_DATABASE = {
     "hellfire_orb":	   { "cost": 35, "cd": 15.0, "base_dmg": 120, "scale_stat": "INT", "scale_ratio": 1.40, "is_damage": true, "is_heal": false, "effect": "Alan Patlaması" },
     "soul_rift":		  { "cost": 45, "cd": 20.0, "base_dmg": 100, "scale_stat": "INT", "scale_ratio": 1.20, "is_damage": true, "is_heal": false, "effect": "Çekim Alanı + Patlama" },
     "demonic_ascension":  { "cost": 60, "cd": 70.0, "base_dmg": 0,  "scale_stat": "INT", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Büyü Hasarı/Leech Buff" },
-
 # --- CLERIC (8) - WIS/FOC/VIT ---
     "holy_light":		 { "cost": 25, "cd": 4.0, "base_dmg": 100, "scale_stat": "WIS", "scale_ratio": 1.30, "is_damage": false, "is_heal": true, "effect": "Anlık Tek Hedef Heal" },
     "purify":			 { "cost": 15, "cd": 6.0, "base_dmg": 40,  "scale_stat": "WIS", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Negatif Etki Temizle + Kalkan" }, 
@@ -112,7 +107,6 @@ const SKILL_DATABASE = {
     "beacon_of_hope":	 { "cost": 30, "cd": 18.0, "base_dmg": 30,  "scale_stat": "WIS", "scale_ratio": 0.50, "is_damage": false, "is_heal": true, "effect": "AoE HoT" },
     "hymn_of_serenity":   { "cost": 20, "cd": 15.0, "base_dmg": 0,  "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Takım MP Regen Buff" },
     "judgment_of_light":  { "cost": 25, "cd": 7.0, "base_dmg": 80,  "scale_stat": "INT", "scale_ratio": 0.0,  "is_damage": true, "is_heal": true, "effect": "Hasar + Yakın Heal" },
-
 # --- BARD (9) - FOC/WIS/DEX ---
     "song_of_courage":	{ "cost": 10, "cd": 5.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Buff_Atk" },
     "requiem_of_weakness":{ "cost": 15, "cd": 8.0, "base_dmg": 0,  "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Debuff_Atk" },
@@ -124,7 +118,6 @@ const SKILL_DATABASE = {
     "dirge_of_shadows":   { "cost": 25, "cd": 15.0, "base_dmg": 0,  "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Debuff_Crit" },
     "aria_of_restoration":{ "cost": 10, "cd": 5.0, "base_dmg": 0,  "scale_stat": "WIS", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Takım MP Regen Buff" },
     "crescendo_finale":   { "cost": 50, "cd": 60.0, "base_dmg": 120, "scale_stat": "FOC", "scale_ratio": 0.0,  "is_damage": true, "is_heal": false, "effect": "Final Vuruşu + Kalkan" },
-
 # --- NECROMANCER (10) - INT/FOC/WIS ---
     "bone_spear":		 { "cost": 20, "cd": 4.0, "base_dmg": 95,  "scale_stat": "INT", "scale_ratio": 1.10, "is_damage": true, "is_heal": false, "effect": "Delici Hasar" },
     "soul_rot":		   { "cost": 30, "cd": 8.0, "base_dmg": 160, "scale_stat": "INT", "scale_ratio": 1.70, "is_damage": true, "is_heal": false, "effect": "Yüksek DoT" },
@@ -136,7 +129,6 @@ const SKILL_DATABASE = {
     "plague_field":	   { "cost": 45, "cd": 15.0, "base_dmg": 140, "scale_stat": "INT", "scale_ratio": 1.50, "is_damage": true, "is_heal": false, "effect": "AoE DoT + Heal Reduce" },
     "summon_abomination": { "cost": 50, "cd": 40.0, "base_dmg": 100, "scale_stat": "INT", "scale_ratio": 1.20, "is_damage": false, "is_heal": false, "effect": "Tank Minion Çağır" }, 
     "ritual_of_sacrifice":{ "cost": 0,  "cd": 60.0, "base_dmg": 70,  "scale_stat": "INT", "scale_ratio": 0.90, "is_damage": true, "is_heal": false, "effect": "Minionları Patlat + Self Buff" },
-
 # --- RANGER (11) - DEX/FOC/VIT ---
     "power_shot":		 { "cost": 15, "cd": 4.0, "base_dmg": 105, "scale_stat": "DEX", "scale_ratio": 1.20, "is_damage": true, "is_heal": false, "effect": "Zırh Delme 20%" },
     "multi_arrow":		{ "cost": 10, "cd": 3.0, "base_dmg": 45,  "scale_stat": "DEX", "scale_ratio": 0.60, "is_damage": true, "is_heal": false, "effect": "3 Ok" },
@@ -149,6 +141,9 @@ const SKILL_DATABASE = {
     # DÜZELTME: Yazım hatası (Typo) "camuflage" -> "ranger_camouflage" olarak düzeltildi.
     "ranger_camouflage":  { "cost": 0,  "cd": 20.0, "base_dmg": 0,  "scale_stat": "DEX", "scale_ratio": 0.0,  "is_damage": false, "is_heal": false, "effect": "Gizlilik + Crit Şansı" },
     "arrow_storm":		{ "cost": 40, "cd": 30.0, "base_dmg": 40,  "scale_stat": "DEX", "scale_ratio": 0.50, "is_damage": true, "is_heal": false, "effect": "Geniş AoE Ok Yağmuru" },
+
+
+
 }
 
 # --- YETENEK COOLDOWN YÖNETİMİ ---
@@ -163,7 +158,7 @@ signal stats_updated(stats_payload)
 signal skill_executed(skill_id, value, is_heal, effect, target_or_position) 
 signal invisibility_changed(is_now_invisible) # GÖRÜNMEZLİK SİNYALİ
 
-# --- STATLAR (Aynı) ---
+# --- STATLAR (TEMEL DEĞERLER) ---
 var base_health: int = 80
 var base_mana: int = 30
 var hp_per_level: int = 10
@@ -182,6 +177,8 @@ var experience: int = 0
 var experience_to_next_level: int = 100
 var manual_points_available: int = 0 
 
+# --- HESAPLANMIŞ (COMPUTED) STATLAR ---
+# Bu değerler recalculate_derived_stats() tarafından doldurulur
 var computed_max_health: int = 100
 var computed_max_mana: int = 50
 var computed_physical_attack_power: int = 10 
@@ -198,13 +195,16 @@ var computed_hp_regen: float = 0.0
 var computed_mp_regen: float = 0.0
 var computed_debuff_resist: float = 0.0
 var computed_debuff_success: float = 0.0
-var computed_dmg_reduction: float = 0.0 # (Örn: Aegis of Faith)
-var computed_thorns_base_dmg: int = 0 # (Örn: Thorn Armor)
-var computed_thorns_scale_stat: String = "" # (Örn: "INT")
-var computed_thorns_scale_ratio: float = 0.0 # (Örn: 0.25)
+var computed_dmg_reduction: float = 0.0
+var computed_thorns_base_dmg: int = 0
+var computed_thorns_scale_stat: String = ""
+var computed_thorns_scale_ratio: float = 0.0
 
 var class_id: int = 0 
 var is_invisible: bool = false # GÖRÜNMEZLİK DURUMU
+
+var equipped_items: Dictionary = {}          # slot_name -> item dict
+var equipment_bonus_stats: Dictionary = {}   # stat_key -> toplam değer
 
 # --- YENİ DOT/HOT/BUFF SİSTEMİ ---
 var active_statuses: Dictionary = {} # DoT, HoT ve Buff/Debuff'ları tutar
@@ -221,6 +221,11 @@ func _process(delta):
         active_cooldowns.erase(skill_id)
         
     _tick_statuses(delta) # Player'ın HoT/DoT ve Buff/Debuff'larını işle
+  
+    # HUD BuffPanel güncellemesi
+    var hud = get_tree().get_first_node_in_group("hud")
+    if hud and hud.has_method("update_buff_panel"):
+        hud.update_buff_panel(active_statuses, SKILL_DATABASE, class_id)
 
 # YENİ FONKSİYON: Player'ın HoT/DoT ve Buff/Debuff'larını Uygular
 func _tick_statuses(delta):
@@ -294,39 +299,31 @@ func apply_buff_debuff(skill_id: String, duration: float, effect_type: String):
     
 
 func _ready():
-    # Godot'ta PlayerData singleton'unun var olduğunu varsayıyorum
     if has_node("/root/PlayerData"):
         class_id = get_node("/root/PlayerData").character_class_id
-    recalculate_derived_stats()
+    
+    recalculate_derived_stats() # DÜZELTME: Bu fonksiyon artık sinyali kendisi gönderiyor
     set_health(computed_max_health)
     set_mana(computed_max_mana)
     add_to_group("player_character") 
-    emit_full_stat_update()
+    # DÜZELTME: 'emit_full_stat_update()' SİLİNDİ. (recalculate_derived_stats hallediyor)
 
 # --- EKSİK FONKSİYONLAR (HoT/DoT için) ---
-# Bu fonksiyonlar olmadan _tick_statuses'daki call() komutları çalışmaz.
 func heal(amount: int, damage_color: Color):
-    if current_health <= 0: return # Zaten ölmüşse iyileştirme yapma
+    if current_health <= 0: return 
 
     set_health(current_health + amount)
     spawn_damage_number(amount, damage_color)
     print("PLAYER HoT Aldı: ", amount, ". Yeni Can: ", current_health)
 
 func take_damage(amount: int, damage_color: Color, attacker = null):
-    if current_health <= 0: return # Zaten ölmüşse hasar alma
+    if current_health <= 0: return 
     
-    # player.gd'deki take_damage hasar azaltma içerir,
-    # ancak bu DoT hasarı içindir, bu yüzden doğrudan set_health çağrılır.
     set_health(current_health - amount)
     spawn_damage_number(amount, damage_color)
     print("PLAYER DoT Aldı: ", amount, ". Kalan Can: ", current_health)
     
-# İyileştirme/Hasar sayılarını göstermek için (enemy.gd'den uyarlanmıştır)
 func spawn_damage_number(amount, color):
-    # Bu fonksiyon, player.gd'de override edilebilir (veya doğrudan burada kullanılır)
-    # Şimdilik, player.gd'de daha spesifik bir spawn_damage_number olduğunu varsayıyoruz.
-    # Bu yüzden player.gd'nin bunu override etmesine izin veriyoruz.
-    # Eğer player.gd'de bu fonksiyon olmasaydı, bu çalışırdı.
     if get_parent().has_method("spawn_damage_number_on_effect_layer"):
         get_parent().spawn_damage_number_on_effect_layer(amount, color, global_position + Vector2(0, -35))
     else:
@@ -383,8 +380,12 @@ func increase_stat(stat_name: String):
         "FOC": foc += 1
             
     recalculate_derived_stats()
-    emit_full_stat_update() 
+    # DÜZELTME: 'emit_full_stat_update()' SİLİNDİ. (recalculate_derived_stats hallediyor)
 
+
+# =======================================================================
+# --- ANA STAT HESAPLAMA FONKSİYONU (TAMAMEN GÜNCELLENDİ) ---
+# =======================================================================
 func recalculate_derived_stats():
     var old_max_hp = computed_max_health
     var old_max_mp = computed_max_mana
@@ -392,56 +393,79 @@ func recalculate_derived_stats():
     # --- GÖRÜNMEZLİK KONTROLÜ (ADIM 1) ---
     var was_invisible = is_invisible
     is_invisible = false # Her hesaplamada sıfırla
-    # ------------------------------------
   
-    # --- 1. ADIM: Temel Statları Hesapla (Buff'sız) ---
-    computed_max_health = int( (base_health + (hp_per_level * (level - 1))) + (vit * 18) + (str * 4) )
-    computed_max_mana = int( (base_mana + (mp_per_level * (level - 1))) + (foc * 15) + (intel * 5) )
+    # --- 1. ADIM: TEMEL STATLARI VE EKİPMANLARI TOPLA ---
+    # (DÜZELTME: Ekipmandan gelen temel statları al)
+    var total_str = str + get_equipment_bonus("STR")
+    var total_dex = dex + get_equipment_bonus("DEX")
+    var total_vit = vit + get_equipment_bonus("VIT")
+    var total_intel = intel + get_equipment_bonus("INT")
+    var total_wis = wis + get_equipment_bonus("WIS")
+    var total_foc = foc + get_equipment_bonus("FOC")
+    # ----------------------------------------------------
+
+    # --- 2. ADIM: STATLARI HESAPLA (Buff'sız) ---
+    # (DÜZELTME: 'str', 'vit' vb. yerine 'total_str', 'total_vit' kullan)
+    computed_max_health = int( (base_health + (hp_per_level * (level - 1))) + (total_vit * 18) + (total_str * 4) + get_equipment_bonus("HP") )
+    computed_max_mana = int( (base_mana + (mp_per_level * (level - 1))) + (total_foc * 15) + (total_intel * 5) + get_equipment_bonus("MP") )
     
     # Physical Attack Power (PAP)
     match class_id: 
-        1, 4, 6, 5: computed_physical_attack_power = str
-        11, 3: computed_physical_attack_power = dex
-        _: computed_physical_attack_power = str 
+        1, 4, 6, 5: computed_physical_attack_power = total_str
+        11, 3: computed_physical_attack_power = total_dex
+        _: computed_physical_attack_power = total_str 
     
     # Magical Attack Power (MAP)
-    computed_magical_attack_power = intel
+    computed_magical_attack_power = total_intel
     
     # Healing Power (HealP)
-    computed_healing_power = wis
+    computed_healing_power = total_wis # DÜZELTME: 'wis' yerine 'total_wis' kullan
+    
+    # --- DÜZELTME: Silahın kendi ham hasarını (RAW_ATK) ekle ---
+    var raw_weapon_damage = get_equipment_bonus("RAW_ATK")
+    computed_physical_attack_power += raw_weapon_damage
+    computed_magical_attack_power += raw_weapon_damage
+    # -----------------------------------------------------------
     
     # --- Diğer formüller (float kullanarak) ---
-    var pdef_rating = (vit * 1.0) + (str * 0.2)
-    var mdef_rating = (wis * 1.0) + (intel * 0.2)
+    # (DÜZELTME: 'str', 'vit' vb. yerine 'total_str', 'total_vit' kullan)
     
-    computed_pdef_percent = clampi(pdef_rating * 0.03, 0.0, 75.0)
-    computed_mdef_percent = clampi(mdef_rating * 0.03, 0.0, 75.0)
+    # --- DÜZELTME: Zırhların ham defansını (RAW_DEF) ekle ---
+    var raw_armor_defense = get_equipment_bonus("RAW_DEF")
+    var pdef_rating = (total_vit * 1.0) + (total_str * 0.2) + raw_armor_defense
+    var mdef_rating = (total_wis * 1.0) + (total_intel * 0.2) + raw_armor_defense
+    # ---------------------------------------------------------
     
-    computed_evasion = dex * 0.08
-    computed_aspd_bonus = dex * 0.2
-    computed_cspd_bonus = foc * 0.2
-    computed_pcrit_chance = 5.0 + (dex * 0.1)
-    computed_mcrit_chance = 5.0 + (foc * 0.1)
-    computed_hp_regen = 5.0 + (vit * 0.5)
-    computed_mp_regen = 5.0 + (wis * 0.7)
-    computed_debuff_resist = wis * 0.1
-    computed_debuff_success = foc * 0.1
+    computed_pdef_percent = clampi(pdef_rating * 0.03 + get_equipment_bonus("P_DEF"), 0.0, 75.0)
+    computed_mdef_percent = clampi(mdef_rating * 0.03 + get_equipment_bonus("M_DEF"), 0.0, 75.0)
+    
+    computed_evasion = total_dex * 0.08 + get_equipment_bonus("EVASION_BONUS")
+    computed_aspd_bonus = total_dex * 0.2 + get_equipment_bonus("ASPD_BONUS")
+    computed_cspd_bonus = total_foc * 0.2 + get_equipment_bonus("CSPD_BONUS")
+    computed_pcrit_chance = 5.0 + (total_dex * 0.1) + get_equipment_bonus("P_CRIT_BONUS")
+    computed_mcrit_chance = 5.0 + (total_foc * 0.1) + get_equipment_bonus("M_CRIT_BONUS")
+    computed_hp_regen = 5.0 + (total_vit * 0.5) + get_equipment_bonus("HP_REGEN")
+    computed_mp_regen = 5.0 + (total_wis * 0.7) + get_equipment_bonus("MP_REGEN")
+    computed_debuff_resist = total_wis * 0.1 # DÜZELTME: 'wis' yerine 'total_wis' kullan
+    computed_debuff_success = total_foc * 0.1 # DÜZELTME: 'foc' yerine 'total_foc' kullan
 
-    # --- 2. ADIM: BUFF DEĞERLERİNİ SIFIRLA (KRİTİK DÜZELTME) ---
+    # (DÜZELTME: ItemDatabase'deki düz bonusları ekle)
+    computed_physical_attack_power += get_equipment_bonus("PAP_BONUS")
+    computed_magical_attack_power += get_equipment_bonus("MAP_BONUS")
+    # (ItemDatabase'de HEAL_BONUS % olarak görünüyor, bu yüzden çarpma kullanıyoruz)
+    computed_healing_power *= (1.0 + (get_equipment_bonus("HEAL_BONUS") / 100.0))
+
+    # --- 3. ADIM: BUFF DEĞERLERİNİ SIFIRLA (KRİTİK DÜZELTME) ---
     computed_dmg_reduction = 0.0
     computed_thorns_base_dmg = 0
     computed_thorns_scale_stat = ""
     computed_thorns_scale_ratio = 0.0
-    # -----------------------------------------------------------
 
-    # --- 3. ADIM: Aktif Buff'ları Uygula ---
+    # --- 4. ADIM: Aktif Buff'ları Uygula ---
     for skill_id in active_statuses:
         var status = active_statuses[skill_id]
         if status.has("is_buff"):
-            # DİKKAT: Artık 'effect_type' doğrudan SKILL_DATABASE'deki 'effect' metnidir.
             match status.effect_type:
-                
-                # --- MEVCUT BUFF'LAR (EŞLEŞME GÜNCELLENDİ) ---
                 "Buff_Atk": # bloodletting, song_of_courage
                     computed_physical_attack_power *= 1.2 
                     print("Buff_Atk Aktif!")
@@ -478,14 +502,11 @@ func recalculate_derived_stats():
                     computed_pdef_percent += 10.0
                     computed_mdef_percent += 10.0
                     print("Buff_AtkDef Aktif!")
-                    
-                # --- EKSİK BUFF'LAR EKLENDİ ---
                 "Element Hasarını Artır": # elemental_surge
                     computed_magical_attack_power *= 1.25 # Örnek: +25% MAP
                     print("Elemental Surge Aktif!")
                 "Chi Tüketimi Bonusu": # way_of_the_lotus
-                    pass # TODO: Buraya Chi sistemi bağlandığında mantık eklenecek.
-                    print("Way of the Lotus Aktif!")
+                    pass # TODO
                 "Atk/Direnç Buff": # heart_of_the_dragon
                     computed_physical_attack_power *= 1.10
                     computed_pdef_percent += 15.0
@@ -493,29 +514,21 @@ func recalculate_derived_stats():
                     print("Heart of the Dragon Aktif!")
                 "Büyü Hasarı/Leech Buff": # demonic_ascension
                     computed_magical_attack_power *= 1.20
-                    pass # TODO: Leech (Can Emme) sistemi eklenecek.
-                    print("Demonic Ascension Aktif!")
+                    pass # TODO: Leech
                 "Takım MP Regen Buff": # hymn_of_serenity, aria_of_restoration
-                    computed_mp_regen *= 1.5 # Örnek: MP yenilenmesini %50 artır
+                    computed_mp_regen *= 1.5 
                     print("MP Regen Buff Aktif!")
                 "Hareket/Atk Speed Buff": # windstep
                     computed_aspd_bonus += 15.0
-                    # TODO: Hareket hızı (SPEED) bonusu player.gd'de ele alınmalı.
-                    print("Windstep Aktif!")
+                    # TODO: Hareket hızı (SPEED)
                 "Ölümü Atlama": # ember_rebirth
-                    pass # TODO: Ölüm anında tetiklenecek bir mantık gerektirir.
-                    print("Ember Rebirth Aktif!")
+                    pass # TODO
                 "Temas Hasar Bağışıklığı": # wraith_form
-                    pass # TODO: player.gd'deki take_damage'de kontrol edilmeli.
-                    print("Wraith Form Aktif!")
+                    pass # TODO
                 "Kaçınma + DMG Bağışıklığı": # evasive_roll
-                    pass # TODO: Bu anlık bir etkidir, buff değil. world.gd'de ele alınmalı.
-                    print("Evasive Roll Aktif!")
+                    pass # TODO
                     
-                # Not: Pet/Minion buff'ları (call_of_the_wild vb.) 
-                # summon sistemi kurulduktan sonra eklenecek.
-                    
-    # --- 4. ADIM: Can/Mana Barlarını Güncelle ---
+    # --- 5. ADIM: Can/Mana Barlarını Güncelle ---
     if computed_max_health > old_max_hp:
         set_health(current_health + (computed_max_health - old_max_hp))
     else:
@@ -526,111 +539,25 @@ func recalculate_derived_stats():
     else:
         set_mana(current_mana)
 
-    # --- 5. ADIM (YENİ): Görünmezlik durumunu kontrol et ve sinyal gönder ---
+    # --- 6. ADIM: Görünmezlik durumunu kontrol et ---
     if is_invisible != was_invisible:
         invisibility_changed.emit(is_invisible)
         print("Görünmezlik durumu değişti: ", is_invisible)
-
-
-func level_up():
-    set_level(level + 1)
-    
-    manual_points_available += 5
-    print("SEVİYE ATLADIN! Harcanabilir 5 puan kazandın!")
-    
-    # --- Sınıf Bazlı Otomatik Stat Dağıtımı ---
-    match class_id:
-        0: # Druid (Hibrit)
-            intel += 1; wis += 1; foc += 1; vit += 1
         
-        1: # Berserker (Uzman)
-            str += 2; vit += 1
-            if level % 2 == 1: 
-                wis += 1 
-            else: 
-                dex += 1
-        
-        2: # Elementalist (Uzman)
-            intel += 2; foc += 1
-            if level % 2 == 1: 
-                wis += 1 
-            else: 
-                vit += 1
-        
-        3: # Monk (Hibrit)
-            dex += 1; vit += 1; foc += 1; wis += 1
-        
-        4: # Crusader (Uzman)
-            vit += 2; wis += 1
-            if level % 2 == 1: 
-                foc += 1 
-            else: 
-                str += 1
-        
-        5: # Warden (Hibrit)
-            str += 1; dex += 1; vit += 1; foc += 1
-        
-        6: # Dragon Knight (Uzman)
-            vit += 2; str += 1
-            if level % 2 == 1: 
-                wis += 1 
-            else: 
-                foc += 1
-        
-        7: # Warlock (Uzman)
-            intel += 2; foc += 1
-            if level % 2 == 1: 
-                wis += 1 
-            else: 
-                vit += 1
-        
-        8: # Cleric (Uzman)
-            wis += 2; vit += 1
-            if level % 2 == 1: 
-                intel += 1 
-            else: 
-                foc += 1
-        
-        9: # Bard (Uzman)
-            foc += 2; wis += 1
-            if level % 2 == 1: 
-                dex += 1 
-            else: 
-                vit += 1
-        
-        10: # Necromancer (Uzman)
-            intel += 2; foc += 1
-            if level % 2 == 1: 
-                wis += 1 
-            else: 
-                vit += 1
-        
-        11: # Ranger (Uzman)
-            dex += 2; vit += 1
-            if level % 2 == 1: 
-                str += 1 
-            else: 
-                foc += 1
-        
-        _: 
-            print("HATA: Seviye atlama için class_id tanınmıyor!")
-
-    set_experience_to_next_level(int(experience_to_next_level * 1.5))
-    recalculate_derived_stats()
-    set_health(computed_max_health)
-    set_mana(computed_max_mana)
-    emit_full_stat_update()
-
-func emit_full_stat_update():
+    # --- 7. ADIM (DÜZELTME): 'stats_updated' SİNYALİNİ BURADA, DOĞRU PAYLOAD İLE GÖNDER ---
     var stats_payload = {
         "level": level,
         "hp": current_health, "max_hp": computed_max_health,
         "mp": current_mana, "max_mp": computed_max_mana,
         "xp": experience, "max_xp": experience_to_next_level,
         "points_available": manual_points_available,
-        "str": str, "dex": dex, "vit": vit, "int": intel, "wis": wis, "foc": foc,
         
-        # --- YAN STATLAR ---
+        # (DÜZELTME: 'str' yerine 'total_str' gönderiyoruz)
+        # Bu, C panelinin "Temel Statlar" bölümünde (STR, DEX, vb.)
+        # ekipmanla artan TOPLAM değeri göstermesini sağlar.
+        "str": total_str, "dex": total_dex, "vit": total_vit, "int": total_intel, "wis": total_wis, "foc": total_foc,
+        
+        # --- YAN STATLAR (Bunlar zaten 'computed_' değerlerdi, doğru) ---
         "pap": computed_physical_attack_power,
         "map": computed_magical_attack_power,
         "healp": computed_healing_power,
@@ -647,6 +574,73 @@ func emit_full_stat_update():
         "debuff_success": computed_debuff_success
     }
     stats_updated.emit(stats_payload)
+    # --- HESAPLAMA VE SİNYAL SONU ---
+# =======================================================================
+
+
+func level_up():
+    set_level(level + 1)
+    
+    manual_points_available += 5
+    print("SEVİYE ATLADIN! Harcanabilir 5 puan kazandın!")
+    
+    # --- Sınıf Bazlı Otomatik Stat Dağıtımı ---
+    match class_id:
+        0: # Druid (Hibrit)
+            intel += 1; wis += 1; foc += 1; vit += 1
+        1: # Berserker (Uzman)
+            str += 2; vit += 1
+            if level % 2 == 1: wis += 1 
+            else: dex += 1
+        2: # Elementalist (Uzman)
+            intel += 2; foc += 1
+            if level % 2 == 1: wis += 1 
+            else: vit += 1
+        3: # Monk (Hibrit)
+            dex += 1; vit += 1; foc += 1; wis += 1
+        4: # Crusader (Uzman)
+            vit += 2; wis += 1
+            if level % 2 == 1: foc += 1 
+            else: str += 1
+        5: # Warden (Hibrit)
+            str += 1; dex += 1; vit += 1; foc += 1
+        6: # Dragon Knight (Uzman)
+            vit += 2; str += 1
+            if level % 2 == 1: wis += 1 
+            else: foc += 1
+        7: # Warlock (Uzman)
+            intel += 2; foc += 1
+            if level % 2 == 1: wis += 1 
+            else: vit += 1
+        8: # Cleric (Uzman)
+            wis += 2; vit += 1
+            if level % 2 == 1: intel += 1 
+            else: foc += 1
+        9: # Bard (Uzman)
+            foc += 2; wis += 1
+            if level % 2 == 1: dex += 1 
+            else: vit += 1
+        10: # Necromancer (Uzman)
+            intel += 2; foc += 1
+            if level % 2 == 1: wis += 1 
+            else: vit += 1
+        11: # Ranger (Uzman)
+            dex += 2; vit += 1
+            if level % 2 == 1: str += 1 
+            else: foc += 1
+        _: 
+            print("HATA: Seviye atlama için class_id tanınmıyor!")
+
+    set_experience_to_next_level(int(experience_to_next_level * 1.5))
+    recalculate_derived_stats()
+    set_health(computed_max_health)
+    set_mana(computed_max_mana)
+    # DÜZELTME: 'emit_full_stat_update()' SİLİNDİ. (recalculate_derived_stats hallediyor)
+
+# DÜZELTME: Bu fonksiyon artık gereksiz, tüm mantığı 'recalculate_derived_stats' sonuna taşıdık.
+# func emit_full_stat_update():
+    # ... (TÜM İÇERİĞİ SİLİNDİ) ...
+    
     
 # --- YETENEK KONTROL VE KULLANIM FONKSİYONLARI ---
 
@@ -682,13 +676,26 @@ func start_skill_cooldown(skill_id: String):
 
 # İstenen temel stat değerini döndürür
 func _get_stat_value(stat_name: String) -> float:
+    # DÜZELTME: Bu fonksiyon artık 'total' statları DEĞİL,
+    # stat puanları için ayrılan 'base' statları döndürmeli.
+    # Scale hesaplaması 'recalculate' içinde total_ ile yapılıyor.
+    # Ancak _calculate_skill_value anlık yaptığı için total_ kullanmalı.
+    
+    # YENİ TOPLAM DEĞERLERİ AL:
+    var total_str = str + get_equipment_bonus("STR")
+    var total_dex = dex + get_equipment_bonus("DEX")
+    var total_vit = vit + get_equipment_bonus("VIT")
+    var total_intel = intel + get_equipment_bonus("INT")
+    var total_wis = wis + get_equipment_bonus("WIS")
+    var total_foc = foc + get_equipment_bonus("FOC")
+    
     match stat_name:
-        "STR": return float(str)
-        "DEX": return float(dex)
-        "VIT": return float(vit)
-        "INT": return float(intel)
-        "WIS": return float(wis)
-        "FOC": return float(foc)
+        "STR": return float(total_str)
+        "DEX": return float(total_dex)
+        "VIT": return float(total_vit)
+        "INT": return float(total_intel)
+        "WIS": return float(total_wis)
+        "FOC": return float(total_foc)
         _: return 0.0
 
 # Yeteneğin temel hasar/iyileştirme değerini hesaplar
@@ -701,6 +708,8 @@ func _calculate_skill_value(skill_id: String) -> float:
     var scale_stat: String = skill_data.scale_stat
     var scale_ratio: float = skill_data.scale_ratio
 
+    # DÜZELTME: Bu fonksiyon artık 'total' statları döndüren
+    # _get_stat_value'yu kullanıyor.
     var scaling_value: float = _get_stat_value(scale_stat)
 
     # Nihai Formül: base_dmg + (Stat * Scale_Ratio)
@@ -717,7 +726,6 @@ func execute_skill(skill_id: String, target_or_position = null):
         return
         
     if not can_cast_skill(skill_id):
-        # YETENEK KULLANILAMAMA SEBEBİ LOGU (MANA/CD KONTROLÜ)
         if active_cooldowns.has(skill_id):
             print("YETENEK KULLANILAMADI: %s - Cooldown'da (Kalan: %.1fs)" % [skill_id, active_cooldowns[skill_id]])
         elif current_mana < skill_data.cost:
@@ -730,43 +738,93 @@ func execute_skill(skill_id: String, target_or_position = null):
     var is_heal: bool = skill_data.is_heal if "is_heal" in skill_data else false
     var effect_desc: String = skill_data.effect
     
-    # --- BÜYÜK GÜNCELLEME: İSTİSNASIZ TÜM SELF-TARGET YETENEKLER ---
-    # Bu liste, oyuncunun KENDİNE yaptığı tüm (AoE dahil) iyileştirme,
-    # buff, kalkan ve çağırma yeteneklerini içerir.
     var SELF_TARGET_EFFECTS = [
-        # DRUID
         "rejuvenate", "spirit_link", "thorn_armor", "bloom_field",
-        # BERSERKER
         "bloodletting", "adrenal_surge",
-        # ELEMENTALIST
         "ice_barrier", "elemental_surge",
-        # MONK
         "meditation", "iron_body", "way_of_the_lotus",
-        # CRUSADER
         "divine_guard", "purge_evil", "sanctified_ground", "vow_of_valor", "aegis_of_faith",
-        # WARDEN
         "summon_companion", "call_of_the_wild", "warden_camouflage", "guardian_of_the_forest", "primal_focus",
-        # DRAGON KNIGHT
         "molten_guard", "flame_ward", "ember_rebirth", "heart_of_the_dragon",
-        # WARLOCK
         "soul_drain", "infernal_summon", "shadow_veil", "demonic_ascension",
-        # CLERIC
         "holy_light", "purify", "radiant_wave", "sacred_bond", "blessing_of_valor", "angelic_barrier", "beacon_of_hope", "hymn_of_serenity",
-        # BARD
         "song_of_courage", "melody_of_healing", "rhythm_of_agility", "resonant_shield", "ballad_of_bravery", "aria_of_restoration",
-        # NECROMANCER
         "raise_skeletons", "death_coil", "wraith_form", "summon_abomination", "ritual_of_sacrifice",
-        # RANGER
         "evasive_roll", "windstep", "ranger_camouflage"
     ]
-    # ------------------------------------------------------------------
-
-    # --- SİNYAL GÖNDERİMİ (5 ARGÜMANLI) ---
+    
     if SELF_TARGET_EFFECTS.has(skill_id):
-        # Eğer bu bir HoT veya Self-Buff ise, hedef olarak 'self'i (yani PlayerBase'in kendisini) gönder.
         skill_executed.emit(skill_id, computed_value, is_heal, effect_desc, self)
     else:
-        # Diğer tüm skiller (Düşman hedefli Hasar, DoT, Debuff, AoE)
         skill_executed.emit(skill_id, computed_value, is_heal, effect_desc, target_or_position)
 
     print("YETENEK ÇAĞRISI GÖNDERİLDİ: ", skill_id, " (Değer: ", computed_value, ", Etki: ", effect_desc, ")")
+    
+# =====================================================
+#  EQUIPMENT → STAT SİSTEMİ (DÜZELTİLDİ)
+# =====================================================
+
+# InventoryPanel, her equip değiştiğinde bunu çağıracak.
+func set_equipment_from_inventory(equipped_dict: Dictionary) -> void:
+    equipped_items.clear()
+
+    for key in equipped_dict.keys():
+        var k: String = str(key)
+        var itm = equipped_dict[key]
+        if itm is Dictionary and not itm.is_empty():
+            equipped_items[k] = itm.duplicate(true)
+
+    _recalculate_equipment_stats()
+
+
+# Ekipmanlardan gelen tüm statları tek sözlükte toplar.
+func _recalculate_equipment_stats() -> void:
+    equipment_bonus_stats.clear()
+
+    for itm in equipped_items.values():
+        if itm == null:
+            continue
+        if not (itm is Dictionary):
+            continue
+
+        var stats: Dictionary = itm.get("stats", {})
+        if not (stats is Dictionary):
+            continue
+
+        for s_key in stats.keys():
+            var key_str: String = str(s_key)
+            var raw_val = stats[s_key]
+            var val: float = 0.0
+            if typeof(raw_val) == TYPE_INT or typeof(raw_val) == TYPE_FLOAT:
+                val = float(raw_val)
+            else:
+                continue
+
+            if equipment_bonus_stats.has(key_str):
+                equipment_bonus_stats[key_str] = float(equipment_bonus_stats[key_str]) + val
+            else:
+                equipment_bonus_stats[key_str] = val
+
+    # --- DÜZELTME BAŞLANGICI ---
+    # Hata buradaydı. 'stats_updated' sinyali bir 'payload' sözlüğü bekliyordu.
+    # Sadece sinyal göndermek yetmez, statları yeniden hesaplamalıyız.
+            
+    # 1. Ana statları (HP, MP, Attack Power vb.) yeni ekipman bonuslarıyla yeniden hesapla
+    # 2. VE 'stats_updated' sinyalini doğru payload ile gönder.
+    # (Bu fonksiyon artık her ikisini de yapıyor)
+    recalculate_derived_stats()
+    # --- DÜZELTME SONU ---
+
+
+# Belirli bir stat için sadece equipment'ten gelen bonus
+func get_equipment_bonus(stat_name: String) -> float:
+    var key_str := stat_name
+    if equipment_bonus_stats.has(key_str):
+        return float(equipment_bonus_stats[key_str])
+    return 0.0
+
+
+# Eğer base statlarını dictionary olarak tutuyorsan kullanışlı yardımcı:
+# base_value + equipment bonusu döner.
+func get_total_with_equipment(stat_name: String, base_value: float) -> float:
+    return base_value + get_equipment_bonus(stat_name)

@@ -1,0 +1,105 @@
+[gd_scene load_steps=2 format=3 uid="uid://ccdrj31fkfbkm"]
+
+[ext_resource type="Script" uid="uid://iqqrmsxvakno" path="res://scripts/ui/InventoryPanel.gd" id="1_2whm2"]
+
+[node name="InventoryPanel" type="Control"]
+custom_minimum_size = Vector2(160, 550)
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -160.0
+offset_bottom = 550.0
+grow_horizontal = 0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+script = ExtResource("1_2whm2")
+metadata/_edit_use_anchors_ = true
+
+[node name="PanelBG" type="NinePatchRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelBG"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelBG/MarginContainer"]
+layout_mode = 2
+
+[node name="EquipmentWindow" type="PanelContainer" parent="PanelBG/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(160, 180)
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelBG/MarginContainer/VBoxContainer/EquipmentWindow"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelBG/MarginContainer/VBoxContainer/EquipmentWindow/MarginContainer"]
+layout_mode = 2
+
+[node name="EquipTopBar" type="HBoxContainer" parent="PanelBG/MarginContainer/VBoxContainer/EquipmentWindow/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="PanelBG/MarginContainer/VBoxContainer/EquipmentWindow/MarginContainer/VBoxContainer/EquipTopBar"]
+layout_mode = 2
+text = "Equipment"
+
+[node name="Spacer" type="Control" parent="PanelBG/MarginContainer/VBoxContainer/EquipmentWindow/MarginContainer/VBoxContainer/EquipTopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EquipGridWrap" type="Control" parent="PanelBG/MarginContainer/VBoxContainer/EquipmentWindow/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="EquipGrid" type="GridContainer" parent="PanelBG/MarginContainer/VBoxContainer/EquipmentWindow/MarginContainer/VBoxContainer/EquipGridWrap"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+columns = 5
+
+[node name="InventoryWindow" type="PanelContainer" parent="PanelBG/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelBG/MarginContainer/VBoxContainer/InventoryWindow"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelBG/MarginContainer/VBoxContainer/InventoryWindow/MarginContainer"]
+layout_mode = 2
+
+[node name="TopBar" type="HBoxContainer" parent="PanelBG/MarginContainer/VBoxContainer/InventoryWindow/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="PanelBG/MarginContainer/VBoxContainer/InventoryWindow/MarginContainer/VBoxContainer/TopBar"]
+layout_mode = 2
+text = "Inventory"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="PanelBG/MarginContainer/VBoxContainer/InventoryWindow/MarginContainer/VBoxContainer/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PrevButton" type="Button" parent="PanelBG/MarginContainer/VBoxContainer/InventoryWindow/MarginContainer/VBoxContainer/TopBar"]
+layout_mode = 2
+text = "I
+"
+
+[node name="PageLabel" type="Label" parent="PanelBG/MarginContainer/VBoxContainer/InventoryWindow/MarginContainer/VBoxContainer/TopBar"]
+layout_mode = 2
+
+[node name="NextButton" type="Button" parent="PanelBG/MarginContainer/VBoxContainer/InventoryWindow/MarginContainer/VBoxContainer/TopBar"]
+layout_mode = 2
+text = "II"
+
+[node name="Grid" type="GridContainer" parent="PanelBG/MarginContainer/VBoxContainer/InventoryWindow/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(160, 430)
+layout_mode = 2
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+columns = 5

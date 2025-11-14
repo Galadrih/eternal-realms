@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=3 uid="uid://bltxbodohp3m4"]
+
+[ext_resource type="Script" uid="uid://cf5gi00wwpo3w" path="res://scripts/ui/EquipmentSlot.gd" id="1_g8bb0"]
+
+[node name="EquipmentSlot" type="Button"]
+offset_right = 8.0
+offset_bottom = 8.0
+script = ExtResource("1_g8bb0")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Icon" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+expand_mode = 2
+stretch_mode = 5

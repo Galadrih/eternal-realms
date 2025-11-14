@@ -1,0 +1,22 @@
+[gd_scene load_steps=2 format=3 uid="uid://d2b80arr0sjn7"]
+
+[ext_resource type="Script" uid="uid://csefsxdnkjmtd" path="res://scripts/ui/buff_panel.gd" id="1_lu7dh"]
+
+[node name="BuffPanel" type="Panel"]
+custom_minimum_size = Vector2(260, 40)
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+grow_horizontal = 0
+script = ExtResource("1_lu7dh")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="BuffContainer" type="HBoxContainer" parent="Margin"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 4
+alignment = 2

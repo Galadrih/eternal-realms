@@ -1,6 +1,23 @@
-[gd_scene load_steps=2 format=3 uid="uid://dyy8gqe2t8sgi"]
+[gd_scene load_steps=5 format=3 uid="uid://dyy8gqe2t8sgi"]
 
 [ext_resource type="Script" uid="uid://b8mq5x6af43mf" path="res://scripts/character_creator.gd" id="1_tvdat"]
+[ext_resource type="Texture2D" uid="uid://bf1ooj2ykiihl" path="res://assets/sprites/classes/bard.png" id="2_ja2xc"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6txqo"]
+bg_color = Color(0.06666667, 0.06666667, 0.26666668, 0.06666667)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.1882353, 0.20784314, 0.2784314, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0yffs"]
+bg_color = Color(0.06666667, 0.06666667, 0.26666668, 0.06666667)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.1882353, 0.20784314, 0.2784314, 1)
 
 [node name="CharacterCreator" type="Control"]
 layout_mode = 3
@@ -13,75 +30,156 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_tvdat")
 
-[node name="MainLayout" type="VBoxContainer" parent="."]
+[node name="BG" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.08897526, 0.10784719, 0.14521739, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-metadata/_edit_use_anchors_ = true
 
-[node name="TitleLabel" type="Label" parent="MainLayout"]
+[node name="MainHBox" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2
-size_flags_vertical = 6
-text = "Karakter Yarat
-"
+
+[node name="LeftPanel" type="PanelContainer" parent="MarginContainer/MainHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_6txqo")
+
+[node name="ClassVBox" type="VBoxContainer" parent="MarginContainer/MainHBox/LeftPanel"]
+layout_mode = 2
+
+[node name="ClassTitleLabel" type="Label" parent="MarginContainer/MainHBox/LeftPanel/ClassVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Classes"
 horizontal_alignment = 1
 
-[node name="ClassNameLabel" type="Label" parent="MainLayout"]
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/MainHBox/LeftPanel/ClassVBox"]
 layout_mode = 2
-size_flags_vertical = 6
-text = "[Sınıf Adı]"
+
+[node name="ClassScroll" type="ScrollContainer" parent="MarginContainer/MainHBox/LeftPanel"]
+layout_mode = 2
+
+[node name="ClassList" type="VBoxContainer" parent="MarginContainer/MainHBox/LeftPanel/ClassScroll"]
+layout_mode = 2
+
+[node name="CenterPanel" type="PanelContainer" parent="MarginContainer/MainHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.2
+theme_override_styles/panel = SubResource("StyleBoxFlat_0yffs")
+
+[node name="CenterVBox" type="VBoxContainer" parent="MarginContainer/MainHBox/CenterPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="PreviewTitleLabel" type="Label" parent="MarginContainer/MainHBox/CenterPanel/CenterVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Character Preview"
 horizontal_alignment = 1
 
-[node name="ClassDisplayLayout" type="HBoxContainer" parent="MainLayout"]
+[node name="PreviewFrame" type="Panel" parent="MarginContainer/MainHBox/CenterPanel/CenterVBox"]
+custom_minimum_size = Vector2(400, 300)
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="PreviewCenter" type="CenterContainer" parent="MarginContainer/MainHBox/CenterPanel/CenterVBox/PreviewFrame"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="PreviewSprite" type="Sprite2D" parent="MarginContainer/MainHBox/CenterPanel/CenterVBox/PreviewFrame/PreviewCenter"]
+texture = ExtResource("2_ja2xc")
+
+[node name="ClassSwitchHBox" type="HBoxContainer" parent="MarginContainer/MainHBox/CenterPanel/CenterVBox"]
+layout_mode = 2
 alignment = 1
 
-[node name="PreviousButton" type="Button" parent="MainLayout/ClassDisplayLayout"]
+[node name="PrevClassButton" type="Button" parent="MarginContainer/MainHBox/CenterPanel/CenterVBox/ClassSwitchHBox"]
 layout_mode = 2
 text = "<"
 
-[node name="ClassSprite" type="TextureRect" parent="MainLayout/ClassDisplayLayout"]
-custom_minimum_size = Vector2(128, 128)
+[node name="CurrentClassLabel" type="Label" parent="MarginContainer/MainHBox/CenterPanel/CenterVBox/ClassSwitchHBox"]
 layout_mode = 2
+text = "Druid"
 
-[node name="NextButton" type="Button" parent="MainLayout/ClassDisplayLayout"]
+[node name="NextClassButton" type="Button" parent="MarginContainer/MainHBox/CenterPanel/CenterVBox/ClassSwitchHBox"]
 layout_mode = 2
 text = ">"
 
-[node name="LoreText" type="RichTextLabel" parent="MainLayout"]
-custom_minimum_size = Vector2(0, 100)
+[node name="NameHBox" type="HBoxContainer" parent="MarginContainer/MainHBox/CenterPanel/CenterVBox"]
 layout_mode = 2
-size_flags_vertical = 3
-text = "Sınıfın hikayesi burada görünecek..."
-fit_content = true
-
-[node name="InputLayout" type="HBoxContainer" parent="MainLayout"]
-layout_mode = 2
-size_flags_vertical = 3
 alignment = 1
 
-[node name="NameLabel" type="Label" parent="MainLayout/InputLayout"]
+[node name="NameLabel" type="Label" parent="MarginContainer/MainHBox/CenterPanel/CenterVBox/NameHBox"]
 layout_mode = 2
-text = "Karakter Adı:"
+text = "Name:"
 
-[node name="NameInput" type="LineEdit" parent="MainLayout/InputLayout"]
+[node name="NameInput" type="LineEdit" parent="MarginContainer/MainHBox/CenterPanel/CenterVBox/NameHBox"]
 layout_mode = 2
-text = "Bir isim girin..."
-expand_to_text_length = true
+placeholder_text = "İsim Giriniz...."
 
-[node name="ConfirmationLayout" type="HBoxContainer" parent="MainLayout"]
+[node name="RightPanel" type="PanelContainer" parent="MarginContainer/MainHBox"]
 layout_mode = 2
-size_flags_vertical = 3
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.4
+theme_override_styles/panel = SubResource("StyleBoxFlat_0yffs")
+
+[node name="RightVBox" type="VBoxContainer" parent="MarginContainer/MainHBox/RightPanel"]
+layout_mode = 2
+
+[node name="ClassNameLabel" type="Label" parent="MarginContainer/MainHBox/RightPanel/RightVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Druid"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/MainHBox/RightPanel/RightVBox"]
+layout_mode = 2
+
+[node name="LoreText" type="RichTextLabel" parent="MarginContainer/MainHBox/RightPanel/RightVBox"]
+layout_mode = 2
+
+[node name="HSeparator2" type="HSeparator" parent="MarginContainer/MainHBox/RightPanel/RightVBox"]
+layout_mode = 2
+
+[node name="InfoVBox" type="VBoxContainer" parent="MarginContainer/MainHBox/RightPanel/RightVBox"]
+layout_mode = 2
+
+[node name="RoleLabel" type="Label" parent="MarginContainer/MainHBox/RightPanel/RightVBox/InfoVBox"]
+layout_mode = 2
+text = "Role: Hybrid Support / DPS"
+horizontal_alignment = 1
+
+[node name="RecommendedStatsLabel" type="Label" parent="MarginContainer/MainHBox/RightPanel/RightVBox/InfoVBox"]
+layout_mode = 2
+text = "Recommended Stats: INT, WIS"
+horizontal_alignment = 1
+
+[node name="DifficultyLabel" type="Label" parent="MarginContainer/MainHBox/RightPanel/RightVBox/InfoVBox"]
+layout_mode = 2
+text = "Difficulty: ★★★☆☆"
+horizontal_alignment = 1
+
+[node name="BottomButtonsHBox" type="HBoxContainer" parent="MarginContainer/MainHBox/RightPanel/RightVBox"]
+layout_mode = 2
 alignment = 1
 
-[node name="CreateButton" type="Button" parent="MainLayout/ConfirmationLayout"]
+[node name="BackButton" type="Button" parent="MarginContainer/MainHBox/RightPanel/RightVBox/BottomButtonsHBox"]
 layout_mode = 2
-text = "Oluştur"
+text = "Back"
 
-[node name="BackButton" type="Button" parent="MainLayout/ConfirmationLayout"]
+[node name="CreateButton" type="Button" parent="MarginContainer/MainHBox/RightPanel/RightVBox/BottomButtonsHBox"]
 layout_mode = 2
-text = "Geri"
+text = "Create"

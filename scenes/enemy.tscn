@@ -1,7 +1,8 @@
-[gd_scene load_steps=67 format=3 uid="uid://b2ah0egiqed7p"]
+[gd_scene load_steps=68 format=3 uid="uid://b2ah0egiqed7p"]
 
 [ext_resource type="Script" uid="uid://csrh7qwla6xbw" path="res://scripts/enemy.gd" id="1_4gyqm"]
 [ext_resource type="Texture2D" uid="uid://byhw5c0hnstbf" path="res://assets/sprites/mobs/wolfsheet1 (3).png" id="2_4gyqm"]
+[ext_resource type="PackedScene" uid="uid://l5k315b17od4" path="res://scenes/ui/OverheadDisplay.tscn" id="3_4ra3w"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_qi2p4"]
 atlas = ExtResource("2_4gyqm")
@@ -562,6 +563,8 @@ one_shot = true
 [node name="HealthBar" type="ProgressBar" parent="."]
 offset_right = 4.0
 offset_bottom = 27.0
+
+[node name="OverheadDisplay" parent="." instance=ExtResource("3_4ra3w")]
 
 [connection signal="animation_finished" from="Sprite" to="." method="_on_sprite_animation_finished"]
 [connection signal="body_entered" from="FollowArea" to="." method="_on_follow_area_body_entered"]

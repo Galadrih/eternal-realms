@@ -1,16 +1,11 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=2 format=3 uid="uid://da73icbnj0iik"]
 
-[ext_resource type="Script" path="res://scripts/skill/skill_panel.gd" id="1"]
+[ext_resource type="Script" uid="uid://cvv8e2tnte832" path="res://scripts/skill/skill_panel.gd" id="1"]
 
 [node name="SkillPanel" type="Panel"]
-layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 0.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
@@ -45,7 +40,6 @@ text = "Skills"
 [node name="CloseButton" type="Button" parent="MarginContainer/VBoxContainer/TitleBar"]
 layout_mode = 2
 text = "Close"
-size_flags_horizontal = 1
 
 [node name="Search" type="LineEdit" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -56,11 +50,12 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 follow_focus = true
+horizontal_scroll_mode = 0
 
 [node name="Grid" type="GridContainer" parent="MarginContainer/VBoxContainer/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-columns = 6
 theme_override_constants/h_separation = 8
-theme_override_constants/v_separation = 8
+theme_override_constants/v_separation = 4
+columns = 2
