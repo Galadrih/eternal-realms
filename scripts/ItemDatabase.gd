@@ -3,15 +3,11 @@ class_name ItemDatabase
 
 # =====================================================
 #  BÜYÜK VERİ TABANINI BURAYA YAPIŞTIR
-#  ÖR: const ITEM_DATABASE := { "DRUID": { ... }, ... }
+#  (Aşağıdaki satırı silip kendi 'const ITEM_DATABASE = {...}' kodunuzu buraya yapıştırın)
 # =====================================================
+
 const ITEM_DATABASE = {
-    # Stat Scaling Logic: Lvl 75 Max Stat * (Lvl Factor)
-    
-    # ------------------------------------------------------------------------------------------------------
-    # 1. BERSERKER (STR/VIT Odaklı - Ağır Zırh/Çift El)
-    # ------------------------------------------------------------------------------------------------------
-    "BERSERKER": {
+        "BERSERKER": {
         "1": {
             "Silah": {"id": "B_W_1", "name": "Kaba Odun Balta", "tooltip": "Temel Saldırı: 15. Acemi savaşçının baltası.", "req_level": 1, "req_class": "BERSERKER", "stats": {"STR": 2, "PAP_BONUS": 5, "RAW_ATK": 15, "P_DEF": 5}},
             "Kask": {"id": "B_H_1", "name": "Eski Deri Kafa Bandı", "tooltip": "Temel Defans: 5, HP: 10. Temel kafa koruması.", "req_level": 1, "req_class": "BERSERKER", "stats": {"VIT": 1, "P_DEF": 1, "RAW_DEF": 5, "HP": 10}},
@@ -1412,7 +1408,12 @@ const ITEM_DATABASE = {
         },
     },
 
-}
+} # <-- KENDİ VERİTABANINIZI BURAYA YAPIŞTIRIN
+
+# =====================================================
+#  VERİTABANI SONU
+# =====================================================
+
 
 # Class kodlarını düzgün göstermek için map
 const CLASS_CODE_TO_DISPLAY := {
@@ -1428,15 +1429,17 @@ const CLASS_CODE_TO_DISPLAY := {
     "BARD": "Bard",
     "NECROMANCER": "Necromancer",
     "RANGER": "Ranger",
+    "POTIONS": "Tüketilebilir", # Potlar için eklendi
 }
 
-# Stat label’ları – senin DB’deki tüm statlar
+# Stat label’ları – sizin DB’deki tüm statlar
 const STAT_LABELS := {
     "STR": "STR",
     "DEX": "DEX",
     "INT": "INT",
     "WIS": "WIS",
     "VIT": "VIT",
+    "FOC": "FOC", # Eksikti, eklendi
 
     "RAW_ATK": "Saldırı",
     "RAW_DEF": "Savunma",
@@ -1447,20 +1450,27 @@ const STAT_LABELS := {
     "MAP_BONUS": "Büyü Saldırısı %",
     "P_DEF": "Fiziksel Defans",
     "M_DEF": "Büyü Defansı",
+    "P_DEF_BONUS": "Fiziksel Defans %", # Potlar için eklendi
+    "M_DEF_BONUS": "Büyü Defansı %", # Potlar için eklendi
     "PEN_P": "Zırh Delme %",
     "M_PEN_P": "Büyü Delme %",
 
-    "CRIT_RATE": "Kritik Oran %",
-    "CRIT_DMG": "Kritik Hasar %",
+    "P_CRIT_BONUS": "Fiziksel Kritik %", # İsim güncellendi
+    "M_CRIT_BONUS": "Büyü Kritik %", # İsim güncellendi
     "ASPD_BONUS": "Saldırı Hızı %",
+    "CSPD_BONUS": "Büyü Hızı %", # İsim güncellendi
     "MSPD_BONUS": "Hareket Hızı %",
 
     "LIFESTEAL": "Can Çalma %",
+    "SOUL_LEECH": "Ruh Çalma %", # Eklendi
     "MANASTEAL": "Mana Çalma %",
-    "BLOCK_P": "Blok Oranı %",
+    "BLOCK_CHANCE": "Blok Şansı %", # İsim güncellendi
     "PARRY_P": "Savuşturma Oranı %",
     "DODGE_P": "Kaçınma Oranı %",
+    "EVASION_BONUS": "Kaçınma %", # Eklendi
     "HIT_RATE": "İsabet Oranı %",
+    "RESIST_ALL": "Tüm Dirençler", # Eklendi
+    "FIRE_RESIST": "Ateş Direnci", # Eklendi
     "RESIST_STUN": "Sersemletme Direnci %",
     "RESIST_SLOW": "Yavaşlatma Direnci %",
     "RESIST_ROOT": "Sabitlenme Direnci %",
@@ -1471,14 +1481,26 @@ const STAT_LABELS := {
     "HEAL_BONUS": "İyileştirme Gücü %",
     "BUFF_DURATION": "Buff Süresi %",
     "DEBUFF_DURATION": "Debuff Süresi %",
+    "DEBUFF_SUCCESS": "Debuff Başarısı %", # Eklendi
     "COOLDOWN_REDUCTION": "CD Azaltma %",
     "GOLD_BONUS": "Altın Kazancı %",
     "DROP_BONUS": "Düşüş Oranı %",
-
-    # vs… (DB’de ne varsa ekleyebilirsin)
+    
+    "SUMMON_ATK_BONUS": "Minyon Saldırısı %", # Eklendi
+    "SUMMON_HP_BONUS": "Minyon Canı %", # Eklendi
+    "PET_ATK_BONUS": "Pet Saldırısı %", # Eklendi
+    "PET_HP_BONUS": "Pet Canı %", # Eklendi
+    
+    "HP_REGEN": "HP Yenilenmesi", # Eklendi
+    "MP_REGEN": "MP Yenilenmesi", # Eklendi
+    "HP_REGEN_VALUE": "Can Yenileme", # Potlar için
+    "MP_REGEN_VALUE": "Mana Yenileme", # Potlar için
+    "DURATION": "Süre (sn)", # Potlar için
+    "COOLDOWN": "Bekleme Süresi (sn)", # Potlar için
+    "FIRE_DMG": "Ateş Hasarı" # Eklendi
 }
 
-# --- YENİ EKLENTİ: DİNAMİK FİYATLANDIRMA ---
+# --- GÜNCELLENMİŞ FİYAT SABİTLERİ ---
 
 # Eşya türüne göre fiyat çarpanı (ID'deki harflere göre)
 const SLOT_MULTIPLIERS = {
@@ -1490,7 +1512,15 @@ const SLOT_MULTIPLIERS = {
     "G": 2.5,  # Eldiven
     "N": 2.0,  # Kolye
     "WR": 1.5, # Bileklik
-    "C": 1.0   # Pelerin (En ucuz)
+    "C": 1.0,  # Pelerin (En ucuz)
+    # Pot ID'leri için eklendi (P_HP_S -> "HP" kullanılır)
+    "HP": 1.0, 
+    "MP": 1.0,
+    "DEF": 1.2,
+    "ATK": 1.2,
+    "SPD": 1.1,
+    "CRIT": 1.1,
+    "RES": 1.1
 }
 
 # Statların altın cinsinden ham değeri
@@ -1502,24 +1532,44 @@ const STAT_VALUES = {
     "P_DEF": 1.0, "M_DEF": 1.0,
     "P_CRIT_BONUS": 10.0, "M_CRIT_BONUS": 10.0,
     "ASPD_BONUS": 8.0, "CSPD_BONUS": 8.0,
-    "LIFESTEAL": 20.0, "HEAL_BONUS": 5.0,
-    "SUMMON_ATK_BONUS": 8.0, "SUMMON_HP_BONUS": 0.2
+    "LIFESTEAL": 20.0, "SOUL_LEECH": 15.0,
+    "HEAL_BONUS": 5.0,
+    "SUMMON_ATK_BONUS": 8.0, "SUMMON_HP_BONUS": 0.2,
+    "PET_ATK_BONUS": 8.0, "PET_HP_BONUS": 0.2,
+    "EVASION_BONUS": 3.0, "BLOCK_CHANCE": 5.0,
+    "P_DEF_BONUS": 3.0, "M_DEF_BONUS": 3.0, "RESIST_ALL": 5.0,
+    "FIRE_DMG": 2.0, "HP_REGEN": 1.0, "MP_REGEN": 1.0,
+
+    # Pot statları fiyata 'value' anahtarı üzerinden dahil edilmeli,
+    # Bu yüzden stat değerleri 0 olmalı.
+    "HP_REGEN_VALUE": 0.0, "MP_REGEN_VALUE": 0.0,
+    "DURATION": 0.0, "COOLDOWN": 0.0,
+    "DEBUFF_SUCCESS": 0.0
 }
 # ----------------------------------------------
 
 # Tooltip’te statları hangi sırayla göstermek istiyorsan
 const STAT_ORDER := [
-    "STR", "DEX", "INT", "WIS", "VIT",
-    "RAW_ATK", "RAW_DEF", "HP", "MP",
+    "STR", "DEX", "INT", "WIS", "VIT", "FOC",
+    "HP", "MP", "RAW_ATK", "RAW_DEF",
     "PAP_BONUS", "MAP_BONUS", "P_DEF", "M_DEF",
-    "CRIT_RATE", "CRIT_DMG",
-    "ASPD_BONUS", "MSPD_BONUS",
-    "LIFESTEAL", "MANASTEAL",
-    "HIT_RATE", "DODGE_P", "BLOCK_P", "PARRY_P",
+    "P_DEF_BONUS", "M_DEF_BONUS",
+    "ASPD_BONUS", "CSPD_BONUS", "MSPD_BONUS",
+    "P_CRIT_BONUS", "M_CRIT_BONUS",
+    "LIFESTEAL", "SOUL_LEECH", "MANASTEAL",
+    "HIT_RATE", "EVASION_BONUS", "DODGE_P", "BLOCK_CHANCE", "PARRY_P",
     "HEAL_BONUS",
+    "SUMMON_ATK_BONUS", "SUMMON_HP_BONUS",
+    "PET_ATK_BONUS", "PET_HP_BONUS",
+    "HP_REGEN", "MP_REGEN",
+    "RESIST_ALL", "FIRE_RESIST",
+    "DEBUFF_SUCCESS",
     "BUFF_DURATION", "DEBUFF_DURATION",
     "COOLDOWN_REDUCTION",
     "GOLD_BONUS", "DROP_BONUS",
+    # Pot Statları (En Sonda)
+    "HP_REGEN_VALUE", "MP_REGEN_VALUE",
+    "DURATION", "COOLDOWN"
 ]
 
 var _rng := RandomNumberGenerator.new()
@@ -1528,12 +1578,11 @@ var _rng := RandomNumberGenerator.new()
 
 func _ready() -> void:
     _rng.randomize()
-    # varsa başka ready kodların burada kalsın
     pass
 
 
 # -----------------------------------------------------
-#  YARDIMCI: ITEM NORMALİZE
+#  YARDIMCI: ITEM NORMALİZE (İKON DÜZELTMELİ)
 # -----------------------------------------------------
 func normalize_item(item: Dictionary) -> Dictionary:
     var out: Dictionary = item.duplicate(true)
@@ -1542,6 +1591,25 @@ func normalize_item(item: Dictionary) -> Dictionary:
         out["req_level"] = 1
     if not out.has("req_class"):
         out["req_class"] = ""
+        
+    # --- YENİ İKON DÜZELTMESİ (ICON FIX) ---
+    if not out.has("icon") and out.has("id"):
+        var id_str: String = out["id"]
+        if id_str.begins_with("P_"):
+            var parts = id_str.split("_")
+            if parts.size() >= 3: # P_HP_S -> 3 parça
+                var type = parts[1].to_lower() # hp, mp, def
+                var size = parts[2].to_lower() # s, m, l, xl
+                
+                var icon_name = "potion_%s_%s" % [type, size]
+                # Dosya adlarınız farklıysa (örn: potion_health_small) burayı değiştirin.
+                if type == "hp": 
+                    icon_name = "potion_health_%s" % size # "potion_health_s"
+                elif type == "mp": 
+                    icon_name = "potion_mana_%s" % size # "potion_mana_s"
+                
+                out["icon"] = icon_name
+    # -------------------------------------
 
     return out
 
@@ -1551,11 +1619,14 @@ func normalize_item(item: Dictionary) -> Dictionary:
 # -----------------------------------------------------
 func format_stat_line(key: String, value: Variant) -> String:
     var label: String = STAT_LABELS.get(key, key)
-    # Yüzdelik gibi görünen bazı statlar % ile bitsin
     var as_string := ""
+    
+    if key == "DURATION" or key == "COOLDOWN":
+        as_string = str(float(value) / 1000.0) + "sn"
+        return "%s: %s" % [label, as_string]
+        
     if typeof(value) == TYPE_FLOAT or typeof(value) == TYPE_INT:
         var v: float = float(value)
-        # Tam sayı gibiyse int göster
         if abs(v - roundf(v)) < 0.001:
             as_string = str(int(roundf(v)))
         else:
@@ -1563,31 +1634,34 @@ func format_stat_line(key: String, value: Variant) -> String:
     else:
         as_string = str(value)
 
-    # Bazı statlar %’lik
-    if key.ends_with("_BONUS") or key.ends_with("_P") or key.ends_with("_RATE") or key.ends_with("_DMG"):
-        return "%s: %s%%" % [label, as_string]
-    else:
-        return "%s: %s" % [label, as_string]
+    if key.ends_with("_BONUS") or key.ends_with("_P") or key.ends_with("_RATE") or key.ends_with("_DMG") or key.begins_with("RESIST_") or key == "LIFESTEAL" or key == "SOUL_LEECH" or key == "MANASTEAL":
+        return "%s: +%s%%" % [label, as_string]
+    
+    var plus_stats = ["STR", "DEX", "INT", "WIS", "VIT", "FOC", "HP", "MP", "RAW_ATK", "RAW_DEF", "P_DEF", "M_DEF", "HP_REGEN", "MP_REGEN", "FIRE_DMG", "RESIST_ALL"]
+    if key in plus_stats:
+        return "%s: +%s" % [label, as_string]
+    
+    return "%s: %s" % [label, as_string]
 
 
 # -----------------------------------------------------
-#  TOOLTIP OLUŞTURMA
+#  TOOLTIP OLUŞTURMA (BBCODE DESTEKLİ)
 # -----------------------------------------------------
-func format_tooltip(item: Dictionary) -> String:
+func get_item_tooltip(item: Dictionary) -> String:
+    if ITEM_DATABASE.is_empty(): 
+        return "Veritabanı yükleniyor..."
+
     var it: Dictionary = normalize_item(item)
     var lines: Array[String] = []
 
-    # 1) İSİM
     var name_str: String = str(it.get("name", "")).strip_edges()
     if name_str != "":
-        lines.append(name_str)
+        lines.append("[b]%s[/b]" % name_str)
 
-    # 2) AÇIKLAMA
     var desc_str: String = str(it.get("tooltip", "")).strip_edges()
     if desc_str != "":
         lines.append(desc_str)
 
-    # 3) GEREKSİNİMLER
     var req_level: int = int(it.get("req_level", 1))
     var req_class_raw: String = str(it.get("req_class", "")).to_upper()
     var req_parts: Array[String] = []
@@ -1595,55 +1669,152 @@ func format_tooltip(item: Dictionary) -> String:
     if req_level > 1:
         req_parts.append("Seviye: %d" % req_level)
 
-    if req_class_raw != "":
+    if req_class_raw != "" and req_class_raw != "POTIONS":
         var display_class: String = CLASS_CODE_TO_DISPLAY.get(req_class_raw, req_class_raw.capitalize())
         req_parts.append("Sınıf: %s" % display_class)
 
     if req_parts.size() > 0:
-        lines.append("Gereksinimler: " + " | ".join(req_parts))
+        lines.append("")
+        lines.append("[color=gray]" + " | ".join(req_parts) + "[/color]")
 
-    # 4) STATLAR
     var stats = it.get("stats", {})
     if stats is Dictionary and stats.size() > 0:
-        if lines.size() > 0:
-            lines.append("") # boş satır
+        lines.append("")
 
         if STAT_ORDER.size() > 0:
             for key in STAT_ORDER:
                 if stats.has(key):
                     lines.append(format_stat_line(key, stats[key]))
-
-        # artakalan statlar
+        
         for key in stats.keys():
-            if key in STAT_ORDER:
-                continue
+            if key in STAT_ORDER: continue
             lines.append(format_stat_line(key, stats[key]))
 
+    var price: int = get_item_price(it)
+    if price > 0:
+        var sell_price: int = max(1, int(price * 0.25))
+        lines.append("")
+        lines.append("[color=yellow]Satış Değeri: %d Altın[/color]" % sell_price)
+        
     return "\n".join(lines)
 
 
 # -----------------------------------------------------
-#  ITEM ÇEKME (class_name, level, slot)
+#  ID İLE ITEM ÇEKME (class_name HATASI DÜZELTİLDİ)
+# -----------------------------------------------------
+func get_item_by_id(item_id: String) -> Dictionary:
+    if item_id.is_empty():
+        return {}
+        
+    if ITEM_DATABASE.is_empty():
+        push_warning("ItemDB.get_item_by_id: Veritabanı (ITEM_DATABASE) boş!")
+        return {}
+
+    var found_item: Dictionary = {}
+
+    # 1. Potions içinde ara
+    if ITEM_DATABASE.has("POTIONS"):
+        for level_tier in ITEM_DATABASE.POTIONS:
+            var tier_data = ITEM_DATABASE.POTIONS[level_tier]
+            if not tier_data is Dictionary: continue
+            for key in tier_data:
+                var potion = tier_data[key]
+                if not potion is Dictionary: continue
+                if potion.get("id") == item_id:
+                    found_item = potion.duplicate(true)
+                    return normalize_item(found_item) # Normalize et (ikon ekler)
+
+    # 2. Sınıf ekipmanlarında ara
+    for class_key in ITEM_DATABASE.keys(): # 'class_name' -> 'class_key'
+        if class_key == "POTIONS": continue
+        
+        var class_data = ITEM_DATABASE[class_key]
+        if not class_data is Dictionary: continue
+        
+        for level_tier in class_data:
+            var tier_data = class_data[level_tier]
+            if not tier_data is Dictionary: continue
+            
+            for slot_type in tier_data:
+                var item = tier_data[slot_type]
+                if not item is Dictionary: continue
+                
+                if item.get("id") == item_id:
+                    found_item = item.duplicate(true)
+                    return normalize_item(found_item) # Normalize et
+    
+    push_warning("ItemDB.get_item_by_id: %s ID'li item bulunamadı." % item_id)
+    return {}
+
+
+# -----------------------------------------------------
+#  VENDOR İTEM LİSTESİ ALMA (DÜKKAN İÇİN)
+# -----------------------------------------------------
+func get_vendor_items() -> Array:
+    print("--- DEBUG: [ItemDatabase.gd] ---")
+    print("3. get_vendor_items() fonksiyonu çalıştı.")
+    
+    var items_for_sale: Array = []
+    
+    if ITEM_DATABASE.is_empty():
+        print("HATA: ITEM_DATABASE boş! Veritabanını yapıştırdınız mı?")
+        return items_for_sale
+        
+    if not ITEM_DATABASE.has("POTIONS") or not ITEM_DATABASE.POTIONS.has("LOW_LEVEL"):
+        print("HATA: ITEM_DATABASE içinde 'POTIONS' veya 'LOW_LEVEL' bulunamadı.")
+        return items_for_sale
+
+    var potions = ITEM_DATABASE.POTIONS.LOW_LEVEL
+    print("   > 'LOW_LEVEL' potlar bulundu, %d adet." % potions.size())
+    
+    for key in potions:
+        var potion_data = potions[key]
+        if potion_data.has("id"):
+            var item_id = potion_data["id"]
+            var processed_item = get_item_by_id(item_id)
+            
+            if not processed_item.is_empty():
+                
+                # --- FİYAT GÜNCELLEMESİ (VERİTABANINDA YOKSA) ---
+                if not processed_item.has("value"):
+                    if processed_item.id == "P_HP_S": processed_item["value"] = 25
+                    elif processed_item.id == "P_HP_M": processed_item["value"] = 60
+                    elif processed_item.id == "P_MP_S": processed_item["value"] = 15
+                    elif processed_item.id == "P_MP_M": processed_item["value"] = 40
+                    elif processed_item.id == "P_DEF_S": processed_item["value"] = 50
+                    elif processed_item.id == "P_ATK_S": processed_item["value"] = 50
+                    else: processed_item["value"] = 10
+                # ---------------------------------------------
+                
+                items_for_sale.append(processed_item)
+            else:
+                print("   > UYARI: '%s' ID'li pot, get_item_by_id ile bulunamadı." % item_id)
+        else:
+            print("   > UYARI: ID'si olmayan bir pot verisi bulundu: %s" % key)
+    
+    print("   > Satış listesi hazırlandı, %d eşya eklendi." % items_for_sale.size())
+    return items_for_sale
+
+
+# -----------------------------------------------------
+#  ITEM ÇEKME (p_class_name, level, slot) - (EKİPMANLAR İÇİN)
 # -----------------------------------------------------
 func get_item(p_class_name: String, level: int, slot: String) -> Dictionary:
-    # class_name: "Druid" gibi geliyor → kod’a çevir
     var cname_up: String = str(p_class_name).to_upper()
-    # Senin DB’inde sınıflar muhtemelen DRUID, BERSERKER vs
-    # Eğer ana map’lerin ismi bu şekildeyse direkt kullanıyoruz.
+    
+    if ITEM_DATABASE.is_empty():
+        push_warning("ItemDB.get_item: Veritabanı (ITEM_DATABASE) boş!")
+        return {}
+        
     if not ITEM_DATABASE.has(cname_up):
         return {}
 
-    # level’e en yakın uygun seti bulmak için basit yaklaşım:
     var class_block: Dictionary = ITEM_DATABASE[cname_up]
-    # class_block → { "1": { "Silah": {...}, ... }, "42": {...}, ... } gibi bir yapıysa
-    # sen kendi yapına göre burayı revize edebilirsin.
-    # Şu anda sen zaten level bazlı kendi içinde organize ettiysen,
-    # slot içinden direkt seçebilirsin. Basit yol:
     var best_item: Dictionary = {}
     var best_req: int = -1
 
-    for k in class_block.keys():
-        var set_dict = class_block[k]
+    for k_level_tier in class_block.keys():
+        var set_dict = class_block[k_level_tier]
         if set_dict is Dictionary and set_dict.has(slot):
             var candidate: Dictionary = set_dict[slot]
             var norm := normalize_item(candidate)
@@ -1656,23 +1827,20 @@ func get_item(p_class_name: String, level: int, slot: String) -> Dictionary:
 
 
 # -----------------------------------------------------
-#  RANDOM ITEM (DEBUG)
+#  RANDOM ITEM (DEBUG) - (EKİPMANLAR İÇİN)
 # -----------------------------------------------------
 func get_random_item_for_class(p_class_name: String, level: int) -> Dictionary:
-    # class_name: "Druid", "BERSERKER" vs.
-    # level: oyuncu seviyesi
-
     var cname := str(p_class_name).to_upper()
+
+    if ITEM_DATABASE.is_empty():
+        push_warning("ItemDB.get_random_item_for_class: Veritabanı (ITEM_DATABASE) boş!")
+        return {}
 
     if not ITEM_DATABASE.has(cname):
         push_warning("ItemDB.get_random_item_for_class: bilinmeyen sınıf: %s" % cname)
         return {}
 
     var pool: Array = []
-
-    # ITEM_DATABASE yapısının:
-    # ITEM_DATABASE["DRUID"] -> { "Set_01": { "Silah": {...}, "Kask": {...}, ... }, "Set_02": {...}, ... }
-    # şeklinde olduğunu varsayıyorum.
     var class_data = ITEM_DATABASE[cname]
 
     for set_key in class_data.keys():
@@ -1685,12 +1853,11 @@ func get_random_item_for_class(p_class_name: String, level: int) -> Dictionary:
             if not (item is Dictionary):
                 continue
 
-            var req_lvl := int(item.get("req_level", 1))
-            var req_cls := str(item.get("req_class", "")).to_upper()
-
-            # Level ve class şartını kontrol et
-            if req_lvl <= level and (req_cls == "" or req_cls == cname):
-                pool.append(item)
+            var norm_item := normalize_item(item)
+            var req_lvl := int(norm_item.get("req_level", 1))
+            
+            if req_lvl <= level:
+                pool.append(norm_item)
 
     if pool.is_empty():
         push_warning("ItemDB.get_random_item_for_class: %s için (lvl %d) uygun item bulunamadı." % [cname, level])
@@ -1700,36 +1867,55 @@ func get_random_item_for_class(p_class_name: String, level: int) -> Dictionary:
     return pool[idx].duplicate(true)
 
 
-# --- YENİ FONKSİYON: EŞYA FİYATI HESAPLAMA ---
-
-# Bir eşya sözlüğünü alır ve ona bir "Alış Fiyatı" hesaplar
+# -----------------------------------------------------
+#  GÜNCELLENMİŞ FİYAT HESAPLAMA (POTLARI DESTEKLER)
+# -----------------------------------------------------
 func get_item_price(item_data: Dictionary) -> int:
     if item_data.is_empty():
         return 0
 
-    # 1. Adım: Seviyeye göre temel fiyat
+    # 1. Adım: Sabit "value" anahtarı var mı? (Potlar için en önemli)
+    if item_data.has("value"):
+        return int(item_data["value"])
+        
+    if STAT_VALUES.is_empty():
+        return 1
+
+    # 2. Adım: Seviyeye göre temel fiyat
     var base_price: float = float(item_data.get("req_level", 1)) * 5.0
 
-    # 2. Adım: Statların toplam değerini hesapla
+    # 3. Adım: Statların toplam değerini hesapla
     var stat_price: float = 0.0
     var stats: Dictionary = item_data.get("stats", {})
     for stat_key in stats:
+        var value_multiplier: float = float(STAT_VALUES.get(stat_key, 0.0))
+        if value_multiplier == 0.0:
+            continue
+            
         var stat_value: float = float(stats[stat_key])
-        var value_multiplier: float = float(STAT_VALUES.get(stat_key, 1.0))
         stat_price += (stat_value * value_multiplier)
 
-    # 3. Adım: Slot çarpanını bul (ID'den yola çıkarak)
+    # 4. Adım: Slot çarpanını bul (ID'den yola çıkarak)
     var slot_multiplier: float = 1.0
     var id_str: String = item_data.get("id", "")
     if not id_str.is_empty():
         var parts: Array = id_str.split("_")
-        if parts.size() == 3:
-            var slot_code: String = parts[1] # "B_W_1" -> "W"
+        if parts.size() >= 2: # "P_HP_S" veya "B_W_1"
+            var slot_code: String = parts[1] # "HP" veya "W"
             slot_multiplier = float(SLOT_MULTIPLIERS.get(slot_code, 1.0))
 
-    # 4. Adım: Nihai fiyatı hesapla
-    # (Temel Fiyat + Stat Değeri) * Slot Çarpanı
+    # 5. Adım: Nihai fiyatı hesapla
     var final_price: int = int((base_price + stat_price) * slot_multiplier)
 
-    # Fiyatın en az 1 Altın olmasını sağla
+    # 6. Adım: (Fallback) Eğer 'value' yoksa ama pot ise
+    if final_price <= 1 and id_str.begins_with("P_"):
+        if stats.has("HP_REGEN_VALUE"):
+            final_price = int(float(stats["HP_REGEN_VALUE"]) * 0.25)
+        elif stats.has("MP_REGEN_VALUE"):
+            final_price = int(float(stats["MP_REGEN_VALUE"]) * 0.20)
+        elif stats.has("P_DEF_BONUS"):
+            final_price = 50
+        else:
+            final_price = 10
+
     return max(1, final_price)
