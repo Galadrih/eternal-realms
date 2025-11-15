@@ -6,10 +6,10 @@ class_name CharacterCreator
 # --------------------------------------------------------------------
 
 # --- SOL PANEL ---
-@onready var class_list: VBoxContainer = %ClassList
+@onready var class_list: VBoxContainer = $MarginContainer/MainHBox/LeftPanel/ClassVBox/ClassScroll/ClassList
 
 # --- ORTA PANEL ---
-@onready var preview_sprite: Sprite2D = %PreviewSprite
+@onready var preview_sprite: Sprite2D = $MarginContainer/MainHBox/CenterPanel/CenterVBox/PreviewFrame/PreviewCenter/PreviewSprite
 @onready var current_class_label: Label = $MarginContainer/MainHBox/CenterPanel/CenterVBox/ClassSwitchHBox/CurrentClassLabel
 @onready var next_class_button: Button = $MarginContainer/MainHBox/CenterPanel/CenterVBox/ClassSwitchHBox/NextClassButton
 @onready var previous_class_button: Button = $MarginContainer/MainHBox/CenterPanel/CenterVBox/ClassSwitchHBox/PrevClassButton
@@ -53,7 +53,7 @@ var class_data: Array[Dictionary] = [
         "stats": "INT, FOC, WIS",
         "difficulty": "★★★"
     },
-    # Diğer class’ları da aynı formatla ekleyebilirsin
+    # Diğer class’ları aynı formatta buraya ekleyebilirsin
 ]
 
 var current_class_index: int = 0
@@ -132,11 +132,14 @@ func _update_ui() -> void:
 
     current_class_label.text = class_name_str
 
-    var tex: Texture2D = load(String(data["sprite_path"]))
-    if tex:
-        preview_sprite.texture = tex
+    if preview_sprite:
+        var tex: Texture2D = load(String(data["sprite_path"]))
+        if tex:
+            preview_sprite.texture = tex
+        else:
+            push_warning("Sprite bulunamadı: %s" % [data["sprite_path"]])
     else:
-        push_warning("Sprite bulunamadı: %s" % [data["sprite_path"]])
+        push_warning("preview_sprite node'u bulunamadı, texture atanamadı.")
 
     class_name_label.text = class_name_str
     lore_text.text = lore
