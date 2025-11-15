@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=4 uid="uid://hu8puycjsdov"]
+[gd_scene load_steps=25 format=4 uid="uid://hu8puycjsdov"]
 
 [ext_resource type="Script" uid="uid://b41vhpa3l01uf" path="res://scripts/world.gd" id="1_i7141"]
 [ext_resource type="Texture2D" uid="uid://brgh5tc7ia485" path="res://assets/sprites/tiles/earthtile2.png" id="2_7r4gi"]
@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://b2q5gieiv8h4w" path="res://scenes/character_sheet.tscn" id="8_4mrxx"]
 [ext_resource type="Texture2D" uid="uid://dokldsbtc43om" path="res://assets/sprites/tiles/blacksmith.png" id="8_q5onr"]
 [ext_resource type="PackedScene" uid="uid://bccylipfomovb" path="res://scenes/ui/TargetIndicator.tscn" id="13_jhx03"]
+[ext_resource type="PackedScene" uid="uid://bmuronqsqn0x3" path="res://scenes/vendor.tscn" id="14_o8fc1"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_e3hyu"]
 texture = ExtResource("2_7r4gi")
@@ -22264,3 +22265,5 @@ layer = 3
 [node name="TargetIndicator" parent="." instance=ExtResource("13_jhx03")]
 visible = false
 modulate = Color(1, 1, 1, 0.78431374)
+
+[node name="Vendor" parent="." instance=ExtResource("14_o8fc1")]

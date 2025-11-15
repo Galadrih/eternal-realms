@@ -1,0 +1,15 @@
+[gd_scene load_steps=4 format=3 uid="uid://bmuronqsqn0x3"]
+
+[ext_resource type="Script" uid="uid://bgy52hyex10aq" path="res://scripts/vendor.gd" id="1_3hotk"]
+[ext_resource type="Texture2D" uid="uid://bony3a6ti88y1" path="res://assets/sprites/classes/monk.png" id="2_ic8gk"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0r8pg"]
+
+[node name="Vendor" type="Area2D"]
+script = ExtResource("1_3hotk")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_ic8gk")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_0r8pg")

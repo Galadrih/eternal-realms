@@ -157,6 +157,7 @@ signal mana_updated(current_mp, max_mp)
 signal stats_updated(stats_payload) 
 signal skill_executed(skill_id, value, is_heal, effect, target_or_position) 
 signal invisibility_changed(is_now_invisible) # GÖRÜNMEZLİK SİNYALİ
+signal gold_updated(new_gold_amount)
 
 # --- STATLAR (TEMEL DEĞERLER) ---
 var base_health: int = 80
@@ -307,6 +308,10 @@ func _ready():
     set_mana(computed_max_mana)
     add_to_group("player_character") 
     # DÜZELTME: 'emit_full_stat_update()' SİLİNDİ. (recalculate_derived_stats hallediyor)
+    # --- YENİ EKLENTİ ---
+    # Oyun başladığında HUD'a mevcut altını bildir
+    gold_updated.emit(PlayerData.gold)
+    # -------------------
 
 # --- EKSİK FONKSİYONLAR (HoT/DoT için) ---
 func heal(amount: int, damage_color: Color):
@@ -828,3 +833,29 @@ func get_equipment_bonus(stat_name: String) -> float:
 # base_value + equipment bonusu döner.
 func get_total_with_equipment(stat_name: String, base_value: float) -> float:
     return base_value + get_equipment_bonus(stat_name)
+
+# --- YENİ ALTIN FONKSİYONLARI ---
+
+# Düşmanlar öldüğünde bu fonksiyon çağrılacak
+func add_gold(amount: int) -> void:
+    if amount <= 0:
+        return
+    PlayerData.gold += amount
+    gold_updated.emit(PlayerData.gold)
+    print("Altın kazanıldı: +%d. Toplam: %d" % [amount, PlayerData.gold])
+    # TODO: HUD üzerinde bir "altın kazanıldı" efekti gösterilebilir
+
+# Satıcılardan alışveriş yaparken bu fonksiyon çağrılacak
+func spend_gold(amount: int) -> bool:
+    if amount <= 0:
+        return false
+
+    if PlayerData.gold >= amount:
+        PlayerData.gold -= amount
+        gold_updated.emit(PlayerData.gold)
+        print("Altın harcandı: -%d. Kalan: %d" % [amount, PlayerData.gold])
+        return true
+    else:
+        print("HATA: Yetersiz altın! Gereken: %d, Mevcut: %d" % [amount, PlayerData.gold])
+        return false
+# -------------------------------

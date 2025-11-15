@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://b2p5scgacieep"]
+[gd_scene load_steps=16 format=3 uid="uid://b2p5scgacieep"]
 
 [ext_resource type="Script" uid="uid://dknhlmqxyar17" path="res://scripts/hud.gd" id="1_37p78"]
 [ext_resource type="PackedScene" uid="uid://cw2bpfc61uhek" path="res://scenes/ui/SkillBar.tscn" id="2_oo0fn"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://ciiultq8eyx3b" path="res://scripts/ui/target_frame.gd" id="3_uo2fv"]
 [ext_resource type="PackedScene" uid="uid://dgy637rv3fnip" path="res://scenes/ui/BuffPanel.tscn" id="4_6fi6k"]
 [ext_resource type="PackedScene" uid="uid://ccdrj31fkfbkm" path="res://scenes/ui/InventoryPanel.tscn" id="6_047uy"]
+[ext_resource type="PackedScene" uid="uid://chm3yma0a3upp" path="res://scenes/ui/shop_panel.tscn" id="7_5pdws"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_br27j"]
 bg_color = Color(0.14901961, 0.14901961, 0.14901961, 1)
@@ -198,3 +199,5 @@ offset_top = -20.0
 offset_right = 60.0
 offset_bottom = 20.0
 grow_vertical = 2
+
+[node name="ShopPanel" parent="." instance=ExtResource("7_5pdws")]

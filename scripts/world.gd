@@ -113,7 +113,17 @@ func _ready() -> void:
         var inv_panel: Node = hud.get_node_or_null("InventoryPanel")
         if inv_panel and inv_panel.has_method("set_player"):
             inv_panel.set_player(player_instance)
-    
+        # --- DÜZENLEME BURADA ---
+            if player_instance.has_signal("gold_updated") and inv_panel.has_method("update_gold_display"):
+                # 1. Sinyali GELECEKTEKİ güncellemeler için bağla
+                player_instance.gold_updated.connect(inv_panel.update_gold_display)
+                
+                # 2. (YENİ EKLENTİ) Etiketi BAŞLANGIÇ durumu için manuel olarak güncelle
+                # Bu, oyun başlar başlamaz doğru altını gösterir.
+                if "gold" in PlayerData:
+                    inv_panel.update_gold_display(PlayerData.gold)
+            # --- DÜZENLEME SONU ---
+
     print("Oyuncu '", player_instance.name, "' (Sınıf: ", PlayerData.character_class_name, ") dünyaya eklendi.")
 
     # --- BAĞLANTILAR ---

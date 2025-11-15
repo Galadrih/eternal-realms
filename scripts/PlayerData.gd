@@ -11,3 +11,7 @@ var character_class_id: int = 0
 
 # Başlangıç seviyesi – istersen karakter yaratırken güncellersin
 var character_level: int = 1
+
+# --- YENİ EKLENTİ ---
+var gold: int = 25 # Oyuncuya 25 altınla başlatalım
+# ---------------------

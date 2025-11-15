@@ -3,7 +3,7 @@ class_name InventoryPanel
 
 const COLUMNS: int = 5
 const ROWS: int = 8
-const SLOTS_PER_PAGE: int = COLUMNS * ROWS    # 40
+const SLOTS_PER_PAGE: int = COLUMNS * ROWS     # 40
 const TOTAL_SLOTS: int = SLOTS_PER_PAGE * 2  # 80 (2 sayfa)
 
 const SLOT_SCENE := preload("res://scenes/ui/InventorySlot.tscn")
@@ -21,6 +21,7 @@ const EQUIP_SLOT_SCENE := preload("res://scenes/ui/EquipmentSlot.tscn")
 @onready var page_label: Label        = $PanelBG/MarginContainer/VBoxContainer/InventoryWindow/MarginContainer/VBoxContainer/TopBar/PageLabel
 @onready var prev_button: Button      = $PanelBG/MarginContainer/VBoxContainer/InventoryWindow/MarginContainer/VBoxContainer/TopBar/PrevButton
 @onready var next_button: Button      = $PanelBG/MarginContainer/VBoxContainer/InventoryWindow/MarginContainer/VBoxContainer/TopBar/NextButton
+@onready var gold_label: Label = $PanelBG/MarginContainer/VBoxContainer/InventoryWindow/MarginContainer/VBoxContainer/GoldLabel
 
 # Player referansı (stat ve req check için)
 var player: Node = null
@@ -31,6 +32,12 @@ var slots: Array = []                # 40 InventorySlot referansı
 
 var equip_slots: Array = []          # EquipmentSlot referansları
 var equipped: Dictionary = {}        # slot_name -> item Dictionary
+
+# --- YENİ EKLENTİ: DÜKKAN MODU ---
+var is_in_shop_mode: bool = false
+var hud_node = null # Loot alert/mesajları için
+# ---------------------------------
+
 
 # Ekipman slot isimleri (grid sırasına göre)
 const EQUIP_SLOT_TYPES: Array[StringName] = [
@@ -69,12 +76,17 @@ func _ready() -> void:
     if next_button:
         next_button.pressed.connect(_on_next_page_pressed)
 
+    # --- YENİ EKLENTİ ---
+    # HUD referansını al (LootAlert için)
+    hud_node = get_tree().get_first_node_in_group("hud")
+    # -------------------
+
     _update_page_label()
     _refresh_all_slots()
     _refresh_equip_slots()
 
     # DEBUG – envanteri doldur (ItemDB yoksa kendi içinde iptal ediyor)
-    _debug_fill_inventory()
+    #_debug_fill_inventory() # Test bittiyse bu satırı yorumla
 
 
 # Player’ı HUD/World’den buraya set edeceğiz
@@ -108,6 +120,13 @@ func _create_slots() -> void:
         var slot: InventorySlot = SLOT_SCENE.instantiate()
         slot.local_index = i
         slot.inventory_panel = self
+        
+        # --- KRİTİK DÜZELTME: SİNYAL BAĞLANTISI ---
+        # Slot'tan gelen sağ tık/sürükleme gibi inputları yakalamak için
+        # BU SATIR EKSİK OLDUĞU İÇİN SATIŞ YAPILAMIYORDU.
+        slot.gui_input.connect(_on_inventory_slot_gui_input.bind(slot.local_index))
+        # -----------------------------------------
+        
         grid.add_child(slot)
         slots.append(slot)
         i += 1
@@ -207,7 +226,7 @@ func handle_drop(data: Dictionary, local_index: int) -> void:
     set_item_at(to_index, from_item)
 
     _refresh_all_slots()
-    _notify_player_equipment_changed()
+    # _notify_player_equipment_changed() -> Bu sürüklemede gerekmez, equip değişmedi
 
 
 # ------------------------------------------------------
@@ -266,52 +285,55 @@ func _refresh_equip_slots() -> void:
 #  ITEM → SLOT UYUMLULUK + CLASS / LEVEL REQ
 # ------------------------------------------------------
 
-func can_item_go_to_slot(item: Dictionary, slot_name: String) -> bool:
-    # Önce slot tipini belirle
+# (Bu fonksiyonun ItemDB'deki ID yapınızla uyumlu olması KRİTİKTİR)
+func _find_slot_type_for_item(item: Dictionary) -> StringName:
     var stype := ""
-
-    if item.has("slot_type"):
+    if item.is_empty():
+        return &""
+        
+    if item.has("slot_type"): # Gelecek için
         stype = str(item["slot_type"]).to_lower()
     elif item.has("id"):
         var id_str := str(item["id"])
+        
+        # İksirleri (P_HP_S) ayır, bunların bir slotu yok
+        if id_str.begins_with("P_"):
+            return &""
+
         var parts: Array = id_str.split("_")
         if parts.size() >= 2:
-            var code := str(parts[1])
+            var code := str(parts[1]) # "B_W_1" -> "W"
             match code:
-                "W":
-                    stype = "weapon"
-                "A":
-                    stype = "armor"
-                "H":
-                    stype = "helmet"
-                "P":
-                    stype = "pants"
-                "G":
-                    stype = "gloves"
-                "B":
-                    stype = "boots"
-                "WR":
-                    stype = "bracelet"
-                "N":
-                    stype = "necklace"
-                "C":
-                    stype = "cloak"
-                "BT":
-                    stype = "belt"
-                _:
-                    stype = ""
+                "W": stype = "weapon"
+                "A": stype = "armor"
+                "H": stype = "helmet"
+                "P": stype = "pants"
+                "G": stype = "gloves"
+                # "B" (Boots) ve "BT" (Belt) kodları ItemDB'de yok
+                "WR": stype = "bracelet"
+                "N": stype = "necklace"
+                "C": stype = "cloak"
+                # "O" (Offhand) ItemDB'de var ama EQUIP_SLOT_TYPES listenizde yok.
+                "O": stype = "offhand" 
+                _: stype = ""
+    
+    # Sadece EQUIP_SLOT_TYPES içinde olan bir tipi döndür
+    if EQUIP_SLOT_TYPES.has(stype):
+        return StringName(stype)
+    
+    # Bulunamazsa (örn: "O" (Offhand) veya "B" (Boots)) boş döner
+    return &""
 
-    if stype == "":
+
+func can_item_go_to_slot(item: Dictionary, slot_name: String) -> bool:
+    var item_slot_type = _find_slot_type_for_item(item)
+    
+    if item_slot_type == &"":
+        return false # Eşyanın tipi anlaşılamadı
+    
+    # Slot adları eşleşmeli
+    if item_slot_type != StringName(slot_name):
         return false
-
-    # slot_name ile eşleşme
-    if slot_name.begins_with("ring"):
-        # Artık ring yok dedin ama yine de guard kalsın
-        if stype != "ring":
-            return false
-    else:
-        if stype != slot_name:
-            return false
 
     # Player yoksa (örneğin debug) class/level req kontrol etme
     if player == null:
@@ -329,6 +351,11 @@ func can_item_go_to_slot(item: Dictionary, slot_name: String) -> bool:
     # CLASS REQ – ItemDatabase’de "req_class": "BERSERKER" gibi
     if item.has("req_class"):
         var req_class_str: String = str(item["req_class"]).to_upper()
+        
+        # Boş req_class herkes giyebilir demektir
+        if req_class_str.is_empty() or req_class_str == "POTIONS":
+            return true
+            
         var player_class_code: String = ""
 
         # PlayerBase’de class_id varsa
@@ -351,10 +378,6 @@ func can_item_go_to_slot(item: Dictionary, slot_name: String) -> bool:
             if id_to_code.has(cid):
                 player_class_code = id_to_code[cid]
 
-        # Yedek: player.class_name string ise
-        if player_class_code == "" and "class_name" in player:
-            player_class_code = str(player.class_name).to_upper()
-
         if player_class_code != "" and req_class_str != "" and player_class_code != req_class_str:
             return false
 
@@ -362,7 +385,7 @@ func can_item_go_to_slot(item: Dictionary, slot_name: String) -> bool:
 
 
 # ------------------------------------------------------
-#  ENVANTERDEN EQUIPMENT'A GİYME
+#  ENVANTERDEN EQUIPMENT'A GİYME (Sürükleyince)
 # ------------------------------------------------------
 
 func equip_from_inventory(from_global_index: int, slot_name: String) -> void:
@@ -386,8 +409,7 @@ func equip_from_inventory(from_global_index: int, slot_name: String) -> void:
         set_item_at(from_global_index, previous)
 
     _refresh_all_slots()
-    _refresh_equip_slots()
-    _notify_player_equipment_changed()
+    # _refresh_equip_slots() ve _notify_player...() set_equipped_item() içinde çağrılıyor
 
 
 # ------------------------------------------------------
@@ -426,11 +448,112 @@ func _debug_fill_inventory() -> void:
 
 
 # =======================================================
-#  YENİ EKLENTİ: DÜNYADAN EŞYA TOPLAMA (LOOT)
+#  YENİ FONKSİYONLAR (EKONOMİ & SAĞ TIK)
+# =======================================================
+
+# --- INPUT HANDLER (Sağ Tık) ---
+
+# Envanter slotuna tıklandığında (Slot'un gui_input sinyalinden gelir)
+# BU FONKSİYONUN ÇALIŞMASI İÇİN _create_slots İÇİNDEKİ connect() GEREKLİDİR.
+func _on_inventory_slot_gui_input(event: InputEvent, local_index: int):
+    # Sadece sağ tıka cevap ver (sol tık sürükleme içindir, o InventorySlot.gd'de)
+    if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+        get_viewport().set_input_as_handled()
+        
+        var global_index: int = get_global_index(local_index)
+        
+        if is_in_shop_mode:
+            # Dükkan açıksa: EŞYAYI SAT
+            sell_item_in_slot(global_index)
+        else:
+            # Dükkan kapalıysa: EŞYAYI KUŞANMAYI DENE
+            _try_auto_equip_item(global_index)
+
+# --- OTOMATİK GİYME (Sağ Tık) ---
+
+# Envanterdeki bir eşyayı otomatik olarak doğru slota giymeyi dener
+func _try_auto_equip_item(global_index: int):
+    var item_to_equip = get_item_at(global_index)
+    if item_to_equip.is_empty():
+        return
+        
+    # 1. Eşyanın tipine göre slot adını bul (weapon, armor, etc.)
+    var target_slot_name: StringName = _find_slot_type_for_item(item_to_equip)
+    
+    if target_slot_name == &"":
+        print("Bu eşya için uygun ekipman slotu bulunamadı: ", item_to_equip.get("name", "Bilinmeyen"))
+        # İksirleri "giymeyi" deneme
+        if hud_node and hud_node.has_method("show_loot_alert_text"):
+            hud_node.show_loot_alert_text("Bu eşya giyilemez.")
+        return
+        
+    # 2. Player'ın bu eşyayı giyip giyemeyeceğini kontrol et (level, class)
+    if not can_item_go_to_slot(item_to_equip, target_slot_name):
+        print("Eşya gereksinimleri karşılanmıyor.")
+        if hud_node and hud_node.has_method("show_loot_alert_text"):
+            hud_node.show_loot_alert_text("Gereksinimler karşılanmıyor.")
+        return
+
+    # 3. Eşya giyilebilir. Mevcut slottaki eşyayı al.
+    var currently_equipped_item: Dictionary = get_equipped_item(target_slot_name)
+    
+    # 4. Yeni eşyayı giy
+    set_equipped_item(target_slot_name, item_to_equip)
+    
+    # 5. Eski eşyayı (boş değilse) envantere geri koy
+    set_item_at(global_index, currently_equipped_item)
+    
+    # 6. UI'ları yenile
+    _refresh_all_slots()
+    # _refresh_equip_slots() ve _notify_player...() set_equipped_item() içinde çağrılıyor
+
+
+# --- DÜKKAN MODU (Satma) ---
+
+# ShopPanel.gd tarafından çağrılır
+func set_shop_mode(is_shopping: bool):
+    is_in_shop_mode = is_shopping
+    if is_shopping:
+        print("Dükkan modu AÇIK. Satmak için sağ tıkla.")
+    else:
+        print("Dükkan modu KAPALI. Kuşanmak için sağ tıkla.")
+
+# Bir eşyayı satar
+func sell_item_in_slot(global_index: int):
+    if player == null:
+        player = get_tree().get_first_node_in_group("player_character")
+        if player == null: return
+        
+    var item_data: Dictionary = get_item_at(global_index)
+    if item_data.is_empty():
+        return
+        
+    # 1. Eşyanın "Alış" fiyatını ItemDB'den al
+    # ItemDB'nin bir Autoload olduğunu varsayıyoruz
+    var base_price: int = ItemDB.get_item_price(item_data)
+    
+    # 2. "Satış" fiyatını belirle (örn: %25'i, en az 1 altın)
+    var sell_price: int = max(1, int(base_price * 0.25))
+    
+    # 3. Oyuncuya altını ver
+    player.add_gold(sell_price)
+    
+    # 4. Eşyayı envanterden kaldır
+    clear_item_at(global_index)
+    _refresh_all_slots() # UI'ı yenile
+    
+    # 5. Oyuncuyu bilgilendir
+    if hud_node and hud_node.has_method("show_loot_alert_text"):
+        # hud.gd'deki LootAlert fonksiyonunu kullanıyoruz
+        var alert_text = "%s satıldı! (+%d Altın)" % [item_data.get("name", "Eşya"), sell_price]
+        hud_node.show_loot_alert_text(alert_text)
+
+
+# =======================================================
+#  MEVCUT FONKSİYONLARINIZ (Loot & Altın)
 # =======================================================
 
 # Bu fonksiyon 'player.gd' tarafından çağrılır.
-# Senin mevcut 'add_item_first_free' fonksiyonunu kullanır.
 func add_item_to_inventory(item: Dictionary) -> bool:
     if item.is_empty():
         return false
@@ -444,5 +567,12 @@ func add_item_to_inventory(item: Dictionary) -> bool:
         print("Eşya envantere eklendi: ", item.get("name", "Bilinmeyen Eşya"))
     else:
         print("Envanter dolu, eşya eklenemedi: ", item.get("name", "Bilinmeyen Eşya"))
-        
+        if hud_node and hud_node.has_method("show_loot_alert_text"):
+            hud_node.show_loot_alert_text("Envanter Dolu!")
+            
     return success
+    
+# --- YENİ ALTIN GÖSTERME FONKSİYONU ---
+func update_gold_display(new_amount: int):
+    if is_instance_valid(gold_label):
+        gold_label.text = "Altın: %d" % new_amount

@@ -4,19 +4,20 @@ extends CanvasLayer
 const LOOT_ALERT_SCENE = preload("res://scenes/ui/LootAlert.tscn")
 
 # --- UI Referansları (YENİ LAYOUT’A GÖRE) ---
-@onready var level_label: Label        = $Root/PlayerFrame/Content/InfoAndBars/NameLabel
-@onready var health_bar: ProgressBar   = $Root/PlayerFrame/Content/InfoAndBars/HealthBar
-@onready var mana_bar: ProgressBar     = $Root/PlayerFrame/Content/InfoAndBars/ManaBar
-@onready var xp_bar: ProgressBar       = $Root/PlayerFrame/Content/InfoAndBars/ExpBar
-@onready var class_icon: TextureRect   = $Root/PlayerFrame/Content/ClassIcon
-@onready var buff_panel: BuffPanel     = $BuffPanel
+@onready var level_label: Label         = $Root/PlayerFrame/Content/InfoAndBars/NameLabel
+@onready var health_bar: ProgressBar    = $Root/PlayerFrame/Content/InfoAndBars/HealthBar
+@onready var mana_bar: ProgressBar      = $Root/PlayerFrame/Content/InfoAndBars/ManaBar
+@onready var xp_bar: ProgressBar        = $Root/PlayerFrame/Content/InfoAndBars/ExpBar
+@onready var class_icon: TextureRect    = $Root/PlayerFrame/Content/ClassIcon
+@onready var buff_panel: BuffPanel      = $BuffPanel
 @onready var target_frame: Panel = null
 @onready var inventory_panel: InventoryPanel = $InventoryPanel
 @onready var loot_alert_container: VBoxContainer = $LootAlertContainer # <-- YENİ EKLENDİ
+@onready var shop_panel = $ShopPanel # ShopPanel'in hud.tscn içindeki yolunu yazın
 
 # --- Dinamik bulunacak düğümler ---
-var _skillbar: Node = null          # SkillBar.tscn
-var _skill_panel: Control = null    # SkillPanel.tscn
+var _skillbar: Node = null        # SkillBar.tscn
+var _skill_panel: Control = null  # SkillPanel.tscn
 var _player_class_name: String = ""
 var _player_name: String = ""
 var _current_level: int = 1
@@ -29,7 +30,9 @@ var current_target_node = null
 
 func _ready() -> void:
     add_to_group("hud")
-    set_process_input(true)
+    
+    # _input yerine _unhandled_input kullanacağız
+    set_process_unhandled_input(true)
 
     # TargetFrame’i güvenli şekilde bul
     target_frame = get_node_or_null("Root/TargetFrame")
@@ -53,10 +56,9 @@ func _ready() -> void:
         
     if inventory_panel:
         inventory_panel.hide()
-        _center_panel(inventory_panel)
 
-
-
+    if shop_panel:
+        shop_panel.hide()
 
 
 # =====================================================
@@ -72,11 +74,15 @@ func update_buff_panel(statuses: Dictionary, skill_db: Dictionary, class_id: int
 
 
 # =====================================================
-# INPUT – SkillPanel aç/kapat (K)
+# INPUT – Panelleri aç/kapat
 # =====================================================
-func _input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
     # K → Skill Panel
     if event.is_action_pressed("open_skills"):
+        # Dükkan açıksa, beceri panelini açma
+        if is_instance_valid(shop_panel) and shop_panel.visible:
+            return
+
         _ensure_skill_panel()
         if _skill_panel == null:
             push_error("SkillPanel bulunamadı. HUD altında Root/SkillPanel'i instance ettiğinden emin ol.")
@@ -91,14 +97,26 @@ func _input(event: InputEvent) -> void:
 
             _skill_panel.show()
             _center_panel(_skill_panel)
+            
+        get_viewport().set_input_as_handled()
 
-     # I → Envanter
+
+    # I → Envanter
     if event.is_action_pressed("open_inventory"):
-        if inventory_panel:
-            inventory_panel.visible = not inventory_panel.visible
-            if inventory_panel.visible:
-                _center_panel(inventory_panel)
-
+        
+        # Dükkan açıksa, "I" tuşu her şeyi kapatır
+        if is_instance_valid(shop_panel) and shop_panel.visible:
+            close_shop() # Bu zaten envanteri de kapatır
+        else:
+            # Dükkan kapalıysa, envanteri normal aç/kapat
+            if inventory_panel:
+                inventory_panel.visible = not inventory_panel.visible
+                if inventory_panel.visible:
+                    # Normal açılışta dükkan modunun KAPALI olduğundan emin ol
+                    inventory_panel.set_shop_mode(false)
+                    _center_panel(inventory_panel) # Paneli ortala
+        
+        get_viewport().set_input_as_handled()
 
 
 # =====================================================
@@ -176,11 +194,20 @@ func _ensure_skill_panel() -> void:
 
 
 func _center_panel(p: Control) -> void:
-    var vp: Vector2 = get_viewport().get_visible_rect().size
-    if p.custom_minimum_size == Vector2.ZERO:
-        p.custom_minimum_size = Vector2(620, 440)
-    p.size = p.custom_minimum_size
-    p.position = (vp - p.size) * 0.5
+    var vp_size: Vector2 = get_viewport().get_visible_rect().size
+    var p_size = p.size
+    
+    # Eğer panelin boyutu yoksa (ilk açılışta olabilir), minimum boyutunu kullan
+    if p_size == Vector2.ZERO:
+        p_size = p.custom_minimum_size
+    
+    # Eğer hala boyutu yoksa, hata ver
+    if p_size == Vector2.ZERO:
+         push_warning("Panel '%s' boyutu sıfır, ortalanamıyor." % p.name)
+         p.position = vp_size * 0.25 # Ekranda kalsın diye
+         return
+         
+    p.position = (vp_size - p_size) * 0.5
 
 
 # =====================================================
@@ -244,7 +271,6 @@ func _get_player_class() -> String:
             8: "Cleric",
             9: "Bard",
             10: "Necromancer",
-            # DİKKAT: Senin kodunda 11 (Ranger) eksikti, ekledim.
             11: "Ranger"
         }
         var cid = int(p.get("class_id"))
@@ -284,7 +310,6 @@ func update_xp(current_xp: float, next_level_xp: float) -> void:
 # =====================================================
 func set_target(name: String, level: int, current_hp: float, max_hp: float) -> void:
     if target_frame:
-        # target_frame.gd'nin 'set_target' fonksiyonunu çağırdığını varsayıyoruz
         if target_frame.has_method("set_target"):
             target_frame.set_target(name, level, current_hp, max_hp)
         else:
@@ -293,10 +318,8 @@ func set_target(name: String, level: int, current_hp: float, max_hp: float) -> v
 
 func update_target_hp(current_hp: float, max_hp: float) -> void:
     if target_frame:
-        # target_frame.gd'nin 'update_hp' fonksiyonunu çağırdığını varsayıyoruz
         if target_frame.has_method("update_hp"):
             target_frame.update_hp(current_hp, max_hp)
-        # VEYA target_frame'de 'update_health' varsa onu kullan
         elif target_frame.has_method("update_health"):
             target_frame.update_health(current_hp, max_hp)
         else:
@@ -317,20 +340,14 @@ func clear_target() -> void:
 
 # world.gd veya player tarafından çağrılır
 func set_target_from_node(target: Node) -> void:
-    # print("HUD: set_target_from_node çağrıldı, target =", target) # (Çok fazla log üretebilir, kapattım)
-
     if target_frame == null:
         push_error("HUD: TargetFrame referansı yok, set_target_from_node çalışamıyor.")
         return
 
     # --- 1. ESKİ HEDEFİN BAĞLANTISINI KES ---
-    # 'current_target_node' geçerliyse (null değilse ve silinmemişse)
-    # VE 'health_updated' sinyali varsa
     if is_instance_valid(current_target_node) and current_target_node.has_signal("health_updated"):
-        # 'update_target_hp' fonksiyonumuza bağlı mı diye kontrol et
         if current_target_node.health_updated.is_connected(self.update_target_hp):
             current_target_node.health_updated.disconnect(self.update_target_hp)
-            # print("HUD: Eski hedefin (", current_target_node.name, ") bağlantısı kesildi.")
 
     # --- 2. YENİ HEDEFİ ATA ---
     current_target_node = target
@@ -338,53 +355,37 @@ func set_target_from_node(target: Node) -> void:
     # --- 3. YENİ HEDEFİ İŞLE ---
     if is_instance_valid(current_target_node):
         
-        # ---- İSİM ----
         var name: String = ""
         if "enemy_name" in current_target_node:
             name = str(current_target_node.get("enemy_name"))
-        elif "display_name" in current_target_node:
-            name = str(current_target_node.get("display_name"))
         else:
             name = current_target_node.name
 
-        # ---- LEVEL ----
         var level: int = 1
         if "level" in current_target_node:
             level = int(current_target_node.get("level"))
-        elif "lvl" in current_target_node:
-            level = int(current_target_node.get("lvl"))
 
-        # ---- HP / MAX HP ----
         var current_hp: float = 0.0
         var max_hp: float = 1.0
-
         if "current_health" in current_target_node:
             current_hp = float(current_target_node.get("current_health"))
-            if "max_health" in current_target_node: # enemy.gd'deki @export
+            if "max_health" in current_target_node:
                 max_hp = float(current_target_node.get("max_health"))
-            elif "computed_max_health" in current_target_node: # player.gd'deki gibi
+            elif "computed_max_health" in current_target_node:
                 max_hp = float(current_target_node.get("computed_max_health"))
-        elif "hp" in current_target_node:
-            current_hp = float(current_target_node.get("hp"))
-            if "max_hp" in current_target_node:
-                max_hp = float(current_target_node.get("max_hp"))
         
-        # 'set_target' helper fonksiyonunu kullanarak bilgileri BİR KEZ ayarla
         set_target(name, level, current_hp, max_hp)
 
         # --- 3b. YENİ SİNYAL BAĞLANTISI ---
         if current_target_node.has_signal("health_updated"):
-            # Düşmanın sinyalini, bu script'teki 'update_target_hp' fonksiyonuna bağla
             current_target_node.health_updated.connect(self.update_target_hp)
-            # print("HUD: Yeni hedefe (", current_target_node.name, ") 'update_target_hp' sinyaline bağlanıldı.")
         else:
             print("HUD HATA: Hedef (", current_target_node.name, ") 'health_updated' sinyaline sahip değil.")
 
         target_frame.visible = true
-    
+        
     else:
         # --- 4. HEDEF NULL (BOŞ) İSE ---
-        # print("HUD: target null, TargetFrame temizleniyor.")
         clear_target() # Helper fonksiyonunu kullan
         target_frame.visible = false
 
@@ -392,6 +393,24 @@ func set_target_from_node(target: Node) -> void:
 # =====================================================
 #  YENİ EKLENDİ: LOOT BİLDİRİM SİSTEMİ
 # =====================================================
+
+# Sadece metin tabanlı bir uyarı gösterir (örn: "Eşya Satıldı")
+func show_loot_alert_text(message: String):
+    if not is_instance_valid(loot_alert_container):
+        print("HATA: HUD, LootAlertContainer'ı bulamadı!")
+        return
+        
+    var alert = LOOT_ALERT_SCENE.instantiate()
+    loot_alert_container.add_child(alert)
+    # LootAlert.gd'de bu fonksiyonu oluşturduğunu varsayıyoruz
+    if alert.has_method("show_alert_text"):
+        alert.show_alert_text(message) 
+    else:
+        # Yedek olarak, normal fonksiyonu metinle çağır
+        alert.show_alert({"name": message})
+
+
+# Eşya verisine göre bir uyarı gösterir
 func show_loot_alert(item_data: Dictionary):
     if not is_instance_valid(loot_alert_container):
         print("HATA: HUD, LootAlertContainer'ı bulamadı!")
@@ -400,3 +419,67 @@ func show_loot_alert(item_data: Dictionary):
     var alert = LOOT_ALERT_SCENE.instantiate()
     loot_alert_container.add_child(alert)
     alert.show_alert(item_data)
+
+
+# =====================================================
+#  GÜNCELLENMİŞ DÜKKAN FONKSİYONLARI
+# =====================================================
+func open_shop(item_list: Array):
+    if not (is_instance_valid(shop_panel) and is_instance_valid(inventory_panel)):
+        return
+        
+    shop_panel.open_shop(item_list)
+    inventory_panel.show()
+    inventory_panel.set_shop_mode(true)
+    
+    # --- YENİ POZİSYONLAMA MANTIĞI ---
+    _position_panels_for_shop(true)
+    # -------------------------------
+
+func close_shop():
+    if is_instance_valid(shop_panel) and shop_panel.visible:
+        shop_panel.close_shop()
+        
+    if is_instance_valid(inventory_panel):
+        if inventory_panel.visible:
+            inventory_panel.hide()
+        # Dükkan kapansa bile envanterin modunu sıfırla
+        inventory_panel.set_shop_mode(false)
+    
+    _position_panels_for_shop(false) # Pozisyonları sıfırla
+
+
+# Panelleri dükkan modu için (yan yana) veya normal (ortalı) pozisyonlar
+func _position_panels_for_shop(is_shopping: bool):
+    var vp_size: Vector2 = get_viewport().get_visible_rect().size
+    var margin: float = 20.0 # Kenarlardan boşluk
+    
+    if is_shopping:
+        if not (is_instance_valid(inventory_panel) and is_instance_valid(shop_panel)):
+            return
+            
+        var inv_size: Vector2 = inventory_panel.size
+        var shop_size: Vector2 = shop_panel.size
+        
+        # Boyutlar sıfırsa (ilk açılışta olabilir), minimum boyutlarını kullan
+        if inv_size == Vector2.ZERO: inv_size = inventory_panel.custom_minimum_size
+        if shop_size == Vector2.ZERO: shop_size = shop_panel.custom_minimum_size
+
+        # --- DÜZELTİLMİŞ POZİSYONLAMA ---
+        # Panellerin dikeyde ortalanmasını sağla
+        var y_inv = (vp_size.y - inv_size.y) / 2.0
+        var y_shop = (vp_size.y - shop_size.y) / 2.0
+        
+        # Envanteri sola yasla
+        inventory_panel.position = Vector2(margin, y_inv)
+        
+        # Dükkanı sağa yasla
+        shop_panel.position = Vector2(vp_size.x - shop_size.x - margin, y_shop)
+        # --- DÜZELTME SONU ---
+        
+    else:
+        # Dükkan kapandığında panelleri sıfırla (zaten gizliler)
+        if is_instance_valid(inventory_panel):
+            inventory_panel.position = Vector2.ZERO
+        if is_instance_valid(shop_panel):
+            shop_panel.position = Vector2.ZERO
