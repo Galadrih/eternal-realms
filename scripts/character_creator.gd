@@ -29,31 +29,31 @@ class_name CharacterCreator
 # --------------------------------------------------------------------
 
 var class_data: Array[Dictionary] = [
-    {
-        "name": "Druid",
-        "lore": "Eski ağaçların köklerinde yankılanan dualarla yetişen Druidler, yaşam ve çürüme döngüsünü gözetir. Ormanın nefesiyle iyileştirir, toprağın gazabıyla düşmanı boğar.",
-        "sprite_path": "res://assets/sprites/classes/druid.png",
-        "role": "Hibrit Destek / DPS",
-        "stats": "INT, WIS, FOC",
-        "difficulty": "★☆☆"
-    },
-    {
-        "name": "Berserker",
-        "lore": "Savaşın çığlığıyla büyüyen, acıyı öfkeye dönüştüren savaşçılar. Onlar için yara izleri bir onur madalyasıdır.",
-        "sprite_path": "res://assets/sprites/classes/berserker.png",
-        "role": "Saf Melee DPS",
-        "stats": "STR, VIT",
-        "difficulty": "★★☆"
-    },
-    {
-        "name": "Elementalist",
-        "lore": "Ateşin öfkesi, buzun sabrı ve yıldırımın kaprisiyle büyüyen bilge. Elementleri sırayla konuşturur.",
-        "sprite_path": "res://assets/sprites/classes/elementalist.png",
-        "role": "Ranged Burst AoE",
-        "stats": "INT, FOC, WIS",
-        "difficulty": "★★★"
-    },
-    # Diğer class’ları aynı formatta buraya ekleyebilirsin
+	{
+		"name": "Druid",
+		"lore": "Eski ağaçların köklerinde yankılanan dualarla yetişen Druidler, yaşam ve çürüme döngüsünü gözetir. Ormanın nefesiyle iyileştirir, toprağın gazabıyla düşmanı boğar.",
+		"sprite_path": "res://assets/sprites/classes/druid.png",
+		"role": "Hibrit Destek / DPS",
+		"stats": "INT, WIS, FOC",
+		"difficulty": "★☆☆"
+	},
+	{
+		"name": "Berserker",
+		"lore": "Savaşın çığlığıyla büyüyen, acıyı öfkeye dönüştüren savaşçılar. Onlar için yara izleri bir onur madalyasıdır.",
+		"sprite_path": "res://assets/sprites/classes/berserker.png",
+		"role": "Saf Melee DPS",
+		"stats": "STR, VIT",
+		"difficulty": "★★☆"
+	},
+	{
+		"name": "Elementalist",
+		"lore": "Ateşin öfkesi, buzun sabrı ve yıldırımın kaprisiyle büyüyen bilge. Elementleri sırayla konuşturur.",
+		"sprite_path": "res://assets/sprites/classes/elementalist.png",
+		"role": "Ranged Burst AoE",
+		"stats": "INT, FOC, WIS",
+		"difficulty": "★★★"
+	},
+	# Diğer class’ları aynı formatta buraya ekleyebilirsin
 ]
 
 var current_class_index: int = 0
@@ -63,116 +63,116 @@ var current_class_index: int = 0
 # --------------------------------------------------------------------
 
 func _ready() -> void:
-    _build_class_list()
+	_build_class_list()
 
-    next_class_button.pressed.connect(_on_next_class)
-    previous_class_button.pressed.connect(_on_previous_class)
-    create_button.pressed.connect(_on_create_pressed)
-    back_button.pressed.connect(_on_back_pressed)
+	next_class_button.pressed.connect(_on_next_class)
+	previous_class_button.pressed.connect(_on_previous_class)
+	create_button.pressed.connect(_on_create_pressed)
+	back_button.pressed.connect(_on_back_pressed)
 
-    _update_ui()
+	_update_ui()
 
 # --------------------------------------------------------------------
 #  SOL PANEL – CLASS LİSTESİ
 # --------------------------------------------------------------------
 
 func _build_class_list() -> void:
-    if class_list == null:
-        push_error("CharacterCreator: class_list node'u bulunamadı.")
-        return
+	if class_list == null:
+		push_error("CharacterCreator: class_list node'u bulunamadı.")
+		return
 
-    for child in class_list.get_children():
-        child.queue_free()
+	for child in class_list.get_children():
+		child.queue_free()
 
-    for i in range(class_data.size()):
-        var data: Dictionary = class_data[i]
-        var btn := Button.new()
-        btn.text = String(data["name"])
-        btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-        btn.pressed.connect(_on_class_button.bind(i))
-        class_list.add_child(btn)
+	for i in range(class_data.size()):
+		var data: Dictionary = class_data[i]
+		var btn := Button.new()
+		btn.text = String(data["name"])
+		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		btn.pressed.connect(_on_class_button.bind(i))
+		class_list.add_child(btn)
 
 
 func _on_class_button(index: int) -> void:
-    current_class_index = clamp(index, 0, class_data.size() - 1)
-    _update_ui()
+	current_class_index = clamp(index, 0, class_data.size() - 1)
+	_update_ui()
 
 # --------------------------------------------------------------------
 #  CLASS GEÇİŞ BUTONLARI
 # --------------------------------------------------------------------
 
 func _on_next_class() -> void:
-    current_class_index += 1
-    if current_class_index >= class_data.size():
-        current_class_index = 0
-    _update_ui()
+	current_class_index += 1
+	if current_class_index >= class_data.size():
+		current_class_index = 0
+	_update_ui()
 
 
 func _on_previous_class() -> void:
-    current_class_index -= 1
-    if current_class_index < 0:
-        current_class_index = class_data.size() - 1
-    _update_ui()
+	current_class_index -= 1
+	if current_class_index < 0:
+		current_class_index = class_data.size() - 1
+	_update_ui()
 
 # --------------------------------------------------------------------
 #  UI’YI GÜNCELLEYEN ANA FONKSİYON
 # --------------------------------------------------------------------
 
 func _update_ui() -> void:
-    if class_data.is_empty():
-        return
+	if class_data.is_empty():
+		return
 
-    var data: Dictionary = class_data[current_class_index]
+	var data: Dictionary = class_data[current_class_index]
 
-    var class_name_str := String(data["name"])
-    var lore := String(data["lore"])
-    var role := String(data["role"])
-    var stats := String(data["stats"])
-    var diff := String(data.get("difficulty", ""))
+	var class_name_str := String(data["name"])
+	var lore := String(data["lore"])
+	var role := String(data["role"])
+	var stats := String(data["stats"])
+	var diff := String(data.get("difficulty", ""))
 
-    current_class_label.text = class_name_str
+	current_class_label.text = class_name_str
 
-    if preview_sprite:
-        var tex: Texture2D = load(String(data["sprite_path"]))
-        if tex:
-            preview_sprite.texture = tex
-        else:
-            push_warning("Sprite bulunamadı: %s" % [data["sprite_path"]])
-    else:
-        push_warning("preview_sprite node'u bulunamadı, texture atanamadı.")
+	if preview_sprite:
+		var tex: Texture2D = load(String(data["sprite_path"]))
+		if tex:
+			preview_sprite.texture = tex
+		else:
+			push_warning("Sprite bulunamadı: %s" % [data["sprite_path"]])
+	else:
+		push_warning("preview_sprite node'u bulunamadı, texture atanamadı.")
 
-    class_name_label.text = class_name_str
-    lore_text.text = lore
-    role_label.text = "Rol: %s" % role
-    recommended_stats_label.text = "Önerilen Statlar: %s" % stats
-    difficulty_label.text = "Zorluk: %s" % diff
+	class_name_label.text = class_name_str
+	lore_text.text = lore
+	role_label.text = "Rol: %s" % role
+	recommended_stats_label.text = "Önerilen Statlar: %s" % stats
+	difficulty_label.text = "Zorluk: %s" % diff
 
 # --------------------------------------------------------------------
 #  CREATE BUTTON
 # --------------------------------------------------------------------
 
 func _on_create_pressed() -> void:
-    var character_name := name_input.text.strip_edges()
-    if character_name.is_empty():
-        print("HATA: İsim boş olamaz!")
-        return
+	var character_name := name_input.text.strip_edges()
+	if character_name.is_empty():
+		print("HATA: İsim boş olamaz!")
+		return
 
-    var data: Dictionary = class_data[current_class_index]
+	var data: Dictionary = class_data[current_class_index]
 
-    if typeof(PlayerData) != TYPE_NIL:
-        PlayerData.character_name = character_name
-        PlayerData.character_class_name = String(data["name"])
-        PlayerData.character_class_id = current_class_index
+	if typeof(PlayerData) != TYPE_NIL:
+		PlayerData.character_name = character_name
+		PlayerData.character_class_name = String(data["name"])
+		PlayerData.character_class_id = current_class_index
 
-    print("Karakter verisi kaydedildi. İsim: %s | Sınıf: %s"
-        % [character_name, PlayerData.character_class_name])
+	print("Karakter verisi kaydedildi. İsim: %s | Sınıf: %s"
+		% [character_name, PlayerData.character_class_name])
 
-    get_tree().change_scene_to_file("res://scenes/world.tscn")
+	get_tree().change_scene_to_file("res://scenes/world.tscn")
 
 # --------------------------------------------------------------------
 #  BACK BUTTON
 # --------------------------------------------------------------------
 
 func _on_back_pressed() -> void:
-    print("Geri butonu: Buradan main menü sahnesine dönebilirsin.")
-    # get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
+	print("Geri butonu: Buradan main menü sahnesine dönebilirsin.")
+	# get_tree().change_scene_to_file("res://scenes/main_menu.tscn")
