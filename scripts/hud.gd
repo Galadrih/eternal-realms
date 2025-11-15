@@ -324,6 +324,9 @@ func update_target_hp(current_hp: float, max_hp: float) -> void:
             target_frame.update_health(current_hp, max_hp)
         else:
             print("HUD HATA: target_frame'de 'update_hp' veya 'update_health' metodu bulunamadı.")
+            
+func get_inventory_panel_ref() -> Node:
+    return inventory_panel
 
 
 func clear_target() -> void:

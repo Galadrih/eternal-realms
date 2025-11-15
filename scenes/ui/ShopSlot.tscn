@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=3 uid="uid://dualy1107524g"]
+
+[ext_resource type="Script" uid="uid://2n0a2ln4ojm5" path="res://scripts/ui/ShopSlot.gd" id="1_64u56"]
+
+[node name="InventorySlot" type="Button"]
+offset_right = 8.0
+offset_bottom = 8.0
+script = ExtResource("1_64u56")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Icon" type="TextureRect" parent="Background"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Quantity" type="Label" parent="Background"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+mouse_filter = 1

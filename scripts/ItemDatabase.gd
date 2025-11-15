@@ -1432,14 +1432,14 @@ const CLASS_CODE_TO_DISPLAY := {
     "POTIONS": "Tüketilebilir", # Potlar için eklendi
 }
 
-# Stat label’ları – sizin DB’deki tüm statlar
+# Stat label’ları – sizin DB’deki tüm statlar (Türkçeleştirilmiş)
 const STAT_LABELS := {
-    "STR": "STR",
-    "DEX": "DEX",
-    "INT": "INT",
-    "WIS": "WIS",
-    "VIT": "VIT",
-    "FOC": "FOC", # Eksikti, eklendi
+    "STR": "Güç",
+    "DEX": "Çeviklik",
+    "INT": "Zeka",
+    "WIS": "Bilgelik",
+    "VIT": "Dayanıklılık",
+    "FOC": "Odak",
 
     "RAW_ATK": "Saldırı",
     "RAW_DEF": "Savunma",
@@ -1450,28 +1450,29 @@ const STAT_LABELS := {
     "MAP_BONUS": "Büyü Saldırısı %",
     "P_DEF": "Fiziksel Defans",
     "M_DEF": "Büyü Defansı",
-    "P_DEF_BONUS": "Fiziksel Defans %", # Potlar için eklendi
-    "M_DEF_BONUS": "Büyü Defansı %", # Potlar için eklendi
+    "P_DEF_BONUS": "Fiziksel Defans %",
+    "M_DEF_BONUS": "Büyü Defansı %",
     "PEN_P": "Zırh Delme %",
     "M_PEN_P": "Büyü Delme %",
 
-    "P_CRIT_BONUS": "Fiziksel Kritik %", # İsim güncellendi
-    "M_CRIT_BONUS": "Büyü Kritik %", # İsim güncellendi
+    "P_CRIT_BONUS": "Fiziksel Kritik %",
+    "M_CRIT_BONUS": "Büyü Kritik %",
     "ASPD_BONUS": "Saldırı Hızı %",
-    "CSPD_BONUS": "Büyü Hızı %", # İsim güncellendi
+    "CSPD_BONUS": "Büyü Hızı %",
     "MSPD_BONUS": "Hareket Hızı %",
 
     "LIFESTEAL": "Can Çalma %",
-    "SOUL_LEECH": "Ruh Çalma %", # Eklendi
+    "SOUL_LEECH": "Ruh Çalma %",
     "MANASTEAL": "Mana Çalma %",
-    "BLOCK_CHANCE": "Blok Şansı %", # İsim güncellendi
+    "BLOCK_CHANCE": "Blok Şansı %",
     "PARRY_P": "Savuşturma Oranı %",
     "DODGE_P": "Kaçınma Oranı %",
-    "EVASION_BONUS": "Kaçınma %", # Eklendi
+    "EVASION_BONUS": "Kaçınma %",
     "HIT_RATE": "İsabet Oranı %",
-    "RESIST_ALL": "Tüm Dirençler", # Eklendi
-    "FIRE_RESIST": "Ateş Direnci", # Eklendi
+    "RESIST_ALL": "Tüm Dirençler",
+    "FIRE_RESIST": "Ateş Direnci",
     "RESIST_STUN": "Sersemletme Direnci %",
+    
     "RESIST_SLOW": "Yavaşlatma Direnci %",
     "RESIST_ROOT": "Sabitlenme Direnci %",
     "RESIST_SILENCE": "Sessizlik Direnci %",
@@ -1479,27 +1480,26 @@ const STAT_LABELS := {
     "RESIST_BLEED": "Kanama Direnci %",
     "RESIST_CURSE": "Lanet Direnci %",
     "HEAL_BONUS": "İyileştirme Gücü %",
-    "BUFF_DURATION": "Buff Süresi %",
-    "DEBUFF_DURATION": "Debuff Süresi %",
-    "DEBUFF_SUCCESS": "Debuff Başarısı %", # Eklendi
-    "COOLDOWN_REDUCTION": "CD Azaltma %",
+    "BUFF_DURATION": "Güçlendirme Süresi %",
+    "DEBUFF_DURATION": "Zayıflatma Süresi %",
+    "DEBUFF_SUCCESS": "Zayıflatma Başarısı %",
+    "COOLDOWN_REDUCTION": "Bekleme Süresi Azaltma %",
     "GOLD_BONUS": "Altın Kazancı %",
-    "DROP_BONUS": "Düşüş Oranı %",
+    "DROP_BONUS": "Eşya Düşürme Oranı %",
     
-    "SUMMON_ATK_BONUS": "Minyon Saldırısı %", # Eklendi
-    "SUMMON_HP_BONUS": "Minyon Canı %", # Eklendi
-    "PET_ATK_BONUS": "Pet Saldırısı %", # Eklendi
-    "PET_HP_BONUS": "Pet Canı %", # Eklendi
+    "SUMMON_ATK_BONUS": "Minyon Saldırısı %",
+    "SUMMON_HP_BONUS": "Minyon Canı %",
+    "PET_ATK_BONUS": "Pet Saldırısı %",
+    "PET_HP_BONUS": "Pet Canı %",
     
-    "HP_REGEN": "HP Yenilenmesi", # Eklendi
-    "MP_REGEN": "MP Yenilenmesi", # Eklendi
-    "HP_REGEN_VALUE": "Can Yenileme", # Potlar için
-    "MP_REGEN_VALUE": "Mana Yenileme", # Potlar için
-    "DURATION": "Süre (sn)", # Potlar için
-    "COOLDOWN": "Bekleme Süresi (sn)", # Potlar için
-    "FIRE_DMG": "Ateş Hasarı" # Eklendi
+    "HP_REGEN": "HP Yenilenmesi",
+    "MP_REGEN": "MP Yenilenmesi",
+    "HP_REGEN_VALUE": "Can Yenileme",
+    "MP_REGEN_VALUE": "Mana Yenileme",
+    "DURATION": "Süre",
+    "COOLDOWN": "Bekleme Süresi",
+    "FIRE_DMG": "Ateş Hasarı"
 }
-
 # --- GÜNCELLENMİŞ FİYAT SABİTLERİ ---
 
 # Eşya türüne göre fiyat çarpanı (ID'deki harflere göre)
@@ -1584,6 +1584,7 @@ func _ready() -> void:
 # -----------------------------------------------------
 #  YARDIMCI: ITEM NORMALİZE (İKON DÜZELTMELİ)
 # -----------------------------------------------------
+# ItemDatabase.gd'ye eklenecek
 func normalize_item(item: Dictionary) -> Dictionary:
     var out: Dictionary = item.duplicate(true)
 
@@ -1592,27 +1593,49 @@ func normalize_item(item: Dictionary) -> Dictionary:
     if not out.has("req_class"):
         out["req_class"] = ""
         
-    # --- YENİ İKON DÜZELTMESİ (ICON FIX) ---
+    # --- GÜNCELLENMİŞ İKON MANTIĞI (HEM POT HEM EKİPMAN İÇİN) ---
     if not out.has("icon") and out.has("id"):
         var id_str: String = out["id"]
+        var icon_name := ""
+        
         if id_str.begins_with("P_"):
+            # --- POTION ICON LOGIC ---
             var parts = id_str.split("_")
-            if parts.size() >= 3: # P_HP_S -> 3 parça
+            if parts.size() >= 3:
                 var type = parts[1].to_lower() # hp, mp, def
                 var size = parts[2].to_lower() # s, m, l, xl
                 
-                var icon_name = "potion_%s_%s" % [type, size]
-                # Dosya adlarınız farklıysa (örn: potion_health_small) burayı değiştirin.
                 if type == "hp": 
                     icon_name = "potion_health_%s" % size # "potion_health_s"
                 elif type == "mp": 
                     icon_name = "potion_mana_%s" % size # "potion_mana_s"
-                
-                out["icon"] = icon_name
+                else:
+                    # DİĞER POTLAR İÇİN (örn: P_DEF_S -> potion_def_s)
+                    icon_name = "potion_%s_%s" % [type, size]
+        
+        else:
+            # --- EQUIPMENT ICON LOGIC ---
+            var parts := id_str.split("_")
+            if parts.size() >= 2:
+                var code := parts[1] # B_W_1 -> W
+                match code:
+                    "W": icon_name = "weapon"
+                    "A": icon_name = "armor"
+                    "H": icon_name = "helmet"
+                    "P": icon_name = "pants"
+                    "G": icon_name = "gloves"
+                    # "B" (Boots) ID'lerinizde yok, ama olursa diye ekliyorum:
+                    "B": icon_name = "boots" 
+                    "N": icon_name = "necklace"
+                    "WR": icon_name = "bracelet"
+                    "C": icon_name = "cloak"
+                    "O": icon_name = "offhand"
+                    _: icon_name = "" 
+        
+        if icon_name != "":
+            out["icon"] = icon_name # Eşya verisine "icon" anahtarını ekler
     # -------------------------------------
-
     return out
-
 
 # -----------------------------------------------------
 #  STAT SATIRI FORMATLAMA
@@ -1748,54 +1771,100 @@ func get_item_by_id(item_id: String) -> Dictionary:
 
 
 # -----------------------------------------------------
-#  VENDOR İTEM LİSTESİ ALMA (DÜKKAN İÇİN)
+#  VENDOR İTEM LİSTESİ ALMA (DÜKKAN İÇİN) - DÜZELTİLDİ
 # -----------------------------------------------------
 func get_vendor_items() -> Array:
     print("--- DEBUG: [ItemDatabase.gd] ---")
-    print("3. get_vendor_items() fonksiyonu çalıştı.")
+    print("3. get_vendor_items() fonksiyonu çalıştı. (GÜNCELLENMİŞ VERSİYON)")
     
     var items_for_sale: Array = []
     
     if ITEM_DATABASE.is_empty():
         print("HATA: ITEM_DATABASE boş! Veritabanını yapıştırdınız mı?")
         return items_for_sale
-        
-    if not ITEM_DATABASE.has("POTIONS") or not ITEM_DATABASE.POTIONS.has("LOW_LEVEL"):
-        print("HATA: ITEM_DATABASE içinde 'POTIONS' veya 'LOW_LEVEL' bulunamadı.")
+    
+    if not ITEM_DATABASE.has("POTIONS"):
+        print("HATA: ITEM_DATABASE içinde 'POTIONS' bloğu yok.")
         return items_for_sale
-
-    var potions = ITEM_DATABASE.POTIONS.LOW_LEVEL
-    print("   > 'LOW_LEVEL' potlar bulundu, %d adet." % potions.size())
     
-    for key in potions:
-        var potion_data = potions[key]
-        if potion_data.has("id"):
-            var item_id = potion_data["id"]
-            var processed_item = get_item_by_id(item_id)
+    var potions_block = ITEM_DATABASE["POTIONS"]
+    if not (potions_block is Dictionary):
+        print("HATA: ITEM_DATABASE['POTIONS'] dictionary değil.")
+        return items_for_sale
+    
+    # TÜM SEVİYELERİ DOLAŞ (LOW_LEVEL, MID_LEVEL, HIGH_LEVEL)
+    for level_tier in potions_block.keys():
+        var potions_in_tier: Dictionary = potions_block[level_tier]
+        
+        if not (potions_in_tier is Dictionary):
+            continue
+        
+        # Her potu tek tek işleyip satış listesine ekle
+        for key in potions_in_tier.keys():
+            var potion_data = potions_in_tier[key]
+            if not (potion_data is Dictionary):
+                continue
             
-            if not processed_item.is_empty():
-                
-                # --- FİYAT GÜNCELLEMESİ (VERİTABANINDA YOKSA) ---
-                if not processed_item.has("value"):
-                    if processed_item.id == "P_HP_S": processed_item["value"] = 25
-                    elif processed_item.id == "P_HP_M": processed_item["value"] = 60
-                    elif processed_item.id == "P_MP_S": processed_item["value"] = 15
-                    elif processed_item.id == "P_MP_M": processed_item["value"] = 40
-                    elif processed_item.id == "P_DEF_S": processed_item["value"] = 50
-                    elif processed_item.id == "P_ATK_S": processed_item["value"] = 50
-                    else: processed_item["value"] = 10
-                # ---------------------------------------------
-                
-                items_for_sale.append(processed_item)
-            else:
-                print("   > UYARI: '%s' ID'li pot, get_item_by_id ile bulunamadı." % item_id)
-        else:
-            print("   > UYARI: ID'si olmayan bir pot verisi bulundu: %s" % key)
+            var processed_item: Dictionary = normalize_item(potion_data)
+            
+            if processed_item.is_empty():
+                print("   > UYARI: '%s' normalleştirilemedi." % key)
+                continue
+            
+            # 'value' (fiyat) ataması
+            if not processed_item.has("value"):
+                var pid := str(processed_item.get("id", ""))
+                match pid:
+                    "P_HP_S":
+                        processed_item["value"] = 25
+                    "P_HP_M":
+                        processed_item["value"] = 60
+                    "P_MP_S":
+                        processed_item["value"] = 15
+                    "P_MP_M":
+                        processed_item["value"] = 40
+                    "P_DEF_S":
+                        processed_item["value"] = 50
+                    "P_ATK_S":
+                        processed_item["value"] = 50
+                    "P_HP_L":
+                        processed_item["value"] = 150
+                    "P_MP_L":
+                        processed_item["value"] = 100
+                    "P_DEF_M":
+                        processed_item["value"] = 120
+                    "P_ATK_M":
+                        processed_item["value"] = 120
+                    "P_SPD_M":
+                        processed_item["value"] = 100
+                    "P_CRIT_M":
+                        processed_item["value"] = 100
+                    "P_HP_XL":
+                        processed_item["value"] = 400
+                    "P_MP_XL":
+                        processed_item["value"] = 250
+                    "P_DEF_L":
+                        processed_item["value"] = 300
+                    "P_ATK_L":
+                        processed_item["value"] = 300
+                    "P_SPD_L":
+                        processed_item["value"] = 250
+                    "P_CRIT_L":
+                        processed_item["value"] = 250
+                    "P_RES_L":
+                        processed_item["value"] = 350
+                    _:
+                        processed_item["value"] = 10 # Fallback
+            
+            items_for_sale.append(processed_item)
     
+    # --- DÜZELTME BURADA ---
+    # Bu iki satır, 'for level_tier...' döngüsünün DIŞINA taşındı.
+    # Girintileri azaltıldı.
     print("   > Satış listesi hazırlandı, %d eşya eklendi." % items_for_sale.size())
     return items_for_sale
-
-
+    
+    
 # -----------------------------------------------------
 #  ITEM ÇEKME (p_class_name, level, slot) - (EKİPMANLAR İÇİN)
 # -----------------------------------------------------

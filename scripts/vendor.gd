@@ -43,14 +43,18 @@ func _unhandled_input(event):
         if not shop_is_open:
             if hud.has_method("open_shop"):
                 
-                # --- DEĞİŞİKLİK BURADA ---
+                # --- DÜZELTME BURADA ---
+                # "if ItemDB and ..." kontrolünü kaldırıyoruz.
+                # Tıpkı slotlarda olduğu gibi, ItemDB'ye doğrudan erişmeye zorluyoruz.
+                # Eğer ItemDatabase.gd'de bir hata varsa, oyun şimdi burada çöker ve hatayı gösterir.
+                
                 var items_for_sale: Array = []
-                if ItemDB and ItemDB.has_method("get_vendor_items"):
-                    print("2. ItemDB.get_vendor_items() çağrılıyor...")
-                    items_for_sale = ItemDB.get_vendor_items()
-                    print("4. ItemDB'den %d adet eşya listesi alındı." % items_for_sale.size())
-                else:
-                    print("HATA: ItemDB veya get_vendor_items() fonksiyonu bulunamadı!")
+                print("2. ItemDB.get_vendor_items() çağrılıyor...")
+                
+                # Bu satır, ItemDB'nin var olmasını zorunlu kılar:
+                items_for_sale = ItemDB.get_vendor_items() 
+                
+                print("4. ItemDB'den %d adet eşya listesi alındı." % items_for_sale.size())
                 # -------------------------
                 
                 # Eğer satacak bir şey varsa dükkanı aç

@@ -1,18 +1,15 @@
 extends Button
-class_name InventorySlot
+class_name ShopSlot
 
-@export var local_index: int = 0      # 0–39, sayfa içindeki index
-var inventory_panel: Node = null      # InventoryPanel referansı
+# Envanterden farklı olarak sürükleme veya index bilgisi YOK
+var current_item: Dictionary = {}
 
-var current_item: Dictionary = {}     # Bu slottaki item (kopya)
+@onready var icon_rect: TextureRect = $Background/Icon
+@onready var quantity_label: Label   = $Background/Quantity
+@onready var bg_panel: Panel = $Background
 
-@onready var icon_rect: TextureRect = $Icon
-@onready var quantity_label: Label   = $Quantity
-@onready var bg_panel: Panel = $Background # Sarı çerçeve için
-
-signal slot_gui_input_event(event, local_index)
+# Sadece "satın almak için tıklandım" sinyali
 signal item_clicked(item_data)
-
 
 func _ready() -> void:
     focus_mode = Control.FOCUS_NONE
@@ -21,23 +18,42 @@ func _ready() -> void:
     mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
     custom_minimum_size = Vector2(56, 56)
 
+    # Sarı çerçeveyi ayarla
     _setup_background_style()
 
+    # Tıklama sorununu çözen "mouse_filter" ayarları
+    if bg_panel:
+        bg_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE 
+    
     if icon_rect:
+        icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE 
         icon_rect.stretch_mode = TextureRect.STRETCH_SCALE
         icon_rect.expand_mode = TextureRect.EXPAND_FIT_WIDTH
         icon_rect.custom_minimum_size = Vector2(48, 48)
+    
+    if quantity_label:
+        quantity_label.mouse_filter = Control.MOUSE_FILTER_IGNORE 
 
-    _apply_empty_visual()
+    # Spawn sorunları yaşamamak için _apply_empty_visual çağırmıyoruz
+    # _apply_empty_visual()
 
-    pressed.connect(_on_self_pressed)
+    # Sol tıka basıldığında _on_self_pressed fonksiyonunu çalıştır
+    pressed.connect(_on_self_pressed) 
 
+# ================================================================
+# SAĞ TIKLA SATIN ALMA
+# ================================================================
+func _gui_input(event: InputEvent) -> void:
+    if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+        if not current_item.is_empty():
+            print("DEBUG (ShopSlot): Sağ tık algılandı! Eşya: %s" % current_item.get("name", "BOŞ VERİ"))
+            item_clicked.emit(current_item)
+            get_viewport().set_input_as_handled()
 
-# (EquipmentSlot.gd'den kopyalanan) Sarı çerçeveyi çizer
+# Sarı çerçeveyi çizer
 func _setup_background_style() -> void:
     if bg_panel == null:
         return
-
     var sb := StyleBoxFlat.new()
     sb.bg_color = Color(0.05, 0.05, 0.05, 0.95)
     sb.set_corner_radius_all(2)
@@ -46,22 +62,15 @@ func _setup_background_style() -> void:
     sb.shadow_size = 1
     sb.shadow_color = Color(0, 0, 0, 0.8)
     sb.set_content_margin_all(3)
-
     bg_panel.add_theme_stylebox_override("panel", sb)
 
-
-func _gui_input(event: InputEvent):
-    if event is InputEventMouseButton:
-        slot_gui_input_event.emit(event, local_index)
-        if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-            get_viewport().set_input_as_handled()
-
-
-func _on_self_pressed():
+# Tıklandığında (SATIN ALMA sinyali) - sol tık
+func _on_self_pressed() -> void:
+    print("DEBUG (ShopSlot): Sol tık algılandı! Eşya: %s" % current_item.get("name", "BOŞ VERİ"))
     if not current_item.is_empty():
         item_clicked.emit(current_item)
 
-
+# Slotu temizler
 func _apply_empty_visual() -> void:
     current_item.clear()
     if icon_rect:
@@ -70,42 +79,39 @@ func _apply_empty_visual() -> void:
         quantity_label.text = ""
     tooltip_text = ""
 
-
+# Slotu eşya verisiyle doldurur
 func refresh_with_item(item: Dictionary) -> void:
-    current_item = item.duplicate(true)
+    current_item = item.duplicate(true) 
 
     if current_item.is_empty():
         _apply_empty_visual()
         return
 
     # --------------------------
-    # 1) ICON (GÜÇLENDİRİLMİŞ MANTIK)
+    # 1) ICON (InventorySlot ile aynı mantık)
     # --------------------------
     var tex: Texture2D = null
-    
-    # 1. Öncelik: "icon_path" (elle girilen tam yol)
+
+    # 1. Öncelik: "icon_path"
     if current_item.has("icon_path"):
         var path_str := str(current_item["icon_path"])
         if ResourceLoader.exists(path_str):
             tex = load(path_str)
-            
-    # 2. Öncelik: "icon" (ItemDB.normalize_item tarafından eklenen)
-    # 'potion_health_s.png' veya 'potion_def_s.png' gibi dosyaları arar
+
+    # 2. Öncelik: "icon"
     if tex == null and current_item.has("icon"):
         var icon_name := str(current_item["icon"]).to_lower()
         var path2 := "res://assets/icons/%s.png" % icon_name
         if ResourceLoader.exists(path2):
             tex = load(path2)
-            
-    # 3. Öncelik (YEDEK PLAN 1): İkon adının direkt ID ile aynı olması
-    # 'P_HP_S.png' veya 'P_DEF_S.png' gibi dosyaları arar
+
+    # 3. Öncelik: ID ile aynı isim
     if tex == null and current_item.has("id"):
         var id_fallback_path := "res://assets/icons/%s.png" % str(current_item["id"])
         if ResourceLoader.exists(id_fallback_path):
             tex = load(id_fallback_path)
-            
-    # 4. Öncelik (YEDEK PLAN 2): Ekipmanlar için eski 'match' bloğu
-    # 'weapon.png', 'armor.png' gibi dosyaları arar
+
+    # 4. Öncelik: Ekipmanlar için eski match bloğu
     if tex == null and current_item.has("id"):
         var id_str := str(current_item["id"])
         if not id_str.begins_with("P_"): # Pot değilse
@@ -129,37 +135,29 @@ func refresh_with_item(item: Dictionary) -> void:
                     var path3 := "res://assets/icons/%s.png" % icon_name2
                     if ResourceLoader.exists(path3):
                         tex = load(path3)
-    
-    # --- İkon ataması ---
+
     if icon_rect:
         icon_rect.texture = tex
-        # --- HATA AYIKLAMA LOG'U ---
         if tex == null and not current_item.is_empty():
-            # İkon bulunamadıysa konsola HATA bas
-            print("UYARI: '%s' için ikon bulunamadı. Aranan yollar:" % current_item.get("name", "BİLİNMEYEN EŞYA"))
+            print("UYARI (ShopSlot): '%s' için ikon bulunamadı. Aranan potansiyel yollar:" % current_item.get("name", "BİLİNMEYEN EŞYA"))
+            if current_item.has("icon_path"):
+                print("   - icon_path: %s" % current_item["icon_path"])
             if current_item.has("icon"):
                 print("   - res://assets/icons/%s.png" % current_item["icon"])
             if current_item.has("id"):
                 print("   - res://assets/icons/%s.png" % current_item["id"])
-        # ---------------------------
 
     # --------------------------
     # 2) STACK MİKTARI
     # --------------------------
-    var amount: int = 1
-    if current_item.has("amount"):
-        amount = int(current_item["amount"])
+    # Dükkanda stack göstermek istemiyorsun, boş bırakıyoruz
     if quantity_label:
-        if amount > 1:
-            quantity_label.text = str(amount)
-        else:
-            quantity_label.text = ""
+        quantity_label.text = ""
 
     # --------------------------
-    # 3) TOOLTIP (Düzeltilmiş Hali)
+    # 3) TOOLTIP (senin eski shop tooltip'in)
     # --------------------------
     var lines: Array = []
-
     var name_str := str(current_item.get("name", "")).strip_edges()
     if name_str != "":
         lines.append(name_str)
@@ -175,8 +173,7 @@ func refresh_with_item(item: Dictionary) -> void:
         if req_level > 0:
             req_line += "Lv %d" % req_level
         if req_class_str != "":
-            if req_line != "":
-                req_line += " | "
+            if req_line != "": req_line += " | " 
             req_line += req_class_str.capitalize()
         if req_line != "":
             lines.append(req_line)
@@ -185,14 +182,11 @@ func refresh_with_item(item: Dictionary) -> void:
     if desc_str != "":
         lines.append(desc_str)
 
-    # STATLAR (ItemDB'ye doğrudan erişim)
     var stats = current_item.get("stats", {})
     if stats is Dictionary and stats.size() > 0:
         if lines.size() > 0:
             lines.append("")
-
         var db = ItemDB
-        
         if db.STAT_ORDER.size() > 0:
             for key in db.STAT_ORDER:
                 if stats.has(key):
@@ -202,74 +196,11 @@ func refresh_with_item(item: Dictionary) -> void:
                 continue
             lines.append(db.format_stat_line(key, stats[key]))
 
-    # FİYAT BİLGİSİ (ItemDB'ye doğrudan erişim)
+    # FİYAT BİLGİSİ (Satın alma fiyatı)
     if ItemDB.has_method("get_item_price"):
         var price: int = ItemDB.get_item_price(current_item)
         if price > 0:
-            var sell_price: int = max(1, int(price * 0.25))
             lines.append("")
-            lines.append("Satış Fiyatı: %d Altın" % sell_price)
-    else:
-        print("HATA: ItemDB yüklendi ANCAK get_item_price fonksiyonu bulunamadı.")
-    
+            lines.append("Fiyat: %d Altın" % price) 
+
     tooltip_text = "\n".join(lines)
-
-
-# ======================================================
-#  DRAG & DROP
-# ======================================================
-
-func _get_drag_data(at_position: Vector2) -> Variant:
-    if inventory_panel == null:
-        return null
-    var global_index: int = inventory_panel.get_global_index(local_index)
-    var item: Dictionary = inventory_panel.get_item_at(global_index)
-    if item.is_empty():
-        return null
-
-    var data := {
-        "type": "inventory_item",
-        "from_global_index": global_index,
-        "item": item,
-    }
-
-    var preview_root := Control.new()
-    preview_root.custom_minimum_size = Vector2(48, 48)
-    var tex_rect := TextureRect.new()
-    tex_rect.stretch_mode = TextureRect.STRETCH_SCALE
-    tex_rect.expand_mode = TextureRect.EXPAND_FIT_WIDTH
-    tex_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
-    if icon_rect and icon_rect.texture:
-        tex_rect.texture = icon_rect.texture
-    preview_root.add_child(tex_rect)
-    set_drag_preview(preview_root)
-    
-    tooltip_text = ""
-
-    return data
-
-
-func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
-    if typeof(data) != TYPE_DICTIONARY:
-        return false
-    var dict: Dictionary = data
-    if not dict.has("type"):
-        return false
-    
-    return (dict["type"] == "inventory_item" or dict["type"] == "equipment_item")
-
-
-func _drop_data(at_position: Vector2, data: Variant) -> void:
-    if inventory_panel == null:
-        return
-    if typeof(data) != TYPE_DICTIONARY:
-        return
-
-    var dict: Dictionary = data
-    
-    if dict.has("type") and dict["type"] == "inventory_item":
-        if inventory_panel.has_method("handle_drop"):
-            inventory_panel.handle_drop(dict, local_index)
-    elif dict.has("type") and dict["type"] == "equipment_item":
-        if inventory_panel.has_method("handle_equip_drop"):
-            inventory_panel.handle_equip_drop(dict, local_index)
