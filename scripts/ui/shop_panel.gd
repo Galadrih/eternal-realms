@@ -22,8 +22,28 @@ func _ready() -> void:
         print("UYARI (shop_panel): 'hud' grubunda HUD bulunamadı. Daha sonra tekrar denenecek.")
     else:
         print("DEBUG (shop_panel): HUD bulundu: %s" % hud_node.name)
+        
+        
+func _ensure_player_and_inventory() -> bool:
+    if player == null:
+        player = get_tree().get_first_node_in_group("player_character")
+
+    if player_inventory == null:
+        if hud_node:
+            if hud_node.has_property("inventory_panel") and is_instance_valid(hud_node.inventory_panel):
+                player_inventory = hud_node.inventory_panel
+            elif hud_node.has_node("InventoryPanel"):
+                player_inventory = hud_node.get_node("InventoryPanel")
+            elif hud_node.has_node("Inventory"):
+                player_inventory = hud_node.get_node("Inventory")
+
+    return player != null and player_inventory != null
+
 
 func open_shop(item_list: Array) -> void:
+    # Önce player / HUD / Inventory referanslarını tazele
+    _ensure_references_valid()
+
     print("--- DEBUG: [shop_panel.gd] ---")
     print("6. open_shop() fonksiyonu çalıştı, %d eşya alındı." % item_list.size())
 
@@ -40,7 +60,6 @@ func open_shop(item_list: Array) -> void:
         
         print("   > Slot oluşturuluyor: %s" % item_data.get("name", "İSİMSİZ EŞYA"))
         var slot = InventorySlotScene.instantiate()
-        
         slot.refresh_with_item(item_data)
         slot.item_clicked.connect(_on_shop_item_clicked)
         vendor_item_grid.add_child(slot)
@@ -59,15 +78,24 @@ func open_shop(item_list: Array) -> void:
 
     print("7. Eşya slotları oluşturma tamamlandı.")
 
-    # Envanteri shop moduna al (referansımız varsa)
-    if player_inventory and player_inventory.has_method("set_shop_mode"):
-        player_inventory.set_shop_mode(true)
+    # Envanteri shop SELL moduna al
+    _ensure_references_valid()
+    if player_inventory and player_inventory.has_method("set_shop_sell_mode"):
+        player_inventory.set_shop_sell_mode(true)
 
     visible = true
 
+
 func close_shop() -> void:
+    _ensure_references_valid()
+
+    if player_inventory and player_inventory.has_method("set_shop_sell_mode"):
+        player_inventory.set_shop_sell_mode(false)
+
+    # Eski shop_mode kullanıyorsan, bunu da istersen koru
     if player_inventory and player_inventory.has_method("set_shop_mode"):
         player_inventory.set_shop_mode(false)
+
     visible = false
 
 func _ensure_references_valid() -> void:

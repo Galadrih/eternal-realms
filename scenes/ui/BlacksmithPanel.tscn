@@ -1,0 +1,71 @@
+[gd_scene load_steps=3 format=3 uid="uid://v6jmhvw2h5u8"]
+
+[ext_resource type="Script" uid="uid://cv5h005h0ckhu" path="res://scripts/ui/BlacksmithPanel.gd" id="1_jx00n"]
+[ext_resource type="Script" uid="uid://dg7c3cglf1cos" path="res://scripts/systems/BlacksmithTargetSlot.gd" id="2_jx00n"]
+
+[node name="BlacksmithPanel" type="Control" groups=["blacksmith_panel"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_jx00n")
+
+[node name="MainPanel" type="Panel" parent="."]
+custom_minimum_size = Vector2(400, 200)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="MainPanel"]
+custom_minimum_size = Vector2(400, 200)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ItemNameLabel" type="Label" parent="MainPanel/VBox"]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StatsLabel" type="Label" parent="MainPanel/VBox"]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TargetSlot" type="Panel" parent="MainPanel/VBox"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+script = ExtResource("2_jx00n")
+
+[node name="Icon" type="TextureRect" parent="MainPanel/VBox/TargetSlot"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+stretch_mode = 3
+
+[node name="UpgradeButton" type="Button" parent="MainPanel/VBox"]
+layout_mode = 2
+text = "Yükselt"
+
+[node name="ResultLabel" type="Label" parent="MainPanel/VBox"]
+layout_mode = 2
+
+[node name="CloseButton" type="Button" parent="MainPanel"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+text = "X"

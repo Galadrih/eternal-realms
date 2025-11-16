@@ -35,6 +35,7 @@ var equipped: Dictionary = {}        # slot_name -> item Dictionary
 
 # --- YENİ EKLENTİ: DÜKKAN MODU ---
 var is_in_shop_mode: bool = false
+var shop_force_sell_mode: bool = false # YENİ
 var hud_node = null # Loot alert/mesajları için
 # ---------------------------------
 
@@ -122,7 +123,8 @@ func _create_slots() -> void:
         slot.inventory_panel = self
         
         # Slot'tan gelen sağ tık/sürükleme gibi inputları yakalamak için
-        slot.gui_input.connect(_on_inventory_slot_gui_input.bind(slot.local_index))
+        slot.slot_gui_input_event.connect(_on_inventory_slot_gui_input)
+
         
         grid.add_child(slot)
         slots.append(slot)
@@ -165,18 +167,54 @@ func get_item_at(global_index: int) -> Dictionary:
     if itm is Dictionary:
         return itm
     return {}
+    
+func get_local_index(global_index: int) -> int:
+    # Geçersiz index ise
+    if global_index < 0 or global_index >= items.size():
+        return -1
+
+    # Bu item HANGİ sayfada?
+    var page: int = global_index / SLOTS_PER_PAGE  # 0 ya da 1 çıkar
+
+    # Şu anda açık olan sayfa değilse bu slotu yenilemeye gerek yok
+    if page != current_page:
+        return -1
+
+    # Sayfa içindeki index (0–39)
+    return global_index % SLOTS_PER_PAGE
+
 
 
 func set_item_at(global_index: int, item: Dictionary) -> void:
     if global_index < 0 or global_index >= items.size():
         return
     items[global_index] = item.duplicate(true)
+    # Blacksmith, loot, drag-drop vs her değişiklikten sonra UI’yi güncelle
+    _refresh_all_slots()
 
 
 func clear_item_at(global_index: int) -> void:
     if global_index < 0 or global_index >= items.size():
         return
     items[global_index] = {}
+    # Slot boşaltılınca da UI’yi yenile
+    _refresh_all_slots()
+    
+
+func _refresh_single_slot(global_index: int) -> void:
+    var local_index: int = get_local_index(global_index)
+    if local_index == -1:
+        # Bu item şu an açık olan sayfada değil, yenilemeye gerek yok
+        return
+
+    if local_index < 0 or local_index >= slots.size():
+        return
+
+    var slot: InventorySlot = slots[local_index]
+    var item: Dictionary = get_item_at(global_index)
+    slot.refresh_with_item(item)
+
+
 
 
 func add_item_first_free(item: Dictionary) -> bool:
@@ -458,17 +496,49 @@ func _debug_fill_inventory() -> void:
 #  YENİ FONKSİYONLAR (EKONOMİ & SAĞ TIK)
 # =======================================================
 
-func _on_inventory_slot_gui_input(event: InputEvent, local_index: int):
-    # Sadece sağ tıka cevap ver (sol tık sürükleme içindir)
-    if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-        get_viewport().set_input_as_handled()
-        
-        var global_index: int = get_global_index(local_index)
-        
-        if is_in_shop_mode:
-            sell_item_in_slot(global_index)
-        else:
-            _try_auto_equip_item(global_index)
+func _on_inventory_slot_gui_input(event: InputEvent, local_index: int) -> void:
+    # Sadece sağ tıka cevap ver (sol tık sürükleme/drag için)
+    if not (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed):
+        return
+
+    get_viewport().set_input_as_handled()
+    
+    var global_index: int = get_global_index(local_index)
+    var item_data: Dictionary = get_item_at(global_index)
+    if item_data.is_empty():
+        return
+
+    # -------------------------------------------------
+    # 1) SHOP FORCE MODE: Shop açıkken HER ZAMAN SAT
+    # -------------------------------------------------
+    if shop_force_sell_mode:
+        sell_item_in_slot(global_index)
+        return
+
+    # -------------------------------------------------
+    # 2) POTION mı?
+    # -------------------------------------------------
+    var is_potion := false
+
+    var req_class_val := str(item_data.get("req_class", "")).to_upper()
+    var id_str := str(item_data.get("id", ""))
+
+    if req_class_val == "POTIONS":
+        is_potion = true
+    elif id_str.begins_with("P_"):
+        is_potion = true
+
+    if is_potion:
+        if _try_use_potion(global_index, item_data):
+            return
+
+    # -------------------------------------------------
+    # 3) Geri kalanı: auto-equip
+    # -------------------------------------------------
+    _try_auto_equip_item(global_index)
+
+
+
 
 func _try_auto_equip_item(global_index: int):
     var item_to_equip = get_item_at(global_index)
@@ -493,10 +563,37 @@ func _try_auto_equip_item(global_index: int):
     _refresh_all_slots()
 
 
+func unequip_slot_to_inventory(slot_name: String) -> void:
+    # 1) Önce o slottaki itemı al
+    var item: Dictionary = get_equipped_item(slot_name)
+    if item.is_empty():
+        return
+
+    # 2) Envantere eklemeyi dene
+    var added: bool = add_item_first_free(item)
+    if not added:
+        if hud_node and hud_node.has_method("show_loot_alert_text"):
+            hud_node.show_loot_alert_text("Envanter dolu, eşya çıkarılamıyor.")
+        return
+
+    # 3) Ekipmandan temizle
+    clear_equipped_item(slot_name)
+
+    # 4) Envanter slotlarını da tazele (görsel taraf)
+    _refresh_all_slots()
+
 # --- DÜKKAN MODU (Satma) ---
 
-func set_shop_mode(is_shopping: bool):
+func set_shop_mode(is_shopping: bool) -> void:
     is_in_shop_mode = is_shopping
+    print("DEBUG (InventoryPanel): set_shop_mode -> ", is_shopping)
+    
+func set_shop_sell_mode(enabled: bool) -> void:
+    shop_force_sell_mode = enabled
+    # debug istersen:
+    # print("DEBUG (InventoryPanel): shop_force_sell_mode -> ", enabled)
+
+
 
 func sell_item_in_slot(global_index: int):
     if player == null:
@@ -540,3 +637,45 @@ func add_item_to_inventory(item: Dictionary) -> bool:
 func update_gold_display(new_amount: int):
     if is_instance_valid(gold_label):
         gold_label.text = "Altın: %d" % new_amount
+        
+func _try_use_potion(global_index: int, item_data: Dictionary) -> bool:
+    if item_data.is_empty():
+        return false
+
+    if player == null:
+        player = get_tree().get_first_node_in_group("player_character")
+        if player == null:
+            return false
+
+    # DEBUG:
+    # print("DEBUG _try_use_potion:", item_data.get("name", "İksir"))
+
+    if player.has_method("use_potion_item"):
+        var result: bool = player.use_potion_item(item_data)
+
+        # DEBUG:
+        # print("DEBUG use_potion_item result:", result)
+
+        if result:
+            # Başarılıysa envanterden 1 adet eksilt
+            var amount: int = int(item_data.get("amount", 1))
+            amount -= 1
+
+            if amount > 0:
+                item_data["amount"] = amount
+                set_item_at(global_index, item_data)
+            else:
+                clear_item_at(global_index)
+
+            _refresh_all_slots()
+
+            if hud_node and hud_node.has_method("show_loot_alert_text"):
+                var name = item_data.get("name", "İksir")
+                hud_node.show_loot_alert_text("%s kullanıldı." % name)
+
+            return true
+
+    return false
+    
+    
+    

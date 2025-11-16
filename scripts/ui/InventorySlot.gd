@@ -52,9 +52,13 @@ func _setup_background_style() -> void:
 
 func _gui_input(event: InputEvent):
     if event is InputEventMouseButton:
+        # DÜZELTME: Olayı hemen tüketmekten kaçınıyoruz.
+        # Bu, olay yakalama sinyalini (slot_gui_input_event) tetikler ve
+        # işleme kararını InventoryPanel'e devreder.
         slot_gui_input_event.emit(event, local_index)
-        if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
-            get_viewport().set_input_as_handled()
+        
+        # Orijinaldeki "if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed: get_viewport().set_input_as_handled()"
+        # bloğu silinmiştir, bu sayede Panel olayı tüketebilir.
 
 
 func _on_self_pressed():
@@ -64,6 +68,7 @@ func _on_self_pressed():
 
 func _apply_empty_visual() -> void:
     current_item.clear()
+    
     if icon_rect:
         icon_rect.texture = null
     if quantity_label:
@@ -79,36 +84,33 @@ func refresh_with_item(item: Dictionary) -> void:
         return
 
     # --------------------------
-    # 1) ICON (GÜÇLENDİRİLMİŞ MANTIK)
+    # 1) ICON
     # --------------------------
     var tex: Texture2D = null
-    
-    # 1. Öncelik: "icon_path" (elle girilen tam yol)
+
+    # 1. Öncelik: "icon_path"
     if current_item.has("icon_path"):
         var path_str := str(current_item["icon_path"])
         if ResourceLoader.exists(path_str):
             tex = load(path_str)
-            
-    # 2. Öncelik: "icon" (ItemDB.normalize_item tarafından eklenen)
-    # 'potion_health_s.png' veya 'potion_def_s.png' gibi dosyaları arar
+
+    # 2. Öncelik: "icon"
     if tex == null and current_item.has("icon"):
         var icon_name := str(current_item["icon"]).to_lower()
         var path2 := "res://assets/icons/%s.png" % icon_name
         if ResourceLoader.exists(path2):
             tex = load(path2)
-            
-    # 3. Öncelik (YEDEK PLAN 1): İkon adının direkt ID ile aynı olması
-    # 'P_HP_S.png' veya 'P_DEF_S.png' gibi dosyaları arar
+
+    # 3. Öncelik: ID ile aynı isim
     if tex == null and current_item.has("id"):
         var id_fallback_path := "res://assets/icons/%s.png" % str(current_item["id"])
         if ResourceLoader.exists(id_fallback_path):
             tex = load(id_fallback_path)
-            
-    # 4. Öncelik (YEDEK PLAN 2): Ekipmanlar için eski 'match' bloğu
-    # 'weapon.png', 'armor.png' gibi dosyaları arar
+
+    # 4. Öncelik: ekipman koduna göre (weapon, armor vs.)
     if tex == null and current_item.has("id"):
         var id_str := str(current_item["id"])
-        if not id_str.begins_with("P_"): # Pot değilse
+        if not id_str.begins_with("P_"):
             var parts := id_str.split("_")
             if parts.size() >= 2:
                 var code := parts[1]
@@ -129,47 +131,64 @@ func refresh_with_item(item: Dictionary) -> void:
                     var path3 := "res://assets/icons/%s.png" % icon_name2
                     if ResourceLoader.exists(path3):
                         tex = load(path3)
-    
-    # --- İkon ataması ---
+
     if icon_rect:
         icon_rect.texture = tex
-        # --- HATA AYIKLAMA LOG'U ---
         if tex == null and not current_item.is_empty():
-            # İkon bulunamadıysa konsola HATA bas
-            print("UYARI: '%s' için ikon bulunamadı. Aranan yollar:" % current_item.get("name", "BİLİNMEYEN EŞYA"))
-            if current_item.has("icon"):
-                print("   - res://assets/icons/%s.png" % current_item["icon"])
-            if current_item.has("id"):
-                print("   - res://assets/icons/%s.png" % current_item["id"])
-        # ---------------------------
+            print("UYARI: '%s' için ikon bulunamadı." % current_item.get("name", "BİLİNMEYEN EŞYA"))
 
     # --------------------------
-    # 2) STACK MİKTARI
+    # 2) MİKTAR / +LEVEL LABEL
     # --------------------------
     var amount: int = 1
     if current_item.has("amount"):
         amount = int(current_item["amount"])
+
+    var upgrade: int = 0
+    if current_item.has("upgrade"):
+        var raw_up = current_item["upgrade"]
+        match typeof(raw_up):
+            TYPE_INT:
+                upgrade = raw_up
+            TYPE_FLOAT:
+                upgrade = int(raw_up)
+            TYPE_STRING:
+                var s_up: String = raw_up
+                if s_up.begins_with("+"):
+                    s_up = s_up.substr(1, s_up.length() - 1)
+                if s_up.is_valid_int():
+                    upgrade = int(s_up)
+
     if quantity_label:
-        if amount > 1:
+        if upgrade > 0:
+            quantity_label.text = "+%d" % upgrade
+        elif amount > 1:
             quantity_label.text = str(amount)
         else:
             quantity_label.text = ""
 
     # --------------------------
-    # 3) TOOLTIP (Düzeltilmiş Hali)
+    # 3) TOOLTIP
     # --------------------------
     var lines: Array = []
 
-    var name_str := str(current_item.get("name", "")).strip_edges()
-    if name_str != "":
-        lines.append(name_str)
+    # İSİM + UPGRADE
+    var base_name: String = str(current_item.get("name", "")).strip_edges()
+    if base_name != "":
+        if upgrade > 0:
+            lines.append("+%d %s" % [upgrade, base_name])
+        else:
+            lines.append(base_name)
 
-    var req_level := -1
+    # LEVEL / CLASS REQUIREMENTS
+    var req_level: int = -1
     if current_item.has("req_level"):
         req_level = int(current_item["req_level"])
-    var req_class_str := ""
+
+    var req_class_str: String = ""
     if current_item.has("req_class"):
         req_class_str = str(current_item["req_class"]).strip_edges()
+
     if req_level > 0 or (req_class_str != "" and req_class_str != "POTIONS"):
         var req_line := ""
         if req_level > 0:
@@ -181,18 +200,17 @@ func refresh_with_item(item: Dictionary) -> void:
         if req_line != "":
             lines.append(req_line)
 
+    # AÇIKLAMA
     var desc_str := str(current_item.get("tooltip", "")).strip_edges()
     if desc_str != "":
         lines.append(desc_str)
 
-    # STATLAR (ItemDB'ye doğrudan erişim)
+    # STATLAR
     var stats = current_item.get("stats", {})
     if stats is Dictionary and stats.size() > 0:
         if lines.size() > 0:
             lines.append("")
-
         var db = ItemDB
-        
         if db.STAT_ORDER.size() > 0:
             for key in db.STAT_ORDER:
                 if stats.has(key):
@@ -202,17 +220,16 @@ func refresh_with_item(item: Dictionary) -> void:
                 continue
             lines.append(db.format_stat_line(key, stats[key]))
 
-    # FİYAT BİLGİSİ (ItemDB'ye doğrudan erişim)
+    # SATIŞ FİYATI
     if ItemDB.has_method("get_item_price"):
         var price: int = ItemDB.get_item_price(current_item)
         if price > 0:
             var sell_price: int = max(1, int(price * 0.25))
             lines.append("")
             lines.append("Satış Fiyatı: %d Altın" % sell_price)
-    else:
-        print("HATA: ItemDB yüklendi ANCAK get_item_price fonksiyonu bulunamadı.")
-    
+
     tooltip_text = "\n".join(lines)
+
 
 
 # ======================================================
@@ -222,6 +239,7 @@ func refresh_with_item(item: Dictionary) -> void:
 func _get_drag_data(at_position: Vector2) -> Variant:
     if inventory_panel == null:
         return null
+
     var global_index: int = inventory_panel.get_global_index(local_index)
     var item: Dictionary = inventory_panel.get_item_at(global_index)
     if item.is_empty():
@@ -231,6 +249,7 @@ func _get_drag_data(at_position: Vector2) -> Variant:
         "type": "inventory_item",
         "from_global_index": global_index,
         "item": item,
+        "inventory_panel": inventory_panel, # <<< DEMİRCİ İÇİN ÖNEMLİ
     }
 
     var preview_root := Control.new()
@@ -260,6 +279,7 @@ func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 
 
 func _drop_data(at_position: Vector2, data: Variant) -> void:
+  
     if inventory_panel == null:
         return
     if typeof(data) != TYPE_DICTIONARY:
@@ -272,4 +292,5 @@ func _drop_data(at_position: Vector2, data: Variant) -> void:
             inventory_panel.handle_drop(dict, local_index)
     elif dict.has("type") and dict["type"] == "equipment_item":
         if inventory_panel.has_method("handle_equip_drop"):
+           
             inventory_panel.handle_equip_drop(dict, local_index)

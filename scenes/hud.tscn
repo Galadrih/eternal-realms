@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://b2p5scgacieep"]
+[gd_scene load_steps=18 format=3 uid="uid://b2p5scgacieep"]
 
 [ext_resource type="Script" uid="uid://dknhlmqxyar17" path="res://scripts/hud.gd" id="1_37p78"]
 [ext_resource type="PackedScene" uid="uid://cw2bpfc61uhek" path="res://scenes/ui/SkillBar.tscn" id="2_oo0fn"]
@@ -7,6 +7,8 @@
 [ext_resource type="PackedScene" uid="uid://dgy637rv3fnip" path="res://scenes/ui/BuffPanel.tscn" id="4_6fi6k"]
 [ext_resource type="PackedScene" uid="uid://ccdrj31fkfbkm" path="res://scenes/ui/InventoryPanel.tscn" id="6_047uy"]
 [ext_resource type="PackedScene" uid="uid://chm3yma0a3upp" path="res://scenes/ui/shop_panel.tscn" id="7_5pdws"]
+[ext_resource type="PackedScene" uid="uid://v6jmhvw2h5u8" path="res://scenes/ui/BlacksmithPanel.tscn" id="8_hd3ao"]
+[ext_resource type="PackedScene" uid="uid://dr68jkgy6u0ho" path="res://scenes/ui/TalentTree.tscn" id="9_0i1j5"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_br27j"]
 bg_color = Color(0.14901961, 0.14901961, 0.14901961, 1)
@@ -145,7 +147,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -130.0
+offset_top = 80.0
 offset_right = -130.0
+offset_bottom = 80.0
 grow_horizontal = 2
 script = ExtResource("3_uo2fv")
 
@@ -201,3 +205,16 @@ grow_vertical = 2
 [node name="ShopPanel" parent="." instance=ExtResource("7_5pdws")]
 
 [node name="InventoryPanel" parent="." instance=ExtResource("6_047uy")]
+anchors_preset = 3
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -429.0
+offset_top = -760.0
+offset_right = -269.0
+offset_bottom = -210.0
+grow_vertical = 0
+
+[node name="BlacksmithPanel" parent="." instance=ExtResource("8_hd3ao")]
+visible = false
+
+[node name="TalentTree" parent="." instance=ExtResource("9_0i1j5")]

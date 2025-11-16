@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b0ig1k21ulxq2"
-path="res://.godot/imported/wolfsheet3 (1).png-49e1d34b3dc6eeaf832fc4dfd26a3385.ctex"
+uid="uid://c3qyk5r06pb3k"
+path="res://.godot/imported/spider01.png-a5abda80eda07bfb4eff4fd00a20073e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/mobs/wolfsheet3 (1).png"
-dest_files=["res://.godot/imported/wolfsheet3 (1).png-49e1d34b3dc6eeaf832fc4dfd26a3385.ctex"]
+source_file="res://assets/sprites/mobs/spider01.png"
+dest_files=["res://.godot/imported/spider01.png-a5abda80eda07bfb4eff4fd00a20073e.ctex"]
 
 [params]
 

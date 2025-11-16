@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bctgshsqjs67l"
-path="res://.godot/imported/wolfsheet5.png-964717f375d3bfd61bbabda10f217095.ctex"
+uid="uid://bwi5b1o50feo1"
+path="res://.godot/imported/blacksmith.png-a041c1699dc45bad4af005cb9ecd7ad5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/mobs/wolfsheet5.png"
-dest_files=["res://.godot/imported/wolfsheet5.png-964717f375d3bfd61bbabda10f217095.ctex"]
+source_file="res://assets/sprites/npcs/blacksmith.png"
+dest_files=["res://.godot/imported/blacksmith.png-a041c1699dc45bad4af005cb9ecd7ad5.ctex"]
 
 [params]
 

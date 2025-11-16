@@ -76,10 +76,19 @@ func update_buff_panel(statuses: Dictionary, skill_db: Dictionary, class_id: int
 # =====================================================
 # INPUT – Panelleri aç/kapat
 # =====================================================
+# =====================================================
+# INPUT – Panelleri aç/kapat (DÜZELTİLMİŞ)
+# =====================================================
 func _unhandled_input(event: InputEvent) -> void:
+    
+    # --- Arayüz referanslarını bul ---
+    var character_sheet_ui = get_tree().get_first_node_in_group("character_sheet")
+    var talent_tree_ui = get_tree().get_first_node_in_group("talent_tree")
+    
+    
     # K → Skill Panel
     if event.is_action_pressed("open_skills"):
-        # Dükkan açıksa, beceri panelini açma
+        
         if is_instance_valid(shop_panel) and shop_panel.visible:
             return
 
@@ -104,21 +113,61 @@ func _unhandled_input(event: InputEvent) -> void:
     # I → Envanter
     if event.is_action_pressed("open_inventory"):
         
-        # Dükkan açıksa, "I" tuşu her şeyi kapatır
         if is_instance_valid(shop_panel) and shop_panel.visible:
-            close_shop() # Bu zaten envanteri de kapatır
+            close_shop() 
         else:
-            # Dükkan kapalıysa, envanteri normal aç/kapat
             if inventory_panel:
                 inventory_panel.visible = not inventory_panel.visible
-                if inventory_panel.visible:
-                    # Normal açılışta dükkan modunun KAPALI olduğundan emin ol
-                    inventory_panel.set_shop_mode(false)
-                    _center_panel(inventory_panel) # Paneli ortala
+                
+        if inventory_panel.visible:
+            inventory_panel.set_shop_mode(false)
         
         get_viewport().set_input_as_handled()
 
+    
+    # --- DÜZELTME: N → Talent Tree ---
+    if event.is_action_pressed("toggle_talents"):
+        
+        if not is_instance_valid(talent_tree_ui):
+            push_error("HUD: 'talent_tree' grubunda TalentTree bulunamadı!")
+            return
 
+        # Eğer başka bir ana panel açıksa (Karakter Sayfası), onu kapat
+        if is_instance_valid(character_sheet_ui) and character_sheet_ui.visible:
+            character_sheet_ui.toggle()
+            
+        # Dükkan açıksa, onu kapat
+        if is_instance_valid(shop_panel) and shop_panel.visible:
+            close_shop()
+
+        # Yetenek penceresini aç/kapa
+        talent_tree_ui.toggle()
+        
+        # Input'u "kullanıldı" olarak işaretle
+        get_viewport().set_input_as_handled()
+
+
+    # --- DÜZELTME: C → Character Sheet (Ayrı bir blok olarak eklendi) ---
+    # Proje Ayarları -> Input Map'e "toggle_character_sheet" eklediğinden emin ol
+    if event.is_action_pressed("toggle_character_sheet"): 
+        
+        if not is_instance_valid(character_sheet_ui):
+            push_error("HUD: 'character_sheet' grubunda CharacterSheet bulunamadı!")
+            return
+            
+        # Eğer Yetenek Paneli açıksa, onu kapat
+        if is_instance_valid(talent_tree_ui) and talent_tree_ui.visible:
+            talent_tree_ui.toggle()
+            
+        # Dükkan açıksa, onu kapat
+        if is_instance_valid(shop_panel) and shop_panel.visible:
+            close_shop()
+            
+        # Karakter penceresini aç/kapa
+        character_sheet_ui.toggle()
+        
+        # Input'u "kullanıldı" olarak işaretle
+        get_viewport().set_input_as_handled()
 # =====================================================
 # SkillBar sinyali
 # =====================================================
@@ -357,39 +406,47 @@ func set_target_from_node(target: Node) -> void:
 
     # --- 3. YENİ HEDEFİ İŞLE ---
     if is_instance_valid(current_target_node):
-        
+
+        # İSİM
         var name: String = ""
         if "enemy_name" in current_target_node:
             name = str(current_target_node.get("enemy_name"))
         else:
             name = current_target_node.name
 
+        # LEVEL AL
         var level: int = 1
-        if "level" in current_target_node:
+        if "enemy_level" in current_target_node:
+            level = int(current_target_node.get("enemy_level"))
+        elif "level" in current_target_node:
             level = int(current_target_node.get("level"))
+        elif current_target_node.has_method("get_level"):
+            level = int(current_target_node.call("get_level"))
 
+        # HP / MAX HP
         var current_hp: float = 0.0
         var max_hp: float = 1.0
         if "current_health" in current_target_node:
             current_hp = float(current_target_node.get("current_health"))
-            if "max_health" in current_target_node:
-                max_hp = float(current_target_node.get("max_health"))
-            elif "computed_max_health" in current_target_node:
-                max_hp = float(current_target_node.get("computed_max_health"))
-        
+        if "max_health" in current_target_node:
+            max_hp = float(current_target_node.get("max_health"))
+        elif "computed_max_health" in current_target_node:
+            max_hp = float(current_target_node.get("computed_max_health"))
+
+        # TargetFrame'i doldur
         set_target(name, level, current_hp, max_hp)
 
-        # --- 3b. YENİ SİNYAL BAĞLANTISI ---
+        # HP güncellemeleri için sinyal bağla
         if current_target_node.has_signal("health_updated"):
             current_target_node.health_updated.connect(self.update_target_hp)
         else:
             print("HUD HATA: Hedef (", current_target_node.name, ") 'health_updated' sinyaline sahip değil.")
 
         target_frame.visible = true
-        
+
     else:
         # --- 4. HEDEF NULL (BOŞ) İSE ---
-        clear_target() # Helper fonksiyonunu kullan
+        clear_target()
         target_frame.visible = false
 
 
@@ -435,9 +492,7 @@ func open_shop(item_list: Array):
     inventory_panel.show()
     inventory_panel.set_shop_mode(true)
     
-    # --- YENİ POZİSYONLAMA MANTIĞI ---
-    _position_panels_for_shop(true)
-    # -------------------------------
+
 
 func close_shop():
     if is_instance_valid(shop_panel) and shop_panel.visible:
@@ -448,8 +503,6 @@ func close_shop():
             inventory_panel.hide()
         # Dükkan kapansa bile envanterin modunu sıfırla
         inventory_panel.set_shop_mode(false)
-    
-    _position_panels_for_shop(false) # Pozisyonları sıfırla
 
 
 # Panelleri dükkan modu için (yan yana) veya normal (ortalı) pozisyonlar

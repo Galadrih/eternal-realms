@@ -1,0 +1,124 @@
+[gd_scene load_steps=17 format=3 uid="uid://bkqupw1yjirf4"]
+
+[ext_resource type="Script" uid="uid://djw41q4yxvowc" path="res://scripts/systems/blacksmith_npc.gd" id="1_6lya6"]
+[ext_resource type="Texture2D" uid="uid://bwi5b1o50feo1" path="res://assets/sprites/npcs/blacksmith.png" id="2_w4bxj"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_glxwr"]
+atlas = ExtResource("2_w4bxj")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_japug"]
+atlas = ExtResource("2_w4bxj")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_42fbr"]
+atlas = ExtResource("2_w4bxj")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sxgdg"]
+atlas = ExtResource("2_w4bxj")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gjv2t"]
+atlas = ExtResource("2_w4bxj")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3o0wf"]
+atlas = ExtResource("2_w4bxj")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a4ix2"]
+atlas = ExtResource("2_w4bxj")
+region = Rect2(384, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nj7g6"]
+atlas = ExtResource("2_w4bxj")
+region = Rect2(448, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nbep2"]
+atlas = ExtResource("2_w4bxj")
+region = Rect2(512, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_js34d"]
+atlas = ExtResource("2_w4bxj")
+region = Rect2(576, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ju4n3"]
+atlas = ExtResource("2_w4bxj")
+region = Rect2(640, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b70tn"]
+atlas = ExtResource("2_w4bxj")
+region = Rect2(704, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_4dmpn"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_glxwr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_japug")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_42fbr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sxgdg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gjv2t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3o0wf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a4ix2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nj7g6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nbep2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_js34d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ju4n3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b70tn")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 11.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_k581e"]
+radius = 98.12747
+
+[node name="BlacksmithNPC" type="Node2D"]
+script = ExtResource("1_6lya6")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(43.5, 43.5)
+scale = Vector2(2.359375, 2.359375)
+sprite_frames = SubResource("SpriteFrames_4dmpn")
+animation = &"idle"
+frame_progress = 0.34361494
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(33, 77)
+shape = SubResource("CircleShape2D_k581e")
+
+[node name="InteractionLabel" type="Label" parent="."]
+offset_left = -42.0
+offset_top = 20.0
+offset_right = 116.0
+offset_bottom = 43.0
+theme_override_font_sizes/font_size = 8
+text = "E - Demirci ile Konuş"
+horizontal_alignment = 1

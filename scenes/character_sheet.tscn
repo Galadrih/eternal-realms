@@ -21,9 +21,14 @@ grow_vertical = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="MainPanel"]
 layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
 [node name="MainLayout" type="VBoxContainer" parent="MainPanel/MarginContainer"]
 layout_mode = 2
+theme_override_constants/separation = 6
 
 [node name="TitleLabel" type="Label" parent="MainPanel/MarginContainer/MainLayout"]
 layout_mode = 2
@@ -43,10 +48,12 @@ layout_mode = 2
 
 [node name="StatsLayout" type="HBoxContainer" parent="MainPanel/MarginContainer/MainLayout"]
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="BaseStatsLayout" type="VBoxContainer" parent="MainPanel/MarginContainer/MainLayout/StatsLayout"]
-custom_minimum_size = Vector2(103, 233)
+custom_minimum_size = Vector2(103, 0)
 layout_mode = 2
+theme_override_constants/separation = 6
 
 [node name="Label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/BaseStatsLayout"]
 layout_mode = 2
@@ -54,6 +61,8 @@ text = "Temel Statlar"
 
 [node name="BaseStatsGrid" type="GridContainer" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/BaseStatsLayout"]
 layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
 columns = 3
 
 [node name="Label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/BaseStatsLayout/BaseStatsGrid"]
@@ -134,10 +143,12 @@ layout_mode = 2
 [node name="ScrollContainer" type="ScrollContainer" parent="MainPanel/MarginContainer/MainLayout/StatsLayout"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
 
 [node name="DerivedStatsLayout" type="VBoxContainer" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 6
 
 [node name="Label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout"]
 layout_mode = 2
@@ -145,6 +156,8 @@ text = "İkincil Statlar"
 
 [node name="DerivedStatsGrid" type="GridContainer" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout"]
 layout_mode = 2
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
 columns = 2
 
 [node name="Label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
@@ -170,22 +183,6 @@ text = "İyileştirme Gücü:"
 [node name="healp_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
 layout_mode = 2
 text = "0"
-
-[node name="Label7" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
-layout_mode = 2
-text = "Fiz. Kritik Şans:"
-
-[node name="pcrit_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
-layout_mode = 2
-text = "0%"
-
-[node name="Label9" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
-layout_mode = 2
-text = "Büy. Kritik Şans:"
-
-[node name="mcrit_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
-layout_mode = 2
-text = "0%"
 
 [node name="Label11" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
 layout_mode = 2
@@ -219,14 +216,6 @@ text = "Büy. Hasar Azaltma:"
 layout_mode = 2
 text = "0%"
 
-[node name="Label19" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
-layout_mode = 2
-text = "Kaçınma Şansı:"
-
-[node name="evasion_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
-layout_mode = 2
-text = "0%"
-
 [node name="Label21" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
 layout_mode = 2
 text = "Saldırı Hızı Bonusu:"
@@ -240,6 +229,30 @@ layout_mode = 2
 text = "Büyü Hızı Bonusu: "
 
 [node name="cspd_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0%"
+
+[node name="Label7" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "Fiz. Kritik Şans:"
+
+[node name="pcrit_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0%"
+
+[node name="Label9" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "Büy. Kritik Şans:"
+
+[node name="mcrit_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0%"
+
+[node name="Label19" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "Kaçınma Şansı:"
+
+[node name="evasion_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
 layout_mode = 2
 text = "0%"
 
@@ -272,6 +285,70 @@ layout_mode = 2
 text = "Statü Başarısı: "
 
 [node name="debuff_success_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0%"
+
+[node name="Label33" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "Fiz. Kritik Hasar:"
+
+[node name="pcrit_dmg_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "150%"
+
+[node name="Label34" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "Büy. Kritik Hasar:"
+
+[node name="mcrit_dmg_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "150%"
+
+[node name="Label35" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "İy. Kritik Şans:"
+
+[node name="heal_crit_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0%"
+
+[node name="Label36" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "Blok Şansı:"
+
+[node name="block_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0%"
+
+[node name="Label37" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "Mana Kullanımı:"
+
+[node name="mana_reduc_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0%"
+
+[node name="Label38" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "Bekleme Süresi Az.:"
+
+[node name="cdr_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0%"
+
+[node name="Label39" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "Buff/Debuff Süresi:"
+
+[node name="buff_dur_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "0%"
+
+[node name="Label40" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
+layout_mode = 2
+text = "Zırh Delme:"
+
+[node name="p_pierce_value_label" type="Label" parent="MainPanel/MarginContainer/MainLayout/StatsLayout/ScrollContainer/DerivedStatsLayout/DerivedStatsGrid"]
 layout_mode = 2
 text = "0%"
 
